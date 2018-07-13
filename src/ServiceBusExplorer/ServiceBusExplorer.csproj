@@ -76,7 +76,7 @@
     <Reference Include="Microsoft.Azure.NotificationHubs">
       <HintPath>..\packages\Microsoft.Azure.NotificationHubs.2.16.0.234\lib\net45-full\Microsoft.Azure.NotificationHubs.dll</HintPath>
       <Private>True</Private>
-    </Reference>
+         </Reference>
     <Reference Include="Microsoft.ServiceBus, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAzure.ServiceBus.4.1.8\lib\net45\Microsoft.ServiceBus.dll</HintPath>
     </Reference>
@@ -360,6 +360,7 @@
       <DependentUpon>DeleteForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AttributeList.cs" />
+    <Compile Include="Helpers\ConfigurationHandler.cs" />
     <Compile Include="Helpers\DataGridViewDeleteButtonCell.cs" />
     <Compile Include="Helpers\DeadLetterMessageHandler.cs" />
     <Compile Include="Helpers\EventProcessorCheckpointHelper.cs" />

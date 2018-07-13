@@ -586,50 +586,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                         MainForm.StaticWriteToLog("The key of the Service Bus namespace cannot be null.");
                         return;
                     }
+
                     var value = txtUri.Text;
-                    var configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                    var configurationSection = configuration.Sections["serviceBusNamespaces"];
-                    var directory = Path.GetDirectoryName(configuration.FilePath);
-                    if (string.IsNullOrEmpty(directory))
-                    {
-                        MainForm.StaticWriteToLog("The directory of the configuration file cannot be null.");
-                        return;
-                    }
-                    var appConfig = Path.Combine(directory, "..\\..\\App.config");
-                    configurationSection.SectionInformation.ForceSave = true;
-                    var xml = configurationSection.SectionInformation.GetRawXml();
-                    var xmlDocument = new XmlDocument();
-                    xmlDocument.LoadXml(xml);
-                    var node = xmlDocument.CreateElement("add");
-                    node.SetAttribute("key", key);
-                    node.SetAttribute("value", value);
-                    xmlDocument.DocumentElement?.AppendChild(node);
-                    configurationSection.SectionInformation.SetRawXml(xmlDocument.OuterXml);
-                    configuration.Save(ConfigurationSaveMode.Modified);
-                    ConfigurationManager.RefreshSection("serviceBusNamespaces");
+                    ConfigurationHandler.SaveConnectionString(key, value, MainForm.StaticWriteToLog);
 
-                    if (File.Exists(appConfig))
-                    {
-                        var exeConfigurationFileMap = new ExeConfigurationFileMap
-                        {
-                            ExeConfigFilename = appConfig
-                        };
-                        configuration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap, ConfigurationUserLevel.None);
-                        configurationSection = configuration.Sections["serviceBusNamespaces"];
-                        configurationSection.SectionInformation.ForceSave = true;
-                        xml = configurationSection.SectionInformation.GetRawXml();
-                        xmlDocument = new XmlDocument();
-                        xmlDocument.LoadXml(xml);
-                        node = xmlDocument.CreateElement("add");
-                        node.SetAttribute("key", key);
-                        node.SetAttribute("value", value);
-                        xmlDocument.DocumentElement?.AppendChild(node);
-                        configurationSection.SectionInformation.SetRawXml(xmlDocument.OuterXml);
-                        configuration.Save(ConfigurationSaveMode.Modified);
-                        ConfigurationManager.RefreshSection("serviceBusNamespaces");
-                    }
-
-                    serviceBusHelper.ServiceBusNamespaces.Add(key, MainForm.GetServiceBusNamespace(key, value));
+                    serviceBusHelper.ServiceBusNamespaces.Add(key, ServiceBusNamespace.GetServiceBusNamespace(key,
+                        value, MainForm.StaticWriteToLog));
                     cboServiceBusNamespace.Items.Clear();
                     cboServiceBusNamespace.Items.Add(SelectServiceBusNamespace);
                     cboServiceBusNamespace.Items.Add(EnterConnectionString);
