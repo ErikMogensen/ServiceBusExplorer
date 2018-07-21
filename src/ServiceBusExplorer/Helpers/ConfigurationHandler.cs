@@ -53,6 +53,17 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
         #endregion
 
+        #region Private fields
+        static string userFilePath;
+        #endregion
+
+        #region Static constructor
+        static ConfigurationHandler()
+        {
+            
+        }
+        #endregion
+
         #region Public methods
         static public void GetMessagingNamespacesFromConfiguration(ServiceBusHelper serviceBusHelper,
             WriteToLogDelegate writeToLog)
@@ -97,15 +108,26 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
-        static public void SaveConnectionString(string key, string value, WriteToLogDelegate staticWriteToLog)
+        static public void SaveConnectionString(string key, string value, 
+            WriteToLogDelegate staticWriteToLog)
         {
             // Check where it should be saved TODO
             var userConfig = false;
             SaveConnectionString(userConfig, key, value, staticWriteToLog);
         }
+
+        static public TwoFilesConfiguration GetConfiguration()
+        {
+            return TwoFilesConfiguration.Create();
+        }
         #endregion
 
         #region Private methods
+        static private void EnsureUserFileExists()
+        {
+
+        }
+
         static private void SaveConnectionString(bool userConfig, string key, string value, WriteToLogDelegate staticWriteToLog)
         {
             Configuration configuration;
@@ -145,7 +167,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                         ExeConfigFilename = appConfig
                     };
 
-                    configuration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap, ConfigurationUserLevel.None);
+                    configuration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap, 
+                        ConfigurationUserLevel.None);
                     configurationSection = configuration.Sections[ServiceBusNamespaces];
                     configurationSection.SectionInformation.ForceSave = true;
 

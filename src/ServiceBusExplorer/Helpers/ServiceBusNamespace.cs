@@ -44,14 +44,16 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
     /// </summary>
     public class ServiceBusNamespace
     {
-        #region Public Constants
+        #region Private Constants
         //***************************
         // Formats
         //***************************
         public const string ConnectionStringFormat = "Endpoint={0};SharedSecretIssuer={1};SharedSecretValue={2};TransportType={3}";
         public const string SasConnectionStringFormat = "Endpoint={0};SharedAccessKeyName={1};SharedAccessKey={2};TransportType={3}";
         public const string SasConnectionStringEntityPathFormat = "Endpoint={0};SharedAccessKeyName={1};SharedAccessKey={2};TransportType={3};EntityPath={4}";
+        #endregion
 
+        #region Public Constants
         //**************************
         // Messages
         //**************************
@@ -96,27 +98,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
         #endregion
 
-        #region Public Constructors
-        /// <summary>
-        /// Initializes a new instance of the ServiceBusHelper class.
-        /// </summary>
-        public ServiceBusNamespace()
-        {
-            ConnectionStringType = ServiceBusNamespaceType.Cloud;
-            ConnectionString = default(string);
-            Uri = default(string);
-            Namespace = default(string);
-            IssuerName = default(string);
-            IssuerSecret = default(string);
-            ServicePath = default(string);
-            StsEndpoint = default(string);
-            RuntimePort = default(string);
-            ManagementPort = default(string);
-            WindowsDomain = default(string);
-            WindowsUserName = default(string);
-            WindowsPassword = default(string);
-        }
-
+        #region Private Constructors
         /// <summary>
         /// Initializes a new instance of the ServiceBusNamespace class.
         /// </summary>
@@ -131,7 +113,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         /// <param name="transportType">The transport type to use to access the namespace.</param>
         /// <param name="isSas">True is is SAS connection string, false otherwise.</param>
         /// <param name="entityPath">Entity path connection string scoped to. Otherwise a default.</param>
-        public ServiceBusNamespace(ServiceBusNamespaceType connectionStringType,
+        private ServiceBusNamespace(ServiceBusNamespaceType connectionStringType,
                                    string connectionString,
                                    string uri,
                                    string ns,
@@ -189,7 +171,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         /// <param name="windowsPassword">The Windows user password.</param>
         /// <param name="ns">The service bus namespace.</param>
         /// <param name="transportType">The transport type to use to access the namespace.</param>
-        public ServiceBusNamespace(string connectionString,
+        private ServiceBusNamespace(string connectionString,
                                    string endpoint,
                                    string stsEndpoint,
                                    string runtimePort,
