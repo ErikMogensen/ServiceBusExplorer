@@ -123,11 +123,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Private methods
-        static private void EnsureUserFileExists()
-        {
-
-        }
-
         static private void SaveConnectionString(bool userConfig, string key, string value, WriteToLogDelegate staticWriteToLog)
         {
             Configuration configuration;

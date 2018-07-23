@@ -49,7 +49,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         Configuration userConfiguration;
         #endregion
 
-        #region The Constructor
+        #region The only constructor
         public TwoFilesConfiguration(Configuration localApplicationConfiguration, Configuration localUserConfiguration)
         {
             applicationConfiguration = localApplicationConfiguration;
@@ -57,8 +57,39 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         }
         #endregion
 
-        #region Public methods
+        #region Static Create methods - different accessability
+        /// <summary>
+        /// This method is meant to only be called for unit testing, to avoid polluting the application config
+        /// file for the executable running the unit tests and the user config file.
+        /// </summary>
+        internal static TwoFilesConfiguration Create(string applicationConfigPath, string userConfigFilePath)
+        {
+            var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
+            return TwoFilesConfiguration.Create(localApplicationConfiguration, userConfigFilePath);
+        }
+        internal static TwoFilesConfiguration Create()
+        {
+            var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var userConfigFilePath = GetUserSettingsFilePath();
+
+            return TwoFilesConfiguration.Create(localApplicationConfiguration, userConfigFilePath);
+        }
+
+        private static TwoFilesConfiguration Create(Configuration applicationConfiguration, string userConfigFilePath)
+        {
+            Configuration localUserConfiguration = null;
+
+            if (File.Exists(userConfigFilePath))
+            {
+                localUserConfiguration = OpenConfiguration(userConfigFilePath);
+            }
+
+            return new TwoFilesConfiguration(applicationConfiguration, localUserConfiguration);
+        }
+        #endregion
+
+        #region Public methods
         public string GetStringValue(string AppSettingKey)
         {
             string result = null;
@@ -158,19 +189,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
-        internal static TwoFilesConfiguration Create()
-        {
-            var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var userFilePath = GetUserSettingsFilePath();
-            Configuration localUserConfiguration = null;
-
-            if (File.Exists(userFilePath))
-            {
-                localUserConfiguration = OpenConfiguration(userFilePath);
-            }
-
-            return new TwoFilesConfiguration(localApplicationConfiguration, localUserConfiguration);
-        }
 
         private static Configuration OpenConfiguration(string userFilePath)
         {
