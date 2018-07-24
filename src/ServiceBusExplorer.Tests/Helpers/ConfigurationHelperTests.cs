@@ -2,6 +2,8 @@
 
 using System;
 using System.IO;
+using System.Reflection;
+using System.Xml.Linq;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
 using NUnit.Framework;
 
@@ -21,23 +23,45 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         }
 
         [SetUp]
-        public void CreateFakeApplicationConfigFile()
+        public void CreateNewFakeApplicationConfigFile()
         {
+            // Delete the old one if it exists
+            DeleteFakeApplicationConfigFile();
 
-        }
-
-        [Test]
-        public void GetValuesFromUserFile()
-        {
-            var guid = new Guid("2E9DB8C4-8803-4BD7-B860-8932CF13835E");
-            var convertedGuid = ConversionHelper.MapStringTypeToCLRType("Guid", guid);
-            Assert.AreEqual(guid, convertedGuid);
+            // Copy the config file from the build
+            var thisAssembly = Assembly.GetExecutingAssembly();
+            var sbeConfigpath = Path.Combine(thisAssembly.CodeBase, 
+                @"..\..\ServiceBusExplorer\bin\release",
+                "ServiceBusExplorer.exe");
+            File.Copy(sbeConfigpath, GetFakeApplicationConfigFilePath());
         }
 
         [TearDown]
         public void DeleteFakeApplicationConfigFile()
         {
+            var fakeFile = GetFakeApplicationConfigFilePath();
+
+            if (File.Exists(fakeFile))
+            {
+                File.Delete(fakeFile);
+            }
+        }
+
+        [Test]
+        public void GetValuesFromUserFile()
+        {
+            TwoFilesConfiguration configuration = ConfigurationHandler.GetConfiguration();
+
+            // Initially the user
+            var onlyInUserFile = configuration.GetBoolValue("OnlyInUserFile", false);
+            Assert.AreEqual(onlyInUserFile, false);
+
+            Assert.AreEqual(guid, convertedGuid);
+        }
+
+        [Test]
+        public void GetValuesFromUserFile()
+        {
 
         }
     }
-}
