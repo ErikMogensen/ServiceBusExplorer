@@ -55,8 +55,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             // Initially the user
             var onlyInUserFile = configuration.GetBoolValue("OnlyInUserFile", false);
             Assert.AreEqual(onlyInUserFile, false);
-
-            Assert.AreEqual(guid, convertedGuid);
         }
 
         [Test]
