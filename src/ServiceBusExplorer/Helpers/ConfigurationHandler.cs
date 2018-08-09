@@ -50,18 +50,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         //***************************
         private const string ServiceBusNamespacesNotConfigured = "Service bus accounts have not been properly configured in the configuration file.";
 
-
-        #endregion
-
-        #region Private fields
-        static string userFilePath;
-        #endregion
-
-        #region Static constructor
-        static ConfigurationHandler()
-        {
-            
-        }
         #endregion
 
         #region Public methods
@@ -108,7 +96,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
-        static public void SaveConnectionString(string key, string value, 
+        static public void SaveConnectionString(string key, string value,
             WriteToLogDelegate staticWriteToLog)
         {
             // Check where it should be saved TODO
@@ -116,7 +104,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             SaveConnectionString(userConfig, key, value, staticWriteToLog);
         }
 
-        static public TwoFilesConfiguration GetConfiguration()
+        static public TwoFilesConfiguration OpenConfiguration()
         {
             return TwoFilesConfiguration.Create();
         }
@@ -148,7 +136,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
 
             configurationSection.SectionInformation.ForceSave = true;
-           
+
             UpdateConfigFile(configuration, configurationSection, key, value);
 
             if (!userConfig)
@@ -162,7 +150,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                         ExeConfigFilename = appConfig
                     };
 
-                    configuration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap, 
+                    configuration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap,
                         ConfigurationUserLevel.None);
                     configurationSection = configuration.Sections[ServiceBusNamespaces];
                     configurationSection.SectionInformation.ForceSave = true;
@@ -186,7 +174,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             configuration.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection("serviceBusNamespaces");
         }
-
         #endregion
     }
 }
