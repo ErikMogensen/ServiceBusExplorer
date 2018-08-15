@@ -3536,6 +3536,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             {
                 return;
             }
+
+            var configuration = ConfigurationHandler.OpenConfiguration();
+
             var parameter = ConfigurationManager.AppSettings[ConfigurationParameters.DebugFlagParameter];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
@@ -3546,6 +3549,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     RetryHelper.TraceEnabled = debug;
                 }
             }
+
+            // serviceBusHelper.TraceEnabled = RetryHelper.TraceEnabled =
+            var tempBool = configuration.GetBoolValue(ConfigurationParameters.DebugFlagParameter, false);
+
+            Debug.Assert(tempBool == serviceBusHelper.TraceEnabled);
+            Debug.Assert(tempBool == RetryHelper.TraceEnabled);
+
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.ConnectivityMode];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
@@ -3555,6 +3566,10 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     ServiceBusHelper.ConnectivityMode = connectivityMode;
                 }
             }
+            var tempCM = configuration.GetEnumValue<ConnectivityMode>(ConfigurationParameters.ConnectivityMode,
+    ConnectivityMode.AutoDetect);
+            Debug.Assert(tempCM == ServiceBusHelper.ConnectivityMode);
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.Encoding];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
@@ -3564,31 +3579,58 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     ServiceBusHelper.EncodingType = encodingType;
                 }
             }
+            var tempEnc = configuration.GetEnumValue(ConfigurationParameters.Encoding,
+                ServiceBusHelper.EncodingType);
+            Debug.Assert(tempEnc == ServiceBusHelper.EncodingType);
+
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.ShowMessageCountParameter];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
                 bool.TryParse(parameter, out showMessageCount);
             }
+            tempBool = configuration.GetBoolValue(ConfigurationParameters.ShowMessageCountParameter,
+                 showMessageCount);
+            Debug.Assert(tempBool == showMessageCount);
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.SaveMessageToFileParameter];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
                 bool.TryParse(parameter, out saveMessageToFile);
             }
+            tempBool = configuration.GetBoolValue(ConfigurationParameters.SaveMessageToFileParameter,
+                 saveMessageToFile);
+            Debug.Assert(tempBool == saveMessageToFile);
+
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.SavePropertiesToFileParameter];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
                 bool.TryParse(parameter, out savePropertiesToFile);
             }
+            tempBool = configuration.GetBoolValue(ConfigurationParameters.SavePropertiesToFileParameter,
+                  savePropertiesToFile);
+            Debug.Assert(tempBool == savePropertiesToFile);
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.SaveCheckpointsToFileParameter];
             if (!string.IsNullOrWhiteSpace(parameter))
             {
                 bool.TryParse(parameter, out saveCheckpointsToFile);
             }
+            tempBool = configuration.GetBoolValue(ConfigurationParameters.SaveCheckpointsToFileParameter,
+         saveCheckpointsToFile);
+            Debug.Assert(tempBool == saveCheckpointsToFile);
+
+
             var scheme = ConfigurationManager.AppSettings[ConfigurationParameters.SchemeParameter];
             if (!string.IsNullOrWhiteSpace(scheme))
             {
                 serviceBusHelper.Scheme = scheme;
             }
+            var tempString = configuration.GetStringValue(ConfigurationParameters.SchemeParameter,
+                   scheme);
+            Debug.Assert(tempString == scheme);
+
             messageText = MessageAndPropertiesHelper.ReadMessage();
             if (string.IsNullOrWhiteSpace(messageText))
             {
@@ -3597,9 +3639,18 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 {
                     messageText = DefaultMessageText;
                 }
+
+                tempString = configuration.GetStringValue(ConfigurationParameters.MessageParameter,
+                   messageText);
+                Debug.Assert(tempString == messageText);
             }
+
             relayMessageText = MessageAndPropertiesHelper.ReadRelayMessage();
             messageFile = ConfigurationManager.AppSettings[ConfigurationParameters.FileParameter];
+            tempString = configuration.GetStringValue(ConfigurationParameters.FileParameter,
+                messageFile);
+            Debug.Assert(tempString == messageFile);
+
             if (!string.IsNullOrWhiteSpace(messageFile) &&
                 File.Exists(messageFile))
             {
@@ -3612,15 +3663,26 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     }
                 }
             }
+
+
             label = ConfigurationManager.AppSettings[ConfigurationParameters.LabelParameter];
             if (string.IsNullOrWhiteSpace(label))
             {
                 label = DefaultLabel;
             }
+            tempString = configuration.GetStringValue(ConfigurationParameters.LabelParameter,
+                label);
+            Debug.Assert(tempString == label);
 
             subscriptionId = ConfigurationManager.AppSettings[ConfigurationParameters.SubscriptionIdParameter];
-            certificateThumbprint = ConfigurationManager.AppSettings[ConfigurationParameters.CertificateThumbprintParameter];
+            tempString = configuration.GetStringValue(ConfigurationParameters.SubscriptionIdParameter,
+    subscriptionId);
+            Debug.Assert(tempString == subscriptionId);
 
+            certificateThumbprint = ConfigurationManager.AppSettings[ConfigurationParameters.CertificateThumbprintParameter];
+            tempString = configuration.GetStringValue(ConfigurationParameters.CertificateThumbprintParameter,
+    certificateThumbprint);
+            Debug.Assert(certificateThumbprint == label);
 
             var logFontSizeValue = ConfigurationManager.AppSettings[ConfigurationParameters.LogFontSize];
             float tempFloat;
@@ -3644,55 +3706,68 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             {
                 RetryHelper.RetryCount = retryCount;
             }
+
             var retryTimeoutValue = ConfigurationManager.AppSettings[ConfigurationParameters.RetryTimeoutParameter];
             int retryTimeout;
             if (int.TryParse(retryTimeoutValue, out retryTimeout))
             {
                 RetryHelper.RetryTimeout = retryTimeout;
             }
+
             var receiveTimeoutValue = ConfigurationManager.AppSettings[ConfigurationParameters.ReceiveTimeoutParameter];
             int receiveTimeoutTemp;
             if (int.TryParse(receiveTimeoutValue, out receiveTimeoutTemp) && receiveTimeoutTemp >= 0)
             {
                 receiveTimeout = receiveTimeoutTemp;
             }
+
             var serverTimeoutValue = ConfigurationManager.AppSettings[ConfigurationParameters.ServerTimeoutParameter];
             int serverTimeoutTemp;
             if (int.TryParse(serverTimeoutValue, out serverTimeoutTemp) && serverTimeoutTemp >= 0)
             {
                 serverTimeout = serverTimeoutTemp;
             }
+
             var senderThinkTimeValue = ConfigurationManager.AppSettings[ConfigurationParameters.SenderThinkTimeParameter];
             int senderThinkTimeTemp;
             if (int.TryParse(senderThinkTimeValue, out senderThinkTimeTemp) && senderThinkTimeTemp >= 0)
             {
                 senderThinkTime = senderThinkTimeTemp;
             }
+
             var receiverThinkTimeValue = ConfigurationManager.AppSettings[ConfigurationParameters.ReceiverThinkTimeParameter];
             int receiverThinkTimeTemp;
             if (int.TryParse(receiverThinkTimeValue, out receiverThinkTimeTemp) && receiverThinkTimeTemp >= 0)
             {
                 receiverThinkTime = receiverThinkTimeTemp;
             }
+
             var monitorRefreshIntervalValue = ConfigurationManager.AppSettings[ConfigurationParameters.MonitorRefreshIntervalParameter];
             int monitorRefreshIntervalTemp;
             if (int.TryParse(monitorRefreshIntervalValue, out monitorRefreshIntervalTemp) && monitorRefreshIntervalTemp >= 0)
             {
                 monitorRefreshInterval = monitorRefreshIntervalTemp;
             }
+
             var prefetchCountValue = ConfigurationManager.AppSettings[ConfigurationParameters.PrefetchCountParameter];
             int prefetchCountTemp;
             if (int.TryParse(prefetchCountValue, out prefetchCountTemp) && prefetchCountTemp >= 0)
             {
                 prefetchCount = prefetchCountTemp;
             }
+
             var topValue = ConfigurationManager.AppSettings[ConfigurationParameters.TopParameter];
             int topTemp;
             if (int.TryParse(topValue, out topTemp) && topTemp > 0)
             {
                 topCount = topTemp;
             }
+
             var messageDeferProvider = ConfigurationManager.AppSettings[ConfigurationParameters.MessageDeferProviderParameter];
+            tempString = configuration.GetStringValue(ConfigurationParameters.MessageDeferProviderParameter,
+    messageDeferProvider);
+            Debug.Assert(tempString == messageDeferProvider);
+
             if (!string.IsNullOrWhiteSpace(messageDeferProvider))
             {
                 try
@@ -3710,7 +3785,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 {
                 }
             }
+
             parameter = ConfigurationManager.AppSettings[ConfigurationParameters.SelectedEntitiesParameter];
+            tempString = configuration.GetStringValue(ConfigurationParameters.SelectedEntitiesParameter,
+    parameter);
+            Debug.Assert(tempString == parameter);
+
             if (!string.IsNullOrEmpty(parameter))
             {
                 var items = parameter.Split(',').Select(item => item.Trim()).ToList();

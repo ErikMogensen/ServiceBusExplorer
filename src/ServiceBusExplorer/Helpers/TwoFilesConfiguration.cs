@@ -45,29 +45,40 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Private fields
+        string userConfigFilePath;
+
         Configuration applicationConfiguration;
         Configuration userConfiguration;
         #endregion
 
-        #region The only constructor
-        public TwoFilesConfiguration(Configuration localApplicationConfiguration, Configuration localUserConfiguration)
+        #region Constructors
+        public TwoFilesConfiguration(Configuration applicationConfiguration, Configuration userConfiguration)
         {
-            applicationConfiguration = localApplicationConfiguration;
-            userConfiguration = localUserConfiguration;
+            this.applicationConfiguration = applicationConfiguration;
+            this.userConfiguration = userConfiguration;
         }
+
+        public TwoFilesConfiguration(Configuration applicationConfiguration, string userConfigFilePath)
+        {
+            this.applicationConfiguration = applicationConfiguration;
+            this.userConfigFilePath = userConfigFilePath;
+        }
+
         #endregion
 
         #region Static Create methods - different accessability
         /// <summary>
-        /// This method is meant to only be called for unit testing, to avoid polluting the application config
-        /// file for the executable running the unit tests and the user config file.
+        /// This method is meant to only be called for unit testing, to avoid polluting 
+        /// neither the application config file for the executable running the unit 
+        /// tests nor the user config file.
         /// </summary>
-        internal static TwoFilesConfiguration Create(string applicationConfigPath, string userConfigFilePath)
+        internal static TwoFilesConfiguration Create(string userConfigFilePath)
         {
-            var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var applicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            return TwoFilesConfiguration.Create(localApplicationConfiguration, userConfigFilePath);
+            return TwoFilesConfiguration.Create(applicationConfiguration, userConfigFilePath);
         }
+
         internal static TwoFilesConfiguration Create()
         {
             var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -78,70 +89,197 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
         private static TwoFilesConfiguration Create(Configuration applicationConfiguration, string userConfigFilePath)
         {
-            Configuration localUserConfiguration = null;
-
             if (File.Exists(userConfigFilePath))
             {
-                localUserConfiguration = OpenConfiguration(userConfigFilePath);
+                Configuration userConfiguration = OpenConfiguration(userConfigFilePath);
+                return new TwoFilesConfiguration(applicationConfiguration, userConfiguration);
             }
 
-            return new TwoFilesConfiguration(applicationConfiguration, localUserConfiguration);
+            return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath);
         }
         #endregion
 
         #region Public methods
-        public string GetStringValue(string AppSettingKey)
+        public string GetStringValue(string AppSettingKey, string defaultValue = "")
         {
             string result = null;
 
             if (userConfiguration != null)
             {
-                result = userConfiguration.AppSettings.Settings[AppSettingKey].Value;
+                result = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
             }
 
             if (result == null)
             {
-                result = applicationConfiguration.AppSettings.Settings[AppSettingKey].Value;
+                result = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+            }
+
+            if (result == null)
+            {
+                result = defaultValue;
             }
 
             return result;
         }
 
+        //        public T GetValue<T>(string AppSettingKey, T defaultValue = default) 
+        //        {
+        //            if (userConfiguration != null)
+        //            {
+        //                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+        //                if (!string.IsNullOrWhiteSpace(resultStringUser))
+        //                {
+        //                    if (typeof(T) == typeof(string))
+        //                    {
+        //                        return (T)(Convert.ChangeType(resultStringUser, typeof(T)));
+        //                    }
+
+        //                    if (typeof(T) == typeof(bool))
+        //                    {
+        //                        (T).GetType().TryParse(resultStringUser, out var result);
+        //                        return (T)Convert.ChangeType(result, typeof(T));
+        //                    }
+
+        //                    throw new InvalidOperationException(@"Cannot handle type {typeof(T)} in method {nameof(this.GetValue)}.");
+
+        //                        // return T.Parse(resultStringUser);
+        //                }
+        //            }
+
+        //            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+        //            if (!string.IsNullOrWhiteSpace(resultStringApp))
+        //            {
+        //                throw new InvalidOperationException(@"Cannot handle type {typeof(T)} in method {nameof
+        //(this.GetValue)}.");
+
+
+        //                //if (bool.TryParse(resultStringApp, out var result))
+        //                //{
+        //                //    return result;
+        //                //}
+
+        //                // TODO Add handling of unparsed
+        //            }
+
+        //            return defaultValue;
+        //        }
+
         public bool GetBoolValue(string AppSettingKey, bool defaultValue)
         {
             if (userConfiguration != null)
             {
-                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey].Value;
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
 
-                if (!string.IsNullOrWhiteSpace(resultStringUser))
+                if (bool.TryParse(resultStringUser, out var result))
                 {
-                    return bool.Parse(resultStringUser);
+                    return result;
                 }
+
+                // TODO Add handling of unparsed
             }
 
-
-            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey].Value;
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
 
             if (!string.IsNullOrWhiteSpace(resultStringApp))
             {
-                return bool.Parse(resultStringApp);
+                if (bool.TryParse(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
             }
 
             return defaultValue;
         }
 
-        public void SetValue<T>(string AppSettingKey, T value)
+        public T GetEnumValue<T>(string AppSettingKey, T defaultValue = default) where T : struct
         {
-            AquireUserConfiguration();
+            if (userConfiguration != null)
+            {
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
 
-            if (userConfiguration.AppSettings.Settings[AppSettingKey]==null)
-            {
-                userConfiguration.AppSettings.Settings.Add(AppSettingKey, value.ToString());
+                if (Enum.TryParse<T>(resultStringUser, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
             }
-            else
+
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+            if (!string.IsNullOrWhiteSpace(resultStringApp))
             {
-                userConfiguration.AppSettings.Settings[AppSettingKey].Value = value.ToString();
+                if (Enum.TryParse<T>(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
             }
+
+            return defaultValue;
+        }
+
+        public float GetFloatValue(string AppSettingKey, float defaultValue = default) 
+        {
+            if (userConfiguration != null)
+            {
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+                if (float.TryParse(resultStringUser, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+            if (!string.IsNullOrWhiteSpace(resultStringApp))
+            {
+                if (float.TryParse(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            return defaultValue;
+        }
+
+        public int GetIntValue(string AppSettingKey, int defaultValue = default)
+        {
+            if (userConfiguration != null)
+            {
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+                if (int.TryParse(resultStringUser, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+            if (!string.IsNullOrWhiteSpace(resultStringApp))
+            {
+                if (int.TryParse(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            return defaultValue;
         }
 
         public void SetStringValue(string AppSettingKey, string value)
@@ -160,7 +298,39 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
         public void SetBoolValue(string AppSettingKey, bool value)
         {
+            AquireUserConfiguration();
 
+            var stringValue = Convert.ToString(value);
+
+            if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
+            {
+                userConfiguration.AppSettings.Settings.Add(AppSettingKey, stringValue);
+            }
+            else
+            {
+                userConfiguration.AppSettings.Settings[AppSettingKey].Value = stringValue;
+            }
+        }
+
+        public void SetValue<T>(string AppSettingKey, T value)
+        {
+            AquireUserConfiguration();
+
+            if (value is string)
+            {
+                SetValueInUserConfiguration(AppSettingKey, value as string);
+            }
+            else
+            {
+                var stringValue = Convert.ToString(value);
+                SetValueInUserConfiguration(AppSettingKey, stringValue);
+            }
+        }
+
+        public void Save()
+        {
+            // We are only making changes to the user configuration
+            userConfiguration.Save();
         }
         #endregion
 
@@ -170,39 +340,60 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             if (userConfiguration == null)
             {
                 EnsureUserFileExists();
-                userConfiguration = OpenConfiguration(GetUserSettingsFilePath());
+                userConfiguration = OpenConfiguration(userConfigFilePath);
             }
         }
 
         private void EnsureUserFileExists()
         {
-            if (!File.Exists(GetUserSettingsFilePath()))
+            if (!File.Exists(userConfigFilePath))
             {
+                // Make sure the directory exists
+                var userConfigDirectory = Path.GetDirectoryName(userConfigFilePath);
+                Directory.CreateDirectory(userConfigDirectory);
+
                 // Create the config file 
-                var rootElement = new XElement("Configuration");
-                rootElement.Add(new XElement("AppSettings"));
+                var rootElement = new XElement("configuration");
+                rootElement.Add(new XElement("appSettings"));
                 var document = new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     rootElement);
 
-                document.Save(GetUserSettingsFilePath());
+                document.Save(userConfigFilePath);
             }
         }
 
-
         private static Configuration OpenConfiguration(string userFilePath)
         {
-            Configuration localUserConfiguration;
-            var configurationFileMap = new ExeConfigurationFileMap(userFilePath);
-            localUserConfiguration = ConfigurationManager.OpenMappedExeConfiguration(configurationFileMap,
-                ConfigurationUserLevel.None, preLoad: true);
-            return localUserConfiguration;
+            Configuration userConfiguration;
+            //var configurationFileMap = new ExeConfigurationFileMap(userFilePath);
+
+            var exeConfigurationFileMap = new ExeConfigurationFileMap
+            {
+                ExeConfigFilename = userFilePath
+            };
+
+            userConfiguration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap,
+                ConfigurationUserLevel.None); //, preLoad: true);
+            return userConfiguration;
         }
 
         private static string GetUserSettingsFilePath()
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Service Bus Explorer", "UserSettings.config");
+        }
+
+        private void SetValueInUserConfiguration(string AppSettingKey, string stringValue)
+        {
+            if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
+            {
+                userConfiguration.AppSettings.Settings.Add(AppSettingKey, stringValue);
+            }
+            else
+            {
+                userConfiguration.AppSettings.Settings[AppSettingKey].Value = stringValue;
+            }
         }
 
         #endregion
