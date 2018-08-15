@@ -100,22 +100,71 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Public methods
-        public string GetStringValue(string AppSettingKey)
+        public string GetStringValue(string AppSettingKey, string defaultValue = "")
         {
             string result = null;
 
             if (userConfiguration != null)
             {
-                result = userConfiguration.AppSettings.Settings[AppSettingKey].Value;
+                result = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
             }
 
             if (result == null)
             {
-                result = applicationConfiguration.AppSettings.Settings[AppSettingKey].Value;
+                result = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+            }
+
+            if (result == null)
+            {
+                result = defaultValue;
             }
 
             return result;
         }
+
+        //        public T GetValue<T>(string AppSettingKey, T defaultValue = default) 
+        //        {
+        //            if (userConfiguration != null)
+        //            {
+        //                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+        //                if (!string.IsNullOrWhiteSpace(resultStringUser))
+        //                {
+        //                    if (typeof(T) == typeof(string))
+        //                    {
+        //                        return (T)(Convert.ChangeType(resultStringUser, typeof(T)));
+        //                    }
+
+        //                    if (typeof(T) == typeof(bool))
+        //                    {
+        //                        (T).GetType().TryParse(resultStringUser, out var result);
+        //                        return (T)Convert.ChangeType(result, typeof(T));
+        //                    }
+
+        //                    throw new InvalidOperationException(@"Cannot handle type {typeof(T)} in method {nameof(this.GetValue)}.");
+
+        //                        // return T.Parse(resultStringUser);
+        //                }
+        //            }
+
+        //            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+        //            if (!string.IsNullOrWhiteSpace(resultStringApp))
+        //            {
+        //                throw new InvalidOperationException(@"Cannot handle type {typeof(T)} in method {nameof
+        //(this.GetValue)}.");
+
+
+        //                //if (bool.TryParse(resultStringApp, out var result))
+        //                //{
+        //                //    return result;
+        //                //}
+
+        //                // TODO Add handling of unparsed
+        //            }
+
+        //            return defaultValue;
+        //        }
 
         public bool GetBoolValue(string AppSettingKey, bool defaultValue)
         {
@@ -123,18 +172,106 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             {
                 string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
 
-                if (!string.IsNullOrWhiteSpace(resultStringUser))
+                if (bool.TryParse(resultStringUser, out var result))
                 {
-                    return bool.Parse(resultStringUser);
+                    return result;
                 }
-            }
 
+                // TODO Add handling of unparsed
+            }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
 
             if (!string.IsNullOrWhiteSpace(resultStringApp))
             {
                 if (bool.TryParse(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            return defaultValue;
+        }
+
+        public T GetEnumValue<T>(string AppSettingKey, T defaultValue = default) where T : struct
+        {
+            if (userConfiguration != null)
+            {
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+                if (Enum.TryParse<T>(resultStringUser, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+            if (!string.IsNullOrWhiteSpace(resultStringApp))
+            {
+                if (Enum.TryParse<T>(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            return defaultValue;
+        }
+
+        public float GetFloatValue(string AppSettingKey, float defaultValue = default) 
+        {
+            if (userConfiguration != null)
+            {
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+                if (float.TryParse(resultStringUser, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+            if (!string.IsNullOrWhiteSpace(resultStringApp))
+            {
+                if (float.TryParse(resultStringApp, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            return defaultValue;
+        }
+
+        public int GetIntValue(string AppSettingKey, int defaultValue = default)
+        {
+            if (userConfiguration != null)
+            {
+                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+                if (int.TryParse(resultStringUser, out var result))
+                {
+                    return result;
+                }
+
+                // TODO Add handling of unparsed
+            }
+
+            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
+
+            if (!string.IsNullOrWhiteSpace(resultStringApp))
+            {
+                if (int.TryParse(resultStringApp, out var result))
                 {
                     return result;
                 }
