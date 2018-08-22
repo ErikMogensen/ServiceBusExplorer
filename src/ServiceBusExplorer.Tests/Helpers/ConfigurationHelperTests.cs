@@ -49,23 +49,21 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         const string KeyConnectivityModeWhichWillBeOverridden = "connectivityMode";
         const string KeyCrustaceanWillExistOnlyInUserConfig = "crustacean";
 
-        // Float testings constants
-        const string KeyWhaleWeightWhichWillBeOverridden = "whaleWeight";
-        const string KeySharkWeightWillExistOnlyInUserConfig = "sharkWeight";
+        // Float testing constants
+        const string KeyWhaleWeightWillExistOnlyInUserConfig = "whaleWeight";
+        const string KeySharkWeightWhichWillBeOverridden = "sharkWeight";
+        const float ValueSharkWeightInAppConfig = 44.12f;
+        const float ValueSharkWeightInUserConfig = 64.0f;
+        const float ValueWhaleWeightInUserConfig = 8039.30f;
 
-        // Int testings constants
-        const string KeyWhaleLengthWhichWillBeOverridden = "whaleLength";
-        const string KeySharkLengthWillExistOnlyInUserConfig = "sharkLength";
+        // Int testing constants
+        const string KeyWhaleLengthWillExistOnlyInUserConfig = "whaleLength";
+        const string KeySharkLengthWhichWillBeOverridden = "sharkLength";
+        const float ValueSharkLengthInAppConfig = 158;
+        const float ValueSharkLengthInUserConfig = 172;
+        const float ValueWhaleLengthInUserConfig = 634;
+
         #endregion
-
-        //private static string GetFakeApplicationConfigFilePath()
-        //{
-        //    // Put it in the users non roaming personal folder
-        //    return Path.Combine(Environment.
-        //        GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        //        TestDirectoryName, 
-        //        "ApplicationSettings.config");
-        //}
 
         private static string GetUserSettingsFilePath()
         {
@@ -73,30 +71,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 TestDirectoryName,
                 "UserSettings.config");
         }
-
-        //private void CreateNewFakeApplicationConfigFile(string build)
-        //{
-        //    // Delete the old one if it exists
-        //    DeleteFakeApplicationConfigFile();
-
-        //    // Make sure the directory for the application config file exists
-        //    var applicationConfigDirectory = Path.GetDirectoryName(GetFakeApplicationConfigFilePath());
-        //    Directory.CreateDirectory(applicationConfigDirectory);
-
-        //    // Copy the config file from the build
-        //    var sbeConfigpath = Path.Combine(
-        //        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-        //        @"..\..\..\ServiceBusExplorer\bin",
-        //        build,
-        //        "ServiceBusExplorer.exe.config");
-
-        //    File.Copy(sbeConfigpath, GetFakeApplicationConfigFilePath());
-        //}
-
-        //private void DeleteFakeApplicationConfigFile()
-        //{
-        //    DeleteFile(GetFakeApplicationConfigFilePath());
-        //}
 
         private void DeleteUserConfigFile()
         {
@@ -171,47 +145,91 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
 
         private void TestReadingFloatValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
         {
-            const string keyOnlyInAppConfig = "monsterWeight";
+            const string keyOnlyInAppConfig = "morayEelWeight";
             const float mediumNumber = 472.7865f;
 
             // Get a value that do not exist in the application config file defaulting to empty
             var nonExistingValueAsDefault = configuration.GetFloatValue(keyDoesNotExistAnywhere);
             Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0), 
-                @"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsDefault} instead of 0.");
+                $"Value read from {nameof(keyDoesNotExistAnywhere)} was " + 
+                    $"{nonExistingValueAsDefault} instead of 0.");
 
-            // Get a value that do not exist in the application config file defaulting to false
-            var nonExistingValueAsNetEvent = configuration.GetFloatValue(keyDoesNotExistAnywhere,
+            // Get a value that do not exist in the application config file defaulting to mediumNumber
+            var nonExistingValueAsMediumNumber = configuration.GetFloatValue(keyDoesNotExistAnywhere,
                 mediumNumber);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, mediumNumber),
-                @"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsDefault} instead of 0.");
+            Assert.IsTrue(NearlyEqual(nonExistingValueAsMediumNumber, mediumNumber),
+                $"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsMediumNumber}" +
+                 " instead of {mediumNumber}.");
 
             // Get the value from the user file defaulting to empty. If userFileShouldHaveValues
             // is false then we should read from the application config and that value should be
-            // AutoDetect
-            var whaleWeight = configuration.GetFloatValue(KeyWhaleWeightWhichWillBeOverridden);
-            Assert.AreEqual(connectivityMode, userFileShouldHaveValues ?
-                ConnectivityMode.Https : ConnectivityMode.AutoDetect);
-            Assert.IsTrue(NearlyEqual(whaleWeight, 0),
-    @"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsDefault} instead of 0.");
+            // ValueSharkWeightInAppConfig
+            var sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden);
+            var expectedWeight = userFileShouldHaveValues ?
+                ValueSharkWeightInUserConfig : ValueSharkWeightInAppConfig;
+            Assert.IsTrue(NearlyEqual(sharkWeight, expectedWeight),
+                $"Value read from {nameof(KeySharkWeightWhichWillBeOverridden)} "
+                    + $"was {sharkWeight} instead of {expectedWeight}.");
 
-            // Get the value from the user file defaulting to Http
-            connectivityMode = configuration.GetFloatValue(KeyConnectivityModeWhichWillBeOverridden, ConnectivityMode.Http);
-            Assert.AreEqual(connectivityMode, userFileShouldHaveValues ?
-                ConnectivityMode.Https : ConnectivityMode.AutoDetect);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0),
-    @"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsDefault} instead of 0.");
+            // Get the value from the user file defaulting to a large number
+            sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden, 
+                4789276579f);
+            Assert.IsTrue(NearlyEqual(sharkWeight, expectedWeight),
+               $"Value read from {nameof(KeySharkWeightWhichWillBeOverridden)} "
+                   + $"was {sharkWeight} instead of {expectedWeight}.");
 
             // Get a value that do not exist in the user file
-            var monster = configuration.GetFloatValue(keyOnlyInAppConfig);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0),
-    @"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsDefault} instead of 0.");
+            const float valueMorayEelWeight = 588f;
+            var morayEelWeight = configuration.GetFloatValue(keyOnlyInAppConfig);
+            Assert.IsTrue(NearlyEqual(morayEelWeight, valueMorayEelWeight),
+                $"Value read from {nameof(keyDoesNotExistAnywhere)} was {morayEelWeight}" + 
+                    $" instead of {valueMorayEelWeight}.");
 
             // Get a value that will only exist in the user file
-            var onlyInUserFile = configuration.GetFloatValue(KeyCrustaceanWillExistOnlyInUserConfig,
-                Crustacean.Shrimp);
-            Assert.AreEqual(onlyInUserFile, userFileShouldHaveValues ? Crustacean.Crab : Crustacean.Shrimp);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0),
-    @"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsDefault} instead of 0.");
+            var onlyInUserFile = configuration.GetFloatValue(KeyWhaleWeightWillExistOnlyInUserConfig,
+                mediumNumber);
+            expectedWeight = userFileShouldHaveValues ? ValueWhaleWeightInUserConfig : mediumNumber;
+            Assert.IsTrue(NearlyEqual(onlyInUserFile, expectedWeight),
+                $"Value read from {nameof(KeyWhaleWeightWillExistOnlyInUserConfig)} was " +
+                    $"{onlyInUserFile} instead of {expectedWeight}.");
+        }
+
+        private void TestReadingIntValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
+        {
+            const string keyOnlyInAppConfig = "morayEelLength";
+            const int mediumNumber = 13500;
+
+            // Get a value that do not exist in the application config file defaulting to empty
+            var nonExistingValueAsDefault = configuration.GetIntValue(keyDoesNotExistAnywhere);
+            Assert.AreEqual(nonExistingValueAsDefault, 0);
+
+            // Get a value that do not exist in the application config file defaulting to mediumNumber
+            var nonExistingValueAsMediumNumber = configuration.GetIntValue(keyDoesNotExistAnywhere,
+                mediumNumber);
+            Assert.AreEqual(nonExistingValueAsMediumNumber, mediumNumber);
+
+            // Get the value from the user file defaulting to empty. If userFileShouldHaveValues
+            // is false then we should read from the application config and that value should be
+            // ValueSharkLengthInAppConfig
+            var sharkLength = configuration.GetIntValue(KeySharkLengthWhichWillBeOverridden);
+            var expectedLength = userFileShouldHaveValues ?
+                ValueSharkLengthInUserConfig : ValueSharkLengthInAppConfig;
+            Assert.AreEqual(sharkLength, expectedLength);
+
+            // Get the value from the user file defaulting to a large number
+            sharkLength = configuration.GetIntValue(KeySharkLengthWhichWillBeOverridden, 3450242);
+            Assert.AreEqual(sharkLength, expectedLength);
+
+            // Get a value that do not exist in the user file
+            const int valueMorayEelLength = 214;
+            var morayEelLength = configuration.GetIntValue(keyOnlyInAppConfig);
+            Assert.AreEqual(morayEelLength, valueMorayEelLength);
+
+            // Get a value that will only exist in the user file
+            var onlyInUserFile = configuration.GetIntValue(KeyWhaleLengthWillExistOnlyInUserConfig,
+                mediumNumber);
+            expectedLength = userFileShouldHaveValues ? ValueWhaleLengthInUserConfig : mediumNumber;
+            Assert.AreEqual(onlyInUserFile, expectedLength);
         }
 
         private void TestReadingStringValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
@@ -355,11 +373,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             TestReadingFloatValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
 
             // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeyConnectivityModeWhichWillBeOverridden,
-                ConnectivityMode.Https);
+            configurationWithoutUserFile.SetValue(KeySharkWeightWhichWillBeOverridden,
+                ValueSharkWeightInUserConfig);
 
             // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyCrustaceanWillExistOnlyInUserConfig, Crustacean.Crab);
+            configurationWithoutUserFile.SetValue(KeyWhaleWeightWillExistOnlyInUserConfig, 
+                ValueWhaleWeightInUserConfig);
 
             // Test reading config values again
             TestReadingFloatValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
@@ -375,6 +394,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             TestReadingFloatValues(configurationWithUserFile, userFileShouldHaveValues: true);
         }
 
+
         [Test]
         public void TestIntValuesReadAndWrite()
         {
@@ -389,11 +409,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             TestReadingIntValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
 
             // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeyConnectivityModeWhichWillBeOverridden,
-                ConnectivityMode.Https);
+            configurationWithoutUserFile.SetValue(KeySharkLengthWhichWillBeOverridden,
+                ValueSharkLengthInUserConfig);
 
             // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyCrustaceanWillExistOnlyInUserConfig, Crustacean.Crab);
+            configurationWithoutUserFile.SetValue(KeyWhaleLengthWillExistOnlyInUserConfig,
+                ValueWhaleLengthInUserConfig);
 
             // Test reading config values again
             TestReadingIntValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
@@ -408,6 +429,39 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             // Test reading config values again 
             TestReadingIntValues(configurationWithUserFile, userFileShouldHaveValues: true);
         }
+        //[Test]
+        //public void ()
+        //{
+        //    // Make sure the user config file does not exist
+        //    DeleteUserConfigFile();
+
+        //    // Create the TwoFilesConfiguration object without a user file
+        //    var configurationWithoutUserFile = TwoFilesConfiguration
+        //        .Create(GetUserSettingsFilePath());
+
+        //    // Test reading config values 
+        //    //(configurationWithoutUserFile, userFileShouldHaveValues: false);
+
+        //    // Set a value which will end up in the user file and already exists in the application config
+        //    configurationWithoutUserFile.SetValue(KeyConnectivityModeWhichWillBeOverridden,
+        //        ConnectivityMode.Https);
+
+        //    // Set a value which will end up in the user file and does not exist in the application config
+        //    configurationWithoutUserFile.SetValue(KeyCrustaceanWillExistOnlyInUserConfig, Crustacean.Crab);
+
+        //    // Test reading config values again
+        //    TestReadingIntValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
+
+        //    // Save the configuration to the user file
+        //    configurationWithoutUserFile.Save();
+
+        //    // Create the TwoFilesConfiguration object when a user file exists
+        //    var configurationWithUserFile = TwoFilesConfiguration
+        //        .Create(GetUserSettingsFilePath());
+
+        //    // Test reading config values again 
+        //    TestReadingIntValues(configurationWithUserFile, userFileShouldHaveValues: true);
+        //}
 
 
         [Test]
@@ -446,7 +500,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
 
         #region Private methods
         // From https://stackoverflow.com/questions/3874627/floating-point-comparison-functions-for-c-sharp
-        public static bool NearlyEqual(double a, double b, double epsilon = 0.0000f)
+        private static bool NearlyEqual(double a, double b, double epsilon = 0.0000f)
         {
             double absA = Math.Abs(a);
             double absB = Math.Abs(b);

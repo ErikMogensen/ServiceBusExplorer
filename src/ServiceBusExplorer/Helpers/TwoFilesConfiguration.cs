@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -109,12 +110,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 result = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
             }
 
-            if (result == null)
+            if (string.IsNullOrEmpty(result))
             {
                 result = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
             }
 
-            if (result == null)
+            if (string.IsNullOrEmpty(result))
             {
                 result = defaultValue;
             }
@@ -224,13 +225,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             return defaultValue;
         }
 
-        public float GetFloatValue(string AppSettingKey, float defaultValue = default) 
+        public float GetFloatValue(string AppSettingKey, float defaultValue = default)
         {
             if (userConfiguration != null)
             {
                 string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
 
-                if (float.TryParse(resultStringUser, out var result))
+                if (float.TryParse(resultStringUser, NumberStyles.Float,
+                    CultureInfo.InvariantCulture, out var result))
                 {
                     return result;
                 }
@@ -242,7 +244,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
             if (!string.IsNullOrWhiteSpace(resultStringApp))
             {
-                if (float.TryParse(resultStringApp, out var result))
+                if (float.TryParse(resultStringApp, NumberStyles.Float,
+                    CultureInfo.InvariantCulture, out var result))
                 {
                     return result;
                 }
@@ -322,7 +325,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
             else
             {
-                var stringValue = Convert.ToString(value);
+                var stringValue = Convert.ToString(value, CultureInfo.InvariantCulture);
                 SetValueInUserConfiguration(AppSettingKey, stringValue);
             }
         }
