@@ -52,17 +52,19 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         Configuration userConfiguration;
         #endregion
 
-        #region Constructors
-        public TwoFilesConfiguration(Configuration applicationConfiguration, Configuration userConfiguration)
-        {
-            this.applicationConfiguration = applicationConfiguration;
-            this.userConfiguration = userConfiguration;
-        }
+        #region Private constructor
+        //private TwoFilesConfiguration(Configuration applicationConfiguration)
+        //{
+        //    this.applicationConfiguration = applicationConfiguration;
+        //    this.userConfiguration = userConfiguration;
+        //}
 
-        public TwoFilesConfiguration(Configuration applicationConfiguration, string userConfigFilePath)
+        private TwoFilesConfiguration(Configuration applicationConfiguration, string userConfigFilePath,
+            Configuration userConfiguration)
         {
             this.applicationConfiguration = applicationConfiguration;
             this.userConfigFilePath = userConfigFilePath;
+            this.userConfiguration = userConfiguration;
         }
 
         #endregion
@@ -77,7 +79,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         {
             var applicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            return TwoFilesConfiguration.Create(applicationConfiguration, userConfigFilePath);
+            return TwoFilesConfiguration.CreateConfiguration(applicationConfiguration, userConfigFilePath);
         }
 
         internal static TwoFilesConfiguration Create()
@@ -85,18 +87,19 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var userConfigFilePath = GetUserSettingsFilePath();
 
-            return TwoFilesConfiguration.Create(localApplicationConfiguration, userConfigFilePath);
+            return TwoFilesConfiguration.CreateConfiguration(localApplicationConfiguration, userConfigFilePath);
         }
 
-        private static TwoFilesConfiguration Create(Configuration applicationConfiguration, string userConfigFilePath)
+        private static TwoFilesConfiguration CreateConfiguration(Configuration applicationConfiguration, string userConfigFilePath)
         {
             if (File.Exists(userConfigFilePath))
             {
                 Configuration userConfiguration = OpenConfiguration(userConfigFilePath);
-                return new TwoFilesConfiguration(applicationConfiguration, userConfiguration);
+                return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath,
+                    userConfiguration);
             }
 
-            return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath);
+            return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath, null);
         }
         #endregion
 
@@ -167,7 +170,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         //            return defaultValue;
         //        }
 
-        public bool GetBoolValue(string AppSettingKey, bool defaultValue)
+        public bool GetBoolValue(string AppSettingKey, bool defaultValue, 
+            WriteToLogDelegate writeToLogDelegate = null)
         {
             if (userConfiguration != null)
             {
@@ -177,8 +181,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 {
                     return result;
                 }
-
-                // TODO Add handling of unparsed
+                else 
+                {
+                    WriteParsingFailure(writeToLogDelegate, userConfigFilePath,
+                        AppSettingKey, resultStringUser);
+                }                
             }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
@@ -189,8 +196,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 {
                     return result;
                 }
-
-                // TODO Add handling of unparsed
+                else
+                {
+                    WriteParsingFailure(writeToLogDelegate, userConfigFilePath,
+                        AppSettingKey, resultStringApp);
+                }
             }
 
             return defaultValue;
@@ -285,35 +295,35 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             return defaultValue;
         }
 
-        public void SetStringValue(string AppSettingKey, string value)
-        {
-            AquireUserConfiguration();
+        //public void SetStringValue(string AppSettingKey, string value)
+        //{
+        //    AquireUserConfiguration();
 
-            if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
-            {
-                userConfiguration.AppSettings.Settings.Add(AppSettingKey, value);
-            }
-            else
-            {
-                userConfiguration.AppSettings.Settings[AppSettingKey].Value = value;
-            }
-        }
+        //    if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
+        //    {
+        //        userConfiguration.AppSettings.Settings.Add(AppSettingKey, value);
+        //    }
+        //    else
+        //    {
+        //        userConfiguration.AppSettings.Settings[AppSettingKey].Value = value;
+        //    }
+        //}
 
-        public void SetBoolValue(string AppSettingKey, bool value)
-        {
-            AquireUserConfiguration();
+        //public void SetBoolValue(string AppSettingKey, bool value)
+        //{
+        //    AquireUserConfiguration();
 
-            var stringValue = Convert.ToString(value);
+        //    var stringValue = Convert.ToString(value);
 
-            if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
-            {
-                userConfiguration.AppSettings.Settings.Add(AppSettingKey, stringValue);
-            }
-            else
-            {
-                userConfiguration.AppSettings.Settings[AppSettingKey].Value = stringValue;
-            }
-        }
+        //    if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
+        //    {
+        //        userConfiguration.AppSettings.Settings.Add(AppSettingKey, stringValue);
+        //    }
+        //    else
+        //    {
+        //        userConfiguration.AppSettings.Settings[AppSettingKey].Value = stringValue;
+        //    }
+        //}
 
         public void SetValue<T>(string AppSettingKey, T value)
         {
@@ -399,6 +409,15 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
+        private void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile, 
+            string appSettingsKey, string value)
+        {
+            if (null != writeToLogDelegate)
+            {
+                writeToLogDelegate($"The configuration file {configFile} has a setting, {appSettingsKey}" +
+                    $" which has the invalid value: {value}. It has been ignored.");
+            }
+        }
         #endregion
     }
 }

@@ -3597,107 +3597,71 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 certificateThumbprint);
 
 
-
-            var tempLogFontSize = configuration.GetFloatValue(ConfigurationParameters.LogFontSize);
+            var tempLogFontSize = configuration.GetFloatValue(ConfigurationParameters.LogFontSize, logFontSize);
             if (!DoubleHelper.NearlyEqual(tempLogFontSize, logFontSize))
             {
                 logFontSize = tempLogFontSize;
                 lstLog.Font = new Font(lstLog.Font.FontFamily, logFontSize);
             }
 
-
-            string tempString;
-            var treeViewFontSizeValue = ConfigurationManager.AppSettings[ConfigurationParameters.TreeViewFontSize];
-            if (Single.TryParse(treeViewFontSizeValue, NumberStyles.Any, CultureInfo.InvariantCulture, out tempFloat))
+            var tempTreeViewFontSize = configuration.GetFloatValue(ConfigurationParameters.TreeViewFontSize, 
+                treeViewFontSize);
+            if (!DoubleHelper.NearlyEqual(tempTreeViewFontSize, treeViewFontSize))
             {
-                treeViewFontSize = tempFloat;
+                treeViewFontSize = tempTreeViewFontSize;
                 serviceBusTreeView.Font = new Font(serviceBusTreeView.Font.FontFamily, treeViewFontSize);
             }
-            tempFloat = configuration.GetFloatValue(ConfigurationParameters.TreeViewFontSize, treeViewFontSize);
 
-            var retryCountValue = ConfigurationManager.AppSettings[ConfigurationParameters.RetryCountParameter];
-            int retryCount;
-            if (int.TryParse(retryCountValue, out retryCount))
+            RetryHelper.RetryCount = configuration.GetIntValue(ConfigurationParameters.RetryCountParameter,
+                RetryHelper.RetryCount);
+
+            RetryHelper.RetryTimeout = configuration.GetIntValue(ConfigurationParameters.RetryTimeoutParameter,
+                RetryHelper.RetryTimeout);
+
+            var tempReceiveTimeout = configuration.GetIntValue(ConfigurationParameters.ReceiveTimeoutParameter, -1);
+            if (tempReceiveTimeout >= 0)
             {
-                RetryHelper.RetryCount = retryCount;
+                receiveTimeout = tempReceiveTimeout;
             }
-            int tempInt = configuration.GetIntValue(ConfigurationParameters.RetryCountParameter);
 
-            var retryTimeoutValue = ConfigurationManager.AppSettings[ConfigurationParameters.RetryTimeoutParameter];
-            int retryTimeout;
-            if (int.TryParse(retryTimeoutValue, out retryTimeout))
+            var tempServerTimeout = configuration.GetIntValue(ConfigurationParameters.ServerTimeoutParameter, -1);
+            if (tempServerTimeout >= 0)
             {
-                RetryHelper.RetryTimeout = retryTimeout;
+                serverTimeout = tempServerTimeout;
             }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.RetryTimeoutParameter);
 
-            var receiveTimeoutValue = ConfigurationManager.AppSettings[ConfigurationParameters.ReceiveTimeoutParameter];
-            int receiveTimeoutTemp;
-            if (int.TryParse(receiveTimeoutValue, out receiveTimeoutTemp) && receiveTimeoutTemp >= 0)
+            var tempSenderThinkTime = configuration.GetIntValue(ConfigurationParameters.SenderThinkTimeParameter, -1);
+            if (tempSenderThinkTime >= 0)
             {
-                receiveTimeout = receiveTimeoutTemp;
+                senderThinkTime = tempSenderThinkTime;
             }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.ReceiveTimeoutParameter);
-            Debug.Assert(tempInt == receiveTimeout);
 
-            var serverTimeoutValue = ConfigurationManager.AppSettings[ConfigurationParameters.ServerTimeoutParameter];
-            int serverTimeoutTemp;
-            if (int.TryParse(serverTimeoutValue, out serverTimeoutTemp) && serverTimeoutTemp >= 0)
+            var tempReceiverThinkTime = configuration.GetIntValue(ConfigurationParameters.ReceiverThinkTimeParameter, -1);
+            if (tempReceiverThinkTime >= 0)
             {
-                serverTimeout = serverTimeoutTemp;
+                receiverThinkTime = tempReceiverThinkTime;
             }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.ServerTimeoutParameter);
-            Debug.Assert(tempInt == serverTimeout);
 
-            var senderThinkTimeValue = ConfigurationManager.AppSettings[ConfigurationParameters.SenderThinkTimeParameter];
-            int senderThinkTimeTemp;
-            if (int.TryParse(senderThinkTimeValue, out senderThinkTimeTemp) && senderThinkTimeTemp >= 0)
+            var monitorRefreshIntervalValue = configuration.GetIntValue
+                (ConfigurationParameters.MonitorRefreshIntervalParameter, -1);
+            if (tempReceiverThinkTime >= 0)
             {
-                senderThinkTime = senderThinkTimeTemp;
+                monitorRefreshInterval = tempReceiverThinkTime;
             }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.SenderThinkTimeParameter);
-            Debug.Assert(tempInt == senderThinkTime);
 
-            var receiverThinkTimeValue = ConfigurationManager.AppSettings[ConfigurationParameters.ReceiverThinkTimeParameter];
-            int receiverThinkTimeTemp;
-            if (int.TryParse(receiverThinkTimeValue, out receiverThinkTimeTemp) && receiverThinkTimeTemp >= 0)
+            var tempPrefetchCount = configuration.GetIntValue(ConfigurationParameters.PrefetchCountParameter, -1);
+            if (tempPrefetchCount >= 0)
             {
-                receiverThinkTime = receiverThinkTimeTemp;
+                prefetchCount = tempPrefetchCount;
             }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.ReceiverThinkTimeParameter);
-            Debug.Assert(tempInt == receiverThinkTimeTemp);
 
-            var monitorRefreshIntervalValue = ConfigurationManager.AppSettings[ConfigurationParameters.MonitorRefreshIntervalParameter];
-            int monitorRefreshIntervalTemp;
-            if (int.TryParse(monitorRefreshIntervalValue, out monitorRefreshIntervalTemp) && monitorRefreshIntervalTemp >= 0)
+            var tempTopValue = configuration.GetIntValue(ConfigurationParameters.TopParameter, -1);
+            if (tempTopValue > 0)
             {
-                monitorRefreshInterval = monitorRefreshIntervalTemp;
+                topCount = tempTopValue;
             }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.MonitorRefreshIntervalParameter);
-            Debug.Assert(tempInt == monitorRefreshInterval);
 
-            var prefetchCountValue = ConfigurationManager.AppSettings[ConfigurationParameters.PrefetchCountParameter];
-            int prefetchCountTemp;
-            if (int.TryParse(prefetchCountValue, out prefetchCountTemp) && prefetchCountTemp >= 0)
-            {
-                prefetchCount = prefetchCountTemp;
-            }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.PrefetchCountParameter);
-            Debug.Assert(tempInt == prefetchCountTemp);
-
-            var topValue = ConfigurationManager.AppSettings[ConfigurationParameters.TopParameter];
-            int topTemp;
-            if (int.TryParse(topValue, out topTemp) && topTemp > 0)
-            {
-                topCount = topTemp;
-            }
-            tempInt = configuration.GetIntValue(ConfigurationParameters.TopParameter, topCount);
-            Debug.Assert(tempInt == topCount);
-
-            var messageDeferProvider = ConfigurationManager.AppSettings[ConfigurationParameters.MessageDeferProviderParameter];
-            tempString = configuration.GetStringValue(ConfigurationParameters.MessageDeferProviderParameter,
-    messageDeferProvider);
-            Debug.Assert(tempString == messageDeferProvider);
+            var messageDeferProvider = configuration.GetStringValue(ConfigurationParameters.MessageDeferProviderParameter);
 
             if (!string.IsNullOrWhiteSpace(messageDeferProvider))
             {
@@ -3717,10 +3681,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 }
             }
 
-            parameter = ConfigurationManager.AppSettings[ConfigurationParameters.SelectedEntitiesParameter];
-            tempString = configuration.GetStringValue(ConfigurationParameters.SelectedEntitiesParameter,
-    parameter);
-            Debug.Assert(tempString == parameter);
+            var parameter = configuration.GetStringValue(ConfigurationParameters.SelectedEntitiesParameter);
 
             if (!string.IsNullOrEmpty(parameter))
             {
