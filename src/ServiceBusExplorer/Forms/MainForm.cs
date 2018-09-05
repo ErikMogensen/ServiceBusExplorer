@@ -3542,6 +3542,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             RetryHelper.TraceEnabled = serviceBusHelper.TraceEnabled = 
                 configuration.GetBoolValue(ConfigurationParameters.DebugFlagParameter, serviceBusHelper.TraceEnabled);
 
+            messageBodyType = configuration.GetStringValue(ConfigurationParameters.MessageBodyType,
+                BodyType.Stream.ToString());
+
             ServiceBusHelper.ConnectivityMode = configuration.GetEnumValue<ConnectivityMode>
                 (ConfigurationParameters.ConnectivityMode, ServiceBusHelper.ConnectivityMode);
 
@@ -3586,16 +3589,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 }
             }
 
-
-
             label = configuration.GetStringValue(ConfigurationParameters.LabelParameter, DefaultLabel);
-
-            subscriptionId = configuration.GetStringValue(ConfigurationParameters.SubscriptionIdParameter,
-                subscriptionId);
-
-            certificateThumbprint = configuration.GetStringValue(ConfigurationParameters.CertificateThumbprintParameter,
-                certificateThumbprint);
-
 
             var tempLogFontSize = configuration.GetFloatValue(ConfigurationParameters.LogFontSize, logFontSize);
             if (!DoubleHelper.NearlyEqual(tempLogFontSize, logFontSize))

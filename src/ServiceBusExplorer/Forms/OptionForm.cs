@@ -411,14 +411,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             configuration.SetValue(ConfigurationParameters.ReceiverThinkTimeParameter, ReceiverThinkTime);
             configuration.SetValue(ConfigurationParameters.MonitorRefreshIntervalParameter, MonitorRefreshInterval);
             configuration.SetValue(ConfigurationParameters.PrefetchCountParameter, PrefetchCount);
-            configuration.SetValue(ConfigurationParameters.SubscriptionIdParameter, SubscriptionId);
-            configuration.SetValue(ConfigurationParameters.CertificateThumbprintParameter, CertificateThumbprint);
             configuration.SetValue(ConfigurationParameters.LabelParameter, Label);
             configuration.SetValue(ConfigurationParameters.FileParameter, MessageFile);
             configuration.SetValue(ConfigurationParameters.MessageParameter, MessageText);
             configuration.SetValue(ConfigurationParameters.ConnectivityMode, ServiceBusHelper.ConnectivityMode);
             configuration.SetValue(ConfigurationParameters.Encoding, ServiceBusHelper.EncodingType);
             configuration.SetValue(ConfigurationParameters.SelectedEntitiesParameter, cboSelectedEntities.Text);
+            configuration.SetValue(ConfigurationParameters.MessageBodyType, 
+                cboDefaultMessageBodyType.SelectedIndex.ToString());
 
             configuration.Save();
         }
