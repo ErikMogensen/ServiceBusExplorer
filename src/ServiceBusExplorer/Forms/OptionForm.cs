@@ -68,12 +68,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                           bool saveCheckpointsToFile,
                           bool useAscii,
                           IEnumerable<string> entities,
-                          IEnumerable<string> selectedEntities)
+                          IEnumerable<string> selectedEntities,
+                          string messageBodyType)
         {
             InitializeComponent();
 
-            SubscriptionId = subscriptionId;
-            CertificateThumbprint = certificateThumbprint;
             Label = label;
             MessageFile = messageFile;
             MessageText = messageText;
@@ -89,8 +88,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             PrefetchCount = prefetchCount;
             TopCount = top;
 
-            txtSubscriptionId.Text = subscriptionId;
-            txtManagementCertificateThumbprint.Text = certificateThumbprint;
             txtLabel.Text = label;
             txtMessageFile.Text = messageFile;
             txtMessageText.Text = messageText;
@@ -132,6 +129,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             {
                 cboSelectedEntities.CheckBoxItems[item].Checked = true;
             }
+            if (!Enum.TryParse<BodyType>(messageBodyType, true, out var bodyType))
+            {
+                bodyType = BodyType.Stream;
+            }
+            cboDefaultMessageBodyType.SelectedIndex = (int)bodyType;
         }
         #endregion
 
@@ -152,8 +154,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         public bool SaveMessageToFile { get; private set; }
         public bool SavePropertiesToFile { get; private set; }
         public bool SaveCheckpointsToFile { get; private set; }
-        public string CertificateThumbprint { get; private set; }
-        public string SubscriptionId { get; private set; }
         public string Label { get; private set; }
         public string MessageFile { get; private set; }
         public string MessageText { get; private set; }
@@ -164,6 +164,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 return cboSelectedEntities.CheckBoxItems.Where(i => i.Checked).Select(i => i.Text).ToList();
             }
         }
+        public string MessageBodyType { get; private set; }
+
         #endregion
 
         #region Event Handlers
@@ -244,6 +246,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             {
                 cboSelectedEntities.CheckBoxItems[item].Checked = true;
             }
+
+            MessageBodyType = BodyType.Stream.ToString();
         }
 
         private void retryCountNumericUpDown_ValueChanged(object sender, EventArgs e)
@@ -330,6 +334,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                                     cboSelectedEntities.Location.Y - 1,
                                     cboSelectedEntities.Size.Width + 1,
                                     cboSelectedEntities.Size.Height + 1);
+            e.Graphics.DrawRectangle(new Pen(SystemColors.ActiveBorder, 1),
+                                    cboDefaultMessageBodyType.Location.X - 1,
+                                    cboDefaultMessageBodyType.Location.Y - 1,
+                                    cboDefaultMessageBodyType.Size.Width + 1,
+                                    cboDefaultMessageBodyType.Size.Height + 1);
             e.Graphics.DrawLine(new Pen(Color.FromArgb(153, 180, 209), 1), 0, mainPanel.Size.Height - 1, mainPanel.Size.Width, mainPanel.Size.Height - 1);
         }
 
@@ -353,16 +362,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             MonitorRefreshInterval = (int)monitorRefreshIntervalNumericUpDown.Value;
         }
 
-        private void txtSubscriptionId_TextChanged(object sender, EventArgs e)
-        {
-            SubscriptionId = txtSubscriptionId.Text;
-        }
-
-        private void txtManagementCertificateThumbprint_TextChanged(object sender, EventArgs e)
-        {
-            CertificateThumbprint = txtManagementCertificateThumbprint.Text;
-        }
-
         private void txtLabel_TextChanged(object sender, EventArgs e)
         {
             Label = txtLabel.Text;
@@ -384,6 +383,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             {
                 ServiceBusHelper.ConnectivityMode = connectivityMode;
             }
+        }
+
+        private void cboDefaultMessageBodyType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            MessageBodyType = cboDefaultMessageBodyType.Text;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -438,5 +442,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             }
         }
         #endregion
+
     }
 } 

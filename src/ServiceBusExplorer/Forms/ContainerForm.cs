@@ -71,12 +71,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private const string SubscriptionListenerFormat = "Listener for subscription {0}";
         private const string HeaderTextQueueListenerFormat = "Queue Listener: {0}";
         private const string HeaderTextSubscriptionListenerFormat = "Subscription Listener: {0}";
-        private const string ConsumerGroupListenerFormat = "Listener for Consumer Group {0}";
-        private const string PartitionListenerFormat = "Listener for Partition {0} of Consumer Group {1}";
+        private const string ConsumerGroupListenerFormat = "Listener for {0}.{1} Consumer Group";
+        private const string PartitionListenerFormat = "Listener for Partition {0} of {1}.{2} Consumer Group";
         private const string IoTHubListenerFormat = "Listener for Consumer Group {0} of IoT HUb {1}";
-        private const string HeaderTextConsumerGroupListenerFormat = "Consumer Group Listener: {0}";
-        private const string HeaderTextPartitionListenerFormat = "Partition Listener: {0}";
-        private const string HeaderTextIoTHubListenerFormat = "IoT Hub Listener: {0}";
+        private const string HeaderTextConsumerGroupListenerFormat = "Consumer Group Listener: {0}.{1}";
+        private const string HeaderTextPartitionListenerFormat = "Partition Listener: {0}.{1}[{2}]";
+        private const string HeaderTextIoTHubListenerFormat = "IoT Hub Listener: {0}.{1}";
 
         //***************************
         // Constants
@@ -85,7 +85,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private const string SaveAsTitle = "Save Log As";
         private const string SaveAsExtension = "txt";
         private const string SaveAsFilter = "Text Documents|*.txt";
-        private const string MetricsHeader = "Namespace Metrics";
 
         //***************************
         // Sizes
@@ -110,36 +109,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         #endregion
 
         #region Public Constructors
-        public ContainerForm(ServiceBusHelper serviceBusHelper, MainForm mainForm)
-        {
-            try
-            {
-                InitializeComponent();
-                logTask = Task.Factory.StartNew(AsyncWriteToLog).ContinueWith(t =>
-                {
-                    if (t.IsFaulted && t.Exception != null)
-                    {
-                        WriteToLog(t.Exception.Message);
-                    }
-                });
-                this.mainForm = mainForm;
-                mainSplitterDistance = mainSplitContainer.SplitterDistance;
-                SuspendLayout();
-                panelMain.SuspendDrawing();
-                panelMain.Controls.Clear();
-                panelMain.BackColor = SystemColors.GradientInactiveCaption;
-                Text = MetricsHeader;
-                logTraceListener = new LogTraceListener(WriteToLog);
-                Trace.Listeners.Add(logTraceListener);
-                SetStyle(ControlStyles.ResizeRedraw, true);
-            }
-            finally
-            {
-                panelMain.ResumeDrawing();
-                ResumeLayout();
-            }
-        }
-
         public ContainerForm(ServiceBusHelper serviceBusHelper, MainForm mainForm, FormTypeEnum formType, QueueDescription queueDescription)
         {
             try
@@ -433,13 +402,13 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
 
                 if (descriptions.Count == 1)
                 {
-                    Text = string.Format(PartitionListenerFormat, descriptions[0].PartitionId, consumerGroupDescription.Name);
-                    panelMain.HeaderText = string.Format(HeaderTextPartitionListenerFormat, descriptions[0].PartitionId);
+                    Text = string.Format(PartitionListenerFormat, descriptions[0].PartitionId, consumerGroupDescription.EventHubPath, consumerGroupDescription.Name);
+                    panelMain.HeaderText = string.Format(HeaderTextPartitionListenerFormat, consumerGroupDescription.EventHubPath, consumerGroupDescription.Name, descriptions[0].PartitionId);
                 }
                 else
                 {
-                    Text = string.Format(ConsumerGroupListenerFormat, consumerGroupDescription.Name);
-                    panelMain.HeaderText = string.Format(HeaderTextConsumerGroupListenerFormat, consumerGroupDescription.Name);
+                    Text = string.Format(ConsumerGroupListenerFormat, consumerGroupDescription.EventHubPath, consumerGroupDescription.Name);
+                    panelMain.HeaderText = string.Format(HeaderTextConsumerGroupListenerFormat, consumerGroupDescription.EventHubPath, consumerGroupDescription.Name);
                 }                
                 partitionListenerControl.Focus();
                 panelMain.Controls.Add(partitionListenerControl);
@@ -487,12 +456,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     var match = Regex.Match(connectionString, "HostName=([A-Za-z0-9_-]+)", RegexOptions.IgnoreCase);
                     var ioTHubName = match.Success ? match.Groups[1].Value : string.Empty;
                     Text = string.Format(IoTHubListenerFormat, consumerGroup, ioTHubName);
-                    panelMain.HeaderText = string.Format(HeaderTextIoTHubListenerFormat, ioTHubName);
+                    panelMain.HeaderText = string.Format(HeaderTextIoTHubListenerFormat, ioTHubName, consumerGroup);
                 }
                 else
                 {
                     Text = string.Format(ConsumerGroupListenerFormat, consumerGroup);
-                    panelMain.HeaderText = string.Format(HeaderTextConsumerGroupListenerFormat, consumerGroup);
+                    panelMain.HeaderText = string.Format(HeaderTextConsumerGroupListenerFormat, hubName, consumerGroup);
                 }
                 partitionListenerControl.Focus();
                 panelMain.Controls.Add(partitionListenerControl);

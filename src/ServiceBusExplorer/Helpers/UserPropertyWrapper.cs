@@ -22,19 +22,57 @@
 #region Using Directives
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
+
 namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 {
-    public class MetricValue
+    public class UserPropertyWrapper
     {
-        #region Public Propeties
-        public long Min { get; set; }
-        public long Max { get; set; }
-        public long Total { get; set; }
-        public double Average { get; set; }
-        public DateTime Timestamp { get; set; }
+        #region Private Fields
+        private string name;
+        private object val;
+        #endregion
+
+        #region Public Constructor
+		public UserPropertyWrapper()
+        {
+        }
+
+        public UserPropertyWrapper(KeyValuePair<string, object> property)
+        {
+            name = property.Key;
+            val = property.Value;
+        }
+	    #endregion
+
+        #region Public Properties
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value; 
+            }
+        }
+
+        public object Value
+        {
+            get
+            {
+                return val;
+            }
+            set
+            {
+                val = value;
+            }
+        }
         #endregion
     }
 }

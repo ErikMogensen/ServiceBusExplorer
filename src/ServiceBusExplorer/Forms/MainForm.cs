@@ -171,7 +171,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private const string ChangeStatusTopicMenuItem = "changeStatusTopicMenuItem";
         private const string ChangeStatusSubscriptionMenuItem = "changeStatusSubscriptionMenuItem";
         private const string ChangeStatusEventHubMenuItem = "changeStatusEventHubMenuItem";
-        private const string MetricsHeader = "Namespace Metrics";
         private const string DefaultConsumerGroupName = "$Default";
 
 
@@ -243,6 +242,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private readonly string argumentName;
         private readonly string argumentValue;
         private List<string> selectedEntites = new List<string>();
+        private string messageBodyType = BodyType.Stream.ToString();
         private readonly List<string> entities = new List<string> { QueueEntities, TopicEntities, EventHubEntities, NotificationHubEntities, RelayEntities };
         private BlockingCollection<string> logCollection = new BlockingCollection<string>();
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -342,14 +342,13 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                                                    saveCheckpointsToFile,
                                                    useAscii,
                                                    entities,
-                                                   selectedEntites))
+                                                   selectedEntites,
+                                                   messageBodyType))
             {
                 if (optionForm.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
-                subscriptionId = optionForm.SubscriptionId;
-                certificateThumbprint = optionForm.CertificateThumbprint;
                 label = optionForm.Label;
                 messageFile = optionForm.MessageFile;
                 messageText = optionForm.MessageText;
@@ -375,6 +374,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 saveCheckpointsToFile = optionForm.SaveCheckpointsToFile;
                 useAscii = optionForm.UseAscii;
                 selectedEntites = optionForm.SelectedEntities;
+                messageBodyType = optionForm.MessageBodyType;
             }
         }
 
@@ -3942,6 +3942,18 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             }
         }
 
+        public BodyType MessageBodyType
+        {
+            get
+            {
+                if (!Enum.TryParse<BodyType>(messageBodyType, out var bodyType))
+                {
+                    bodyType = BodyType.Stream;
+                }
+                return bodyType;
+            }
+        }
+
         public string Version => version;
         #endregion
 
@@ -4291,6 +4303,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                                         HandleNodeMouseClick(notificationHubListNode);
                                     }
                                 }
+                                catch (ArgumentException)
+                                {
+                                    // This is where we end up if there are no Notification Hubs in the namespace
+                                    serviceBusTreeView.Nodes.Remove(notificationHubListNode);
+                                }
                                 catch (Exception ex) when (FilterOutException(ex))
                                 {
                                     WriteToLog($"Failed to retrieve Notification Hub entities. Exception: {ex}");
@@ -4309,6 +4326,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                             try
                             {
                                 var relayServices = serviceBusHelper.GetRelays();
+
                                 relayServiceListNode.Text = RelayEntities;
 
                                 relayServiceListNode.Nodes.Clear();
@@ -4368,7 +4386,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                                 HandleNodeMouseClick(queueListNode);
                             }
                         }
-                        catch (Exception ex) when (FilterOutException(ex))
+                        catch (Exception ex) when(FilterOutException(ex))
                         {
                             WriteToLog($"Failed to retrieve Service Bus queues. Exception: {ex}");
                             serviceBusTreeView.Nodes.Remove(queueListNode);
