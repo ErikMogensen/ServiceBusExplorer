@@ -53,11 +53,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Private constructor
-        //private TwoFilesConfiguration(Configuration applicationConfiguration)
-        //{
-        //    this.applicationConfiguration = applicationConfiguration;
-        //    this.userConfiguration = userConfiguration;
-        //}
 
         private TwoFilesConfiguration(Configuration applicationConfiguration, string userConfigFilePath,
             Configuration userConfiguration)
@@ -126,51 +121,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             return result;
         }
 
-        //        public T GetValue<T>(string AppSettingKey, T defaultValue = default) 
-        //        {
-        //            if (userConfiguration != null)
-        //            {
-        //                string resultStringUser = userConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
-
-        //                if (!string.IsNullOrWhiteSpace(resultStringUser))
-        //                {
-        //                    if (typeof(T) == typeof(string))
-        //                    {
-        //                        return (T)(Convert.ChangeType(resultStringUser, typeof(T)));
-        //                    }
-
-        //                    if (typeof(T) == typeof(bool))
-        //                    {
-        //                        (T).GetType().TryParse(resultStringUser, out var result);
-        //                        return (T)Convert.ChangeType(result, typeof(T));
-        //                    }
-
-        //                    throw new InvalidOperationException(@"Cannot handle type {typeof(T)} in method {nameof(this.GetValue)}.");
-
-        //                        // return T.Parse(resultStringUser);
-        //                }
-        //            }
-
-        //            string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
-
-        //            if (!string.IsNullOrWhiteSpace(resultStringApp))
-        //            {
-        //                throw new InvalidOperationException(@"Cannot handle type {typeof(T)} in method {nameof
-        //(this.GetValue)}.");
-
-
-        //                //if (bool.TryParse(resultStringApp, out var result))
-        //                //{
-        //                //    return result;
-        //                //}
-
-        //                // TODO Add handling of unparsed
-        //            }
-
-        //            return defaultValue;
-        //        }
-
-        public bool GetBoolValue(string AppSettingKey, bool defaultValue, 
+        public bool GetBoolValue(string AppSettingKey, bool defaultValue,
             WriteToLogDelegate writeToLogDelegate = null)
         {
             if (userConfiguration != null)
@@ -181,11 +132,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 {
                     return result;
                 }
-                else 
+                else
                 {
                     WriteParsingFailure(writeToLogDelegate, userConfigFilePath,
                         AppSettingKey, resultStringUser);
-                }                
+                }
             }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
@@ -295,35 +246,24 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             return defaultValue;
         }
 
-        //public void SetStringValue(string AppSettingKey, string value)
-        //{
-        //    AquireUserConfiguration();
+        public ConfigurationSectionCollection Sections
+        {
+            get
+            {
+                var sectionCollection = applicationConfiguration.Sections;
+                var userCollection = userConfiguration.Sections;
 
-        //    if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
-        //    {
-        //        userConfiguration.AppSettings.Settings.Add(AppSettingKey, value);
-        //    }
-        //    else
-        //    {
-        //        userConfiguration.AppSettings.Settings[AppSettingKey].Value = value;
-        //    }
-        //}
+                int i = 0;
+                var enumerator = userCollection.GetEnumerator();
+                foreach(var section in userCollection)
+                {
+                    sectionCollection.Add((++i).ToString(), section);
+                }
 
-        //public void SetBoolValue(string AppSettingKey, bool value)
-        //{
-        //    AquireUserConfiguration();
+                return sectionCollection;
+            }
 
-        //    var stringValue = Convert.ToString(value);
-
-        //    if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
-        //    {
-        //        userConfiguration.AppSettings.Settings.Add(AppSettingKey, stringValue);
-        //    }
-        //    else
-        //    {
-        //        userConfiguration.AppSettings.Settings[AppSettingKey].Value = stringValue;
-        //    }
-        //}
+        }
 
         public void SetValue<T>(string AppSettingKey, T value)
         {
@@ -367,7 +307,19 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
                 // Create the config file 
                 var rootElement = new XElement("configuration");
+            
                 rootElement.Add(new XElement("appSettings"));
+
+                // Create the serviceBusNamespaces section
+                var section = new XElement("section",
+                        new XAttribute("name", "serviceBusNamespaces"),
+                        new XAttribute("type", "System.Configuration.DictionarySectionHandler, System, " +
+                            "Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
+
+                XElement configSections = new XElement("configSections"); 
+                configSections.Add(section);
+                rootElement.AddFirst(configSections);
+
                 var document = new XDocument(
                     new XDeclaration("1.0", "utf-8", "yes"),
                     rootElement);
@@ -409,7 +361,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
-        private void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile, 
+        private void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile,
             string appSettingsKey, string value)
         {
             if (null != writeToLogDelegate)

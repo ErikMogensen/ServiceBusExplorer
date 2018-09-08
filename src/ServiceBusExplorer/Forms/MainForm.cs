@@ -219,8 +219,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private string relayMessageText;
         private string messageFile;
         private string label;
-        private string subscriptionId;
-        private string certificateThumbprint;
         private bool importing;
         private readonly int mainSplitterDistance;
         private readonly int splitterContainerDistance;
@@ -320,9 +318,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         /// <param name="e">System.EventArgs parameter</param>
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var optionForm = new OptionForm(subscriptionId,
-                                                   certificateThumbprint,
-                                                   label,
+            using (var optionForm = new OptionForm(label,
                                                    messageFile,
                                                    messageText,
                                                    (decimal)lstLog.Font.Size,
@@ -3881,30 +3877,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             set
             {
                 monitorRefreshInterval = value;
-            }
-        }
-
-        public string SubscriptionId
-        {
-            get
-            {
-                return subscriptionId;
-            }
-            set
-            {
-                subscriptionId = value;
-            }
-        }
-
-        public string CertificateThumbprint
-        {
-            get
-            {
-                return certificateThumbprint;
-            }
-            set
-            {
-                certificateThumbprint = value;
             }
         }
 

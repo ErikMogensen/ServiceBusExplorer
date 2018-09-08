@@ -46,9 +46,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         #endregion 
 
         #region Public Constructor
-        public OptionForm(string subscriptionId,
-                          string certificateThumbprint,
-                          string label,
+        public OptionForm(string label,
                           string messageFile,
                           string messageText,
                           decimal logFontSize, 
@@ -418,7 +416,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             configuration.SetValue(ConfigurationParameters.Encoding, ServiceBusHelper.EncodingType);
             configuration.SetValue(ConfigurationParameters.SelectedEntitiesParameter, cboSelectedEntities.Text);
             configuration.SetValue(ConfigurationParameters.MessageBodyType, 
-                cboDefaultMessageBodyType.SelectedIndex.ToString());
+            cboDefaultMessageBodyType.SelectedIndex.ToString());
 
             configuration.Save();
         }
