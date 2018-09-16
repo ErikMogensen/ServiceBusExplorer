@@ -23,33 +23,32 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using Microsoft.ServiceBus.Messaging;
 
 #endregion
 
 namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 {
-    // This class is not thread safe since it relies on the Configuration class which is not thread safe when writing
-    class TwoFilesConfiguration
+    // This class is not thread safe since it relies on the Configuration class which is not thread 
+    // safe when writing.
+    public class TwoFilesConfiguration
     {
-        #region Constants
+        #region Contants
+
+        const string indent = "  ";
 
         #endregion
 
         #region Private fields
-        string userConfigFilePath;
 
+        string userConfigFilePath;
         Configuration applicationConfiguration;
         Configuration userConfiguration;
+
         #endregion
 
         #region Private constructor
@@ -64,7 +63,18 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
         #endregion
 
-        #region Static Create methods - different accessability
+        #region Static Create methods 
+
+        internal static TwoFilesConfiguration Create()
+        {
+            var localApplicationConfiguration = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.None);
+            var userConfigFilePath = GetUserSettingsFilePath();
+
+            return TwoFilesConfiguration.CreateConfiguration(localApplicationConfiguration,
+                userConfigFilePath);
+        }
+
         /// <summary>
         /// This method is meant to only be called for unit testing, to avoid polluting 
         /// neither the application config file for the executable running the unit 
@@ -72,30 +82,13 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         /// </summary>
         internal static TwoFilesConfiguration Create(string userConfigFilePath)
         {
-            var applicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var applicationConfiguration = ConfigurationManager.
+                OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            return TwoFilesConfiguration.CreateConfiguration(applicationConfiguration, userConfigFilePath);
+            return TwoFilesConfiguration.CreateConfiguration(applicationConfiguration,
+                userConfigFilePath);
         }
 
-        internal static TwoFilesConfiguration Create()
-        {
-            var localApplicationConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var userConfigFilePath = GetUserSettingsFilePath();
-
-            return TwoFilesConfiguration.CreateConfiguration(localApplicationConfiguration, userConfigFilePath);
-        }
-
-        private static TwoFilesConfiguration CreateConfiguration(Configuration applicationConfiguration, string userConfigFilePath)
-        {
-            if (File.Exists(userConfigFilePath))
-            {
-                Configuration userConfiguration = OpenConfiguration(userConfigFilePath);
-                return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath,
-                    userConfiguration);
-            }
-
-            return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath, null);
-        }
         #endregion
 
         #region Public methods
@@ -246,23 +239,55 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             return defaultValue;
         }
 
-        public ConfigurationSectionCollection Sections
+        internal Hashtable GetHashtableFromSection(string sectionName)
         {
-            get
+            Hashtable sectionValues = null;
+
+            var sectionInApp = applicationConfiguration?.Sections[sectionName];
+
+            if (null != sectionInApp)
             {
-                var sectionCollection = applicationConfiguration.Sections;
-                var userCollection = userConfiguration.Sections;
-
-                int i = 0;
-                var enumerator = userCollection.GetEnumerator();
-                foreach(var section in userCollection)
-                {
-                    sectionCollection.Add((++i).ToString(), section);
-                }
-
-                return sectionCollection;
+                sectionValues = GetHashtableFromConfigurationSection(sectionInApp);
             }
 
+            var sectionInUser = userConfiguration?.Sections[sectionName];
+
+            if (null != sectionInUser)
+            {
+                var sectionValuesInUserConfig = GetHashtableFromConfigurationSection(sectionInUser);
+
+                if (null == sectionValues)
+                {
+                    sectionValues = sectionValuesInUserConfig;
+                }
+                else
+                {
+                    // Merge the hash tables giving superiority to the values from user config
+                    foreach (DictionaryEntry item in sectionValuesInUserConfig)
+                    {
+                        sectionValues[item.Key] = item.Value;
+                    }
+                }
+            }
+
+            return sectionValues;
+        }
+
+        internal void AddEntryToDictionarySection(string sectionName, string key, string value)
+        {
+            AquireUserConfiguration();
+
+            ConfigurationSection section = AquireSection(sectionName);
+            var xml = section.SectionInformation.GetRawXml();
+            var element = XElement.Parse(xml);
+
+            element.Add(new XElement("add",
+                new XAttribute("key", key),
+                new XAttribute("value", value)
+                ));
+
+            section.SectionInformation.SetRawXml(element.ToString());
+            userConfiguration.Save();
         }
 
         public void SetValue<T>(string AppSettingKey, T value)
@@ -285,10 +310,80 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             // We are only making changes to the user configuration
             userConfiguration.Save();
         }
+
         #endregion
 
-        #region Private methods
-        private void AquireUserConfiguration()
+        #region Private static methods
+
+        static Hashtable GetHashtableFromConfigurationSection(ConfigurationSection section)
+        {
+            var xml = section.SectionInformation.GetRawXml();
+            Hashtable sectionValues = null;
+
+            if (null != xml)
+            {
+                var doc = new XmlDocument();
+
+                doc.Load(XmlReader.Create(new StringReader(xml)));
+                sectionValues = new DictionarySectionHandler()
+                    .Create(null, null, doc.DocumentElement) as Hashtable;
+            }
+
+            return sectionValues;
+        }
+
+        static TwoFilesConfiguration CreateConfiguration(Configuration applicationConfiguration, string userConfigFilePath)
+        {
+            if (File.Exists(userConfigFilePath))
+            {
+                Configuration userConfiguration = OpenConfiguration(userConfigFilePath);
+                return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath,
+                    userConfiguration);
+            }
+
+            return new TwoFilesConfiguration(applicationConfiguration, userConfigFilePath,
+                null);
+        }
+
+        static Configuration OpenConfiguration(string userFilePath)
+        {
+            var exeConfigurationFileMap = new ExeConfigurationFileMap
+            {
+                ExeConfigFilename = userFilePath
+            };
+
+            return ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap,
+                ConfigurationUserLevel.None);
+        }
+
+        static string GetUserSettingsFilePath()
+        {
+            // Environment.SpecialFolder.ApplicationData = The directory that serves as a common repository 
+            // for application - specific data for the current roaming user.
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Service Bus Explorer", "UserSettings.config");
+        }
+
+        static void CreateSectionUsingRawXml(XDocument document, string sectionName)
+        {
+            var configElement = document.AquireElement("configuration", addFirst: true);
+            var configSections = configElement.AquireElement("configSections", addFirst: true);
+
+            // Create the section element
+            var newSection = new XElement("section",
+                    new XAttribute("name", sectionName),
+                    new XAttribute("type", "System.Configuration.DictionarySectionHandler, System, " +
+                        "Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
+
+            configSections.Add(newSection);
+            configElement.AquireElement(sectionName);
+        }
+
+        #endregion
+
+        #region Private instance methods
+
+        void AquireUserConfiguration()
         {
             if (userConfiguration == null)
             {
@@ -297,7 +392,58 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
-        private void EnsureUserFileExists()
+        void CreateDictionarySectionInUserConfigFile(string sectionName)
+        {
+            AquireUserConfiguration();
+
+            var section = userConfiguration.GetSection(sectionName);
+
+            if (null != section)
+            {
+                return; // Section already exists
+            }
+
+            var document = XDocument.Load(userConfigFilePath);
+
+            CreateSectionUsingRawXml(document, sectionName);
+
+            var settings = new XmlWriterSettings()
+            {
+                Indent = true,
+                IndentChars = indent
+            };
+
+            using (var writer = XmlWriter.Create(userConfigFilePath, settings))
+            {
+                document.Save(writer);
+            }
+
+            // Refresh the configuration object
+            userConfiguration = null;
+            AquireUserConfiguration();
+        }
+
+        ConfigurationSection AquireSection(string sectionName)
+        {
+            AquireUserConfiguration();
+
+            var section = userConfiguration.GetSection(sectionName);
+
+            if (null == section)
+            {
+                // Create the section in the user file
+                CreateDictionarySectionInUserConfigFile(sectionName);
+
+                section = userConfiguration.GetSection(sectionName);
+            }
+
+            return section;
+        }
+
+        /// Creates the user configuration file if it does not exist. Another way 
+        /// of creating the user file would be to use the SaveAs method of the 
+        /// Configuration class. That would create a copy of the 
+        void EnsureUserFileExists()
         {
             if (!File.Exists(userConfigFilePath))
             {
@@ -306,50 +452,23 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 Directory.CreateDirectory(userConfigDirectory);
 
                 // Create the config file 
+                var document = new XDocument();
+
+                document.Declaration = new XDeclaration("1.0", "utf-8", "yes");
+
                 var rootElement = new XElement("configuration");
-            
+
                 rootElement.Add(new XElement("appSettings"));
 
                 // Create the serviceBusNamespaces section
-                var section = new XElement("section",
-                        new XAttribute("name", "serviceBusNamespaces"),
-                        new XAttribute("type", "System.Configuration.DictionarySectionHandler, System, " +
-                            "Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
+                CreateSectionUsingRawXml(document, "serviceBusNamespaces");
 
-                XElement configSections = new XElement("configSections"); 
-                configSections.Add(section);
-                rootElement.AddFirst(configSections);
-
-                var document = new XDocument(
-                    new XDeclaration("1.0", "utf-8", "yes"),
-                    rootElement);
-
+                // Save it
                 document.Save(userConfigFilePath);
             }
         }
 
-        private static Configuration OpenConfiguration(string userFilePath)
-        {
-            Configuration userConfiguration;
-            //var configurationFileMap = new ExeConfigurationFileMap(userFilePath);
-
-            var exeConfigurationFileMap = new ExeConfigurationFileMap
-            {
-                ExeConfigFilename = userFilePath
-            };
-
-            userConfiguration = ConfigurationManager.OpenMappedExeConfiguration(exeConfigurationFileMap,
-                ConfigurationUserLevel.None); //, preLoad: true);
-            return userConfiguration;
-        }
-
-        private static string GetUserSettingsFilePath()
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Service Bus Explorer", "UserSettings.config");
-        }
-
-        private void SetValueInUserConfiguration(string AppSettingKey, string stringValue)
+        void SetValueInUserConfiguration(string AppSettingKey, string stringValue)
         {
             if (userConfiguration.AppSettings.Settings[AppSettingKey] == null)
             {
@@ -361,7 +480,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             }
         }
 
-        private void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile,
+        void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile,
             string appSettingsKey, string value)
         {
             if (null != writeToLogDelegate)
@@ -370,6 +489,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     $" which has the invalid value: {value}. It has been ignored.");
             }
         }
+
         #endregion
     }
 }

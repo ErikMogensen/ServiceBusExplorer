@@ -1,12 +1,14 @@
 ﻿#region Using Directives
 
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
-using System.Reflection;
-using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
 using Microsoft.ServiceBus;
+
 using NUnit.Framework;
 
 #endregion
@@ -63,21 +65,447 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         const float ValueSharkLengthInUserConfig = 172;
         const float ValueWhaleLengthInUserConfig = 634;
 
+        // Hashtable constants
+        const string KeyFreshWaterFishesWhichWillOnlyExistInUserConfig = "freshWaterFishes";
+        const string KeySaltWaterFishesWhichWillBeMerged = "saltWaterFishes";
+        const string ValueAlaskaPollock = "Alaska pollock";
+        const string ValueAlaskaPollockOldName = "Theragra chalcogramma";
+        const string ValueAlaskaPollockNewName = "Gadus chalcogrammus";
+
+        // MessagingNamespaces constants
+        const string KeyNamespaceInUserFile1 = "treasureInUserFile";
+        const string KeyNamespaceInUserFile2 = "anotherTreasureInUserFile";
+        const string KeyNamespaceInBothFiles = "usedInUserFileAndAppFile";
+        const string KeyNamespaceInAppFile1 = "treasureInAppFile";
+
+        readonly int IndexNamespaceInUserFile1 = 0;
+        readonly int IndexNamespaceInUserFile2 = 1;
+        //readonly int IndexFirstNamespaceInBothFiles = 2;
+        //readonly int IndexSecondNamespaceInBothFiles = 3;
+        //readonly int IndexNamespaceInAppFile1 = 4;
+
+
+        // Indent size in config files
+        const string indent = "  ";
+
         #endregion
 
-        private static string GetUserSettingsFilePath()
+        #region Private fields
+
+        WriteToLogDelegate writeToLog;
+        string logInMemory;
+
+        readonly Dictionary<string, string> saltWaterFishes = new Dictionary<string, string>()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                TestDirectoryName,
-                "UserSettings.config");
+            { "Atlantic chub mackerel", "Scomber colias" },
+            { "Atlantic mackerel", "Scomber scombrus" },
+            { "Alaska pollock", "Theragra chalcogramma" }
+        };
+
+        readonly Dictionary<string, string> freshWaterFishes = new Dictionary<string, string>()
+        {
+            { "Pike", "Esox lucius" },
+            { "Perch", "Perca flavescens" },
+            { "Zander","Sander lucioperca" }
+        };
+
+        readonly List<KeyValuePair<string, string>> fakeConnectionStrings = new List<KeyValuePair<string, string>>()
+        {
+            //{ KeyNamespaceInUserFile1,
+            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=SomeKey;SharedAccessKey=18347=" },
+
+            //{ KeyNamespaceInUserFile2,
+            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=21452=" },
+
+            //{ KeyNamespaceInBothFiles,
+            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=UserFile;SharedAccessKey=32345=" },
+
+            //{ KeyNamespaceInBothFiles,
+            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=AppFile;SharedAccessKey=444445=" },
+
+            //{ KeyNamespaceInAppFile1,
+            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=54442=" }
+
+            { new KeyValuePair<string, string>("treasureInUserFile",
+                "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=SomeKey;SharedAccessKey=18347=") },
+
+            { new KeyValuePair<string, string>("anotherTreasureInUserFile",
+                "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=21452=") },
+
+            { new KeyValuePair<string, string>("usedInUserFileAndAppFile",
+                "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=UserFile;SharedAccessKey=32345=") },
+
+            { new KeyValuePair<string, string>("usedInUserFileAndAppFile",
+                "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=AppFile;SharedAccessKey=444445=") },
+
+            { new KeyValuePair<string, string>("treasureInAppFile",
+                "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=54442=") }
+        };
+
+
+        #endregion
+
+        #region The constructor
+
+        public ConfigurationHelperTests()
+        {
+            // Initialize the delegate that handles logging
+            writeToLog = WriteToLogInMemory;
         }
 
-        private void DeleteUserConfigFile()
+        #endregion
+
+        #region Public methods   
+
+        [SetUp]
+        public void Setup()
+        {
+            // Make sure the user config file does not exist
+            DeleteUserConfigFile();
+
+            // Empty the log buffer
+            logInMemory = string.Empty;
+        }
+
+        [Test]
+        public void TestBoolValuesReadAndWrite()
+        {
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values 
+            TestReadingBoolValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: false);
+
+            // Set a value which will end up in the user file and already exists in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyIsTrueInAppConfig, false);
+
+            // Set a value which will end up in the user file and does not exist in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyWillExistOnlyInUserConfig, true);
+
+            // Test reading config values again
+            TestReadingBoolValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            configurationOpenedWithoutUserFile.Save();
+
+            // Create the TwoFilesConfiguration object when a user file exists
+            var configurationOpenedWithUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values again 
+            TestReadingBoolValues(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        [Test]
+        public void TestEnumValuesReadAndWrite()
+        {
+            // Create the TwoFilesConfiguration object without a user file
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values 
+            TestReadingEnumValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: false);
+
+            // Set a value which will end up in the user file and already exists in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyConnectivityModeWhichWillBeOverridden,
+                ConnectivityMode.Https);
+
+            // Set a value which will end up in the user file and does not exist in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyCrustaceanWillExistOnlyInUserConfig, Crustacean.Crab);
+
+            // Test reading config values again
+            TestReadingEnumValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            // Save the configuration to the user file
+            configurationOpenedWithoutUserFile.Save();
+
+            // Create the TwoFilesConfiguration object when a user file exists
+            var configurationOpenedWithUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values again 
+            TestReadingEnumValues(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        [Test]
+        public void TestFloatValuesReadAndWrite()
+        {
+            // Create the TwoFilesConfiguration object without a user file
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values 
+            TestReadingFloatValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: false);
+
+            // Set a value which will end up in the user file and already exists in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeySharkWeightWhichWillBeOverridden,
+                ValueSharkWeightInUserConfig);
+
+            // Set a value which will end up in the user file and does not exist in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyWhaleWeightWillExistOnlyInUserConfig,
+                ValueWhaleWeightInUserConfig);
+
+            // Test reading config values again
+            TestReadingFloatValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            // Save the configuration to the user file
+            configurationOpenedWithoutUserFile.Save();
+
+            // Create the TwoFilesConfiguration object when a user file exists
+            var configurationOpenedWithUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values again 
+            TestReadingFloatValues(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        [Test]
+        public void TestIntValuesReadAndWrite()
+        {
+            // Create the TwoFilesConfiguration object without a user file
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+
+            // Test reading config values 
+            TestReadingIntValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: false);
+
+            // Set a value which will end up in the user file and already exists in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeySharkLengthWhichWillBeOverridden,
+                ValueSharkLengthInUserConfig);
+
+            // Set a value which will end up in the user file and does not exist in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyWhaleLengthWillExistOnlyInUserConfig,
+                ValueWhaleLengthInUserConfig);
+
+            // Test reading config values again
+            TestReadingIntValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            // Save the configuration to the user file
+            configurationOpenedWithoutUserFile.Save();
+
+            // Create the TwoFilesConfiguration object when a user file exists
+            var configurationOpenedWithUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values again 
+            TestReadingIntValues(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        [Test]
+        public void TestStringValuesReadAndWrite()
+        {
+            // Create the TwoFilesConfiguration object without a user file
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values 
+            TestReadingStringValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: false);
+
+            // Set a value which will end up in the user file and already exists in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeySharkWhichWillBeOverridden,
+                ValueForOverridingShark);
+
+            // Set a value which will end up in the user file and does not exist in the application config
+            configurationOpenedWithoutUserFile.SetValue(KeyWillExistOnlyInUserConfig, AnotherShark);
+
+            // Test reading config values again
+            TestReadingStringValues(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            // Save the changes to the user file
+            configurationOpenedWithoutUserFile.Save();
+
+            // Create the TwoFilesConfiguration object when a user file exists
+            var configurationOpenedWithUserFile = TwoFilesConfiguration
+                .Create(GetUserSettingsFilePath());
+
+            // Test reading config values again 
+            TestReadingStringValues(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        [Test]
+        public void TestHashtableSectionReadAndWrite()
+        {
+            // Create the TwoFilesConfiguration object without a user file
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+
+            // Test reading config values 
+            TestReadingHashtableSection(configurationOpenedWithoutUserFile, userFileShouldHaveValues: false);
+
+            // Add a new entry to a section existing in the application config that should end up in the user config 
+            configurationOpenedWithoutUserFile.AddEntryToDictionarySection(KeySaltWaterFishesWhichWillBeMerged,
+                "Atlantic mackerel", "Scomber scombrus");
+
+            // Add an existing entry to a section existing in the application config that 
+            // should end up in the user config. 
+            configurationOpenedWithoutUserFile.AddEntryToDictionarySection(KeySaltWaterFishesWhichWillBeMerged,
+                "Alaska Pollock", ValueAlaskaPollockNewName);
+
+            foreach (var freshWaterFish in freshWaterFishes)
+            {
+                configurationOpenedWithoutUserFile.AddEntryToDictionarySection
+                    (KeyFreshWaterFishesWhichWillOnlyExistInUserConfig, freshWaterFish.Key, freshWaterFish.Value);
+            }
+
+            // Test reading config values again
+            TestReadingHashtableSection(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            // Persist the configuration
+            configurationOpenedWithoutUserFile.Save();
+
+            // Create the TwoFilesConfiguration object when a user file exists
+            var configurationOpenedWithUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+
+            // Test reading config values again 
+            TestReadingHashtableSection(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        [Test]
+        public void TestMessagingNamespacesReadAndWrite()
+        {
+            // Create the TwoFilesConfiguration object without a user file
+            var configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+
+            // Test reading config values - both application config and user config are missing
+            var namespaces = ServiceBusNamespace.GetMessagingNamespaces
+                (configurationOpenedWithoutUserFile, writeToLog);
+            Assert.AreEqual(0, namespaces.Count);
+            Assert.IsTrue(logInMemory.Contains("Service bus accounts have not been properly configured"));
+            logInMemory = string.Empty;
+
+            // Add connection strings to the user file config values - application config section is still missing
+            SaveConnectionString(configurationOpenedWithoutUserFile, IndexNamespaceInUserFile1);
+            SaveConnectionString(configurationOpenedWithoutUserFile, IndexNamespaceInUserFile2);
+            Assert.IsEmpty(logInMemory);
+
+            namespaces = ServiceBusNamespace.GetMessagingNamespaces
+                (configurationOpenedWithoutUserFile, writeToLog);
+            Assert.IsEmpty(logInMemory);
+            Assert.AreEqual(2, namespaces.Count);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile1].Value, 
+                namespaces[KeyNamespaceInUserFile1].ConnectionString);
+
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile2].Value, namespaces[KeyNamespaceInUserFile2].ConnectionString);
+
+            namespaces = ServiceBusNamespace.GetMessagingNamespaces
+                (configurationOpenedWithoutUserFile, writeToLog);
+
+            namespaces = ServiceBusNamespace.GetMessagingNamespaces
+                (configurationOpenedWithoutUserFile, writeToLog);
+
+            // Add a namespace section existing in the application config that should end up in the user config 
+
+            //configurationOpenedWithoutUserFile.AddEntryToDictionarySection(KeySaltWaterFishesWhichWillBeMerged,
+            //    "Atlantic mackerel", "Scomber scombrus");
+
+            //// Add an existing entry to a section existing in the application config that 
+            //// should end up in the user config. 
+            //configurationOpenedWithoutUserFile.AddEntryToDictionarySection(KeySaltWaterFishesWhichWillBeMerged,
+            //    "Alaska Pollock", ValueAlaskaPollockNewName);
+
+            //foreach (var freshWaterFish in freshWaterFishes)
+            //{
+            //    configurationOpenedWithoutUserFile.AddEntryToDictionarySection
+            //        (KeyFreshWaterFishesWhichWillOnlyExistInUserConfig, freshWaterFish.Key, freshWaterFish.Value);
+            //}
+
+            //// Test reading config values again
+            //TestReadingMessagingNamespacesSection(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
+
+            //// Persist the configuration
+            //configurationOpenedWithoutUserFile.Save();
+
+            //// Create the TwoFilesConfiguration object when a user file exists
+            //var configurationOpenedWithUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+
+            //// Test reading config values again 
+            //TestReadingMessagingNamespacesSection(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+        }
+
+        void SaveConnectionString(TwoFilesConfiguration configuration, int index)
+        {
+            Assert.IsEmpty(logInMemory);
+            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key, 
+                fakeConnectionStrings[index].Value, writeToLog);
+            Assert.IsEmpty(logInMemory);
+        }
+
+        ConfigurationSection AquireSectionInApplicationConfig(string sectionName)
+        {
+            //var configurationFileMap = new ExeConfigurationFileMap(userFilePath);
+            var localApplicationConfiguration = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            var section = localApplicationConfiguration.GetSection(sectionName);
+
+            if (null == section)
+            {
+                // Create the section in the user file
+                CreateDictionarySectionInApplicationConfigFile(localApplicationConfiguration, sectionName);
+
+                section = localApplicationConfiguration.GetSection(sectionName);
+            }
+
+            return section;
+        }
+
+        void CreateDictionarySectionInApplicationConfigFile(Configuration configuration, string sectionName)
+        {
+            var section = configuration.GetSection(sectionName);
+
+            if (null != section)
+            {
+                return; // Section already exists
+            }
+
+            var document = XDocument.Load(configuration.FilePath);
+
+            CreateSectionUsingRawXml(document, sectionName);
+
+            var settings = new XmlWriterSettings()
+            {
+                Indent = true,
+                IndentChars = indent
+            };
+
+            using (var writer = XmlWriter.Create(configuration.FilePath, settings))
+            {
+                document.Save(writer);
+            }
+
+            // Refresh the configuration object
+            ConfigurationManager.RefreshSection(sectionName);
+            //userConfiguration = null;
+            //AquireUserConfiguration();
+        }
+
+        void WriteToLogInMemory(string message, bool async = true)
+        {
+            logInMemory += message;
+        }
+
+        static void CreateSectionUsingRawXml(XDocument document, string sectionName)
+        {
+            var configElement = document.AquireElement("configuration", addFirst: true);
+            var configSections = configElement.AquireElement("configSections", addFirst: true);
+
+            // Create the section element
+            var newSection = new XElement("section",
+                    new XAttribute("name", sectionName),
+                    new XAttribute("type", "System.Configuration.DictionarySectionHandler, System, " +
+                        "Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
+
+            configSections.Add(newSection);
+            configElement.AquireElement(sectionName);
+        }
+
+        #endregion
+
+        #region Private instance methods
+
+        void DeleteUserConfigFile()
         {
             DeleteFile(GetUserSettingsFilePath());
         }
 
-        private void TestReadingBoolValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
+        void TestReadingBoolValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
         {
             const string keyOnlyInAppConfig = "savePropertiesToFile";
 
@@ -107,7 +535,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             Assert.AreEqual(onlyInUserFile, userFileShouldHaveValues);
         }
 
-        private void TestReadingEnumValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
+        void TestReadingEnumValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
         {
             const string keyOnlyInAppConfig = "monster";
 
@@ -142,16 +570,15 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             Assert.AreEqual(onlyInUserFile, userFileShouldHaveValues ? Crustacean.Crab : Crustacean.Shrimp);
         }
 
-
-        private void TestReadingFloatValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
+        void TestReadingFloatValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
         {
             const string keyOnlyInAppConfig = "morayEelWeight";
             const float mediumNumber = 472.7865f;
 
             // Get a value that do not exist in the application config file defaulting to empty
             var nonExistingValueAsDefault = configuration.GetFloatValue(keyDoesNotExistAnywhere);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0), 
-                $"Value read from {nameof(keyDoesNotExistAnywhere)} was " + 
+            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0),
+                $"Value read from {nameof(keyDoesNotExistAnywhere)} was " +
                     $"{nonExistingValueAsDefault} instead of 0.");
 
             // Get a value that do not exist in the application config file defaulting to mediumNumber
@@ -172,7 +599,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                     + $"was {sharkWeight} instead of {expectedWeight}.");
 
             // Get the value from the user file defaulting to a large number
-            sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden, 
+            sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden,
                 4789276579f);
             Assert.IsTrue(NearlyEqual(sharkWeight, expectedWeight),
                $"Value read from {nameof(KeySharkWeightWhichWillBeOverridden)} "
@@ -182,7 +609,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             const float valueMorayEelWeight = 588f;
             var morayEelWeight = configuration.GetFloatValue(keyOnlyInAppConfig);
             Assert.IsTrue(NearlyEqual(morayEelWeight, valueMorayEelWeight),
-                $"Value read from {nameof(keyDoesNotExistAnywhere)} was {morayEelWeight}" + 
+                $"Value read from {nameof(keyDoesNotExistAnywhere)} was {morayEelWeight}" +
                     $" instead of {valueMorayEelWeight}.");
 
             // Get a value that will only exist in the user file
@@ -194,7 +621,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                     $"{onlyInUserFile} instead of {expectedWeight}.");
         }
 
-        private void TestReadingIntValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
+        void TestReadingIntValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
         {
             const string keyOnlyInAppConfig = "morayEelLength";
             const int mediumNumber = 13500;
@@ -206,7 +633,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             // Get a value that do not exist in the application config file defaulting to mediumNumber
             var nonExistingValueAsMediumNumber = configuration.GetIntValue(keyDoesNotExistAnywhere,
                 mediumNumber);
-            Assert.AreEqual(nonExistingValueAsMediumNumber, mediumNumber);
+            Assert.AreEqual(mediumNumber, nonExistingValueAsMediumNumber);
 
             // Get the value from the user file defaulting to empty. If userFileShouldHaveValues
             // is false then we should read from the application config and that value should be
@@ -214,25 +641,25 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             var sharkLength = configuration.GetIntValue(KeySharkLengthWhichWillBeOverridden);
             var expectedLength = userFileShouldHaveValues ?
                 ValueSharkLengthInUserConfig : ValueSharkLengthInAppConfig;
-            Assert.AreEqual(sharkLength, expectedLength);
+            Assert.AreEqual(expectedLength, sharkLength);
 
             // Get the value from the user file defaulting to a large number
             sharkLength = configuration.GetIntValue(KeySharkLengthWhichWillBeOverridden, 3450242);
-            Assert.AreEqual(sharkLength, expectedLength);
+            Assert.AreEqual(expectedLength, sharkLength);
 
             // Get a value that do not exist in the user file
             const int valueMorayEelLength = 214;
             var morayEelLength = configuration.GetIntValue(keyOnlyInAppConfig);
-            Assert.AreEqual(morayEelLength, valueMorayEelLength);
+            Assert.AreEqual(valueMorayEelLength, morayEelLength);
 
             // Get a value that will only exist in the user file
             var onlyInUserFile = configuration.GetIntValue(KeyWhaleLengthWillExistOnlyInUserConfig,
                 mediumNumber);
             expectedLength = userFileShouldHaveValues ? ValueWhaleLengthInUserConfig : mediumNumber;
-            Assert.AreEqual(onlyInUserFile, expectedLength);
+            Assert.AreEqual(expectedLength, onlyInUserFile);
         }
 
-        private void TestReadingStringValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
+        void TestReadingStringValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
         {
             const string keyOnlyInAppConfig = "whale";
             const string ExtinctShark = "Megalodon";
@@ -267,7 +694,52 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             Assert.AreEqual(onlyInUserFile, userFileShouldHaveValues ? AnotherShark : ExtinctShark);
         }
 
-        private static void DeleteFile(string filename)
+        void TestReadingHashtableSection(TwoFilesConfiguration configuration,
+            bool userFileShouldHaveValues)
+        {
+            // Get a value that do not exist in the application config file defaulting to empty
+            var nonExistingSection = configuration.GetHashtableFromSection(keyDoesNotExistAnywhere);
+            Assert.AreEqual(nonExistingSection, null);
+
+            // Get the Hashtable of the saltwater fishes. There are three of them in the app config.
+            var saltWaterFishes = configuration.GetHashtableFromSection(KeySaltWaterFishesWhichWillBeMerged);
+
+            if (!userFileShouldHaveValues)
+            {
+                Assert.AreEqual(2, saltWaterFishes.Count);
+                Assert.AreEqual(ValueAlaskaPollockOldName, saltWaterFishes["Alaska pollock"]);
+            }
+            else
+            {
+                Assert.AreEqual(3, saltWaterFishes.Count);
+                Assert.AreEqual(ValueAlaskaPollockNewName, saltWaterFishes["Alaska pollock"]);
+                Assert.AreEqual("Scomber scombrus", saltWaterFishes["Atlantic mackerel"]);
+            }
+
+            Assert.AreEqual("Scomber colias", saltWaterFishes["Atlantic chub mackerel"]);
+
+            // Read a section that only exists in the user file
+            var freshWaterFishes = configuration.GetHashtableFromSection
+                (KeyFreshWaterFishesWhichWillOnlyExistInUserConfig);
+
+            if (!userFileShouldHaveValues)
+            {
+                Assert.AreEqual(null, freshWaterFishes);
+            }
+            else
+            {
+                Assert.AreEqual(3, freshWaterFishes.Count);
+                Assert.AreEqual("Perca flavescens", freshWaterFishes["Perch"]);
+                Assert.AreEqual("Sander lucioperca", freshWaterFishes["Zander"]);
+                Assert.AreEqual("Esox lucius", freshWaterFishes["Pike"]);
+            }
+        }
+
+        #endregion
+
+        #region Private static methods
+
+        static void DeleteFile(string filename)
         {
             if (File.Exists(filename))
             {
@@ -275,239 +747,23 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             }
         }
 
-        [SetUp]
-        public void Setup()
+        static string GetUserSettingsFilePath()
         {
-            // Find out which type of build we should target by checking the name of the parent 
-            // directory
-            //var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            //var startPosition = path.LastIndexOf('\\') + 1;
-            //var buildName = path.Substring(startPosition);
-
-            //CreateNewFakeApplicationConfigFile(buildName);
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                TestDirectoryName,
+                "UserSettings.config");
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            //DeleteFakeApplicationConfigFile();
-        }
-
-        [Test]
-        public void TestBoolValuesReadAndWrite()
-        {
-            // Make sure the user config file does not exist
-            DeleteUserConfigFile();
-
-            // Create the TwoFilesConfiguration object without a user file
-            var configurationWithoutUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values 
-            TestReadingBoolValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
-
-            // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeyIsTrueInAppConfig, false);
-
-            // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyWillExistOnlyInUserConfig, true);
-
-            // Test reading config values again
-            TestReadingBoolValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
-
-            configurationWithoutUserFile.Save();
-
-            // Create the TwoFilesConfiguration object when a user file exists
-            var configurationWithUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values again 
-            TestReadingBoolValues(configurationWithUserFile, userFileShouldHaveValues: true);
-        }
-
-        [Test]
-        public void TestEnumValuesReadAndWrite()
-        {
-            // Make sure the user config file does not exist
-            DeleteUserConfigFile();
-
-            // Create the TwoFilesConfiguration object without a user file
-            var configurationWithoutUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values 
-            TestReadingEnumValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
-
-            // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeyConnectivityModeWhichWillBeOverridden,
-                ConnectivityMode.Https);
-
-            // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyCrustaceanWillExistOnlyInUserConfig, Crustacean.Crab);
-
-            // Test reading config values again
-            TestReadingEnumValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
-
-            // Save the configuration to the user file
-            configurationWithoutUserFile.Save();
-
-            // Create the TwoFilesConfiguration object when a user file exists
-            var configurationWithUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values again 
-            TestReadingEnumValues(configurationWithUserFile, userFileShouldHaveValues: true);
-        }
-
-        [Test]
-        public void TestFloatValuesReadAndWrite()
-        {
-            // Make sure the user config file does not exist
-            DeleteUserConfigFile();
-
-            // Create the TwoFilesConfiguration object without a user file
-            var configurationWithoutUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values 
-            TestReadingFloatValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
-
-            // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeySharkWeightWhichWillBeOverridden,
-                ValueSharkWeightInUserConfig);
-
-            // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyWhaleWeightWillExistOnlyInUserConfig, 
-                ValueWhaleWeightInUserConfig);
-
-            // Test reading config values again
-            TestReadingFloatValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
-
-            // Save the configuration to the user file
-            configurationWithoutUserFile.Save();
-
-            // Create the TwoFilesConfiguration object when a user file exists
-            var configurationWithUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values again 
-            TestReadingFloatValues(configurationWithUserFile, userFileShouldHaveValues: true);
-        }
-
-
-        [Test]
-        public void TestIntValuesReadAndWrite()
-        {
-            // Make sure the user config file does not exist
-            DeleteUserConfigFile();
-
-            // Create the TwoFilesConfiguration object without a user file
-            var configurationWithoutUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values 
-            TestReadingIntValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
-
-            // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeySharkLengthWhichWillBeOverridden,
-                ValueSharkLengthInUserConfig);
-
-            // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyWhaleLengthWillExistOnlyInUserConfig,
-                ValueWhaleLengthInUserConfig);
-
-            // Test reading config values again
-            TestReadingIntValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
-
-            // Save the configuration to the user file
-            configurationWithoutUserFile.Save();
-
-            // Create the TwoFilesConfiguration object when a user file exists
-            var configurationWithUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values again 
-            TestReadingIntValues(configurationWithUserFile, userFileShouldHaveValues: true);
-        }
-        //[Test]
-        //public void ()
-        //{
-        //    // Make sure the user config file does not exist
-        //    DeleteUserConfigFile();
-
-        //    // Create the TwoFilesConfiguration object without a user file
-        //    var configurationWithoutUserFile = TwoFilesConfiguration
-        //        .Create(GetUserSettingsFilePath());
-
-        //    // Test reading config values 
-        //    //(configurationWithoutUserFile, userFileShouldHaveValues: false);
-
-        //    // Set a value which will end up in the user file and already exists in the application config
-        //    configurationWithoutUserFile.SetValue(KeyConnectivityModeWhichWillBeOverridden,
-        //        ConnectivityMode.Https);
-
-        //    // Set a value which will end up in the user file and does not exist in the application config
-        //    configurationWithoutUserFile.SetValue(KeyCrustaceanWillExistOnlyInUserConfig, Crustacean.Crab);
-
-        //    // Test reading config values again
-        //    TestReadingIntValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
-
-        //    // Save the configuration to the user file
-        //    configurationWithoutUserFile.Save();
-
-        //    // Create the TwoFilesConfiguration object when a user file exists
-        //    var configurationWithUserFile = TwoFilesConfiguration
-        //        .Create(GetUserSettingsFilePath());
-
-        //    // Test reading config values again 
-        //    TestReadingIntValues(configurationWithUserFile, userFileShouldHaveValues: true);
-        //}
-
-
-        [Test]
-        public void TestStringValuesReadAndWrite()
-        {
-            // Make sure the user config file does not exist
-            DeleteUserConfigFile();
-
-            // Create the TwoFilesConfiguration object without a user file
-            var configurationWithoutUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values 
-            TestReadingStringValues(configurationWithoutUserFile, userFileShouldHaveValues: false);
-
-            // Set a value which will end up in the user file and already exists in the application config
-            configurationWithoutUserFile.SetValue(KeySharkWhichWillBeOverridden,
-                ValueForOverridingShark);
-
-            // Set a value which will end up in the user file and does not exist in the application config
-            configurationWithoutUserFile.SetValue(KeyWillExistOnlyInUserConfig, AnotherShark);
-
-            // Test reading config values again
-            TestReadingStringValues(configurationWithoutUserFile, userFileShouldHaveValues: true);
-
-            // Save the changes to the user file
-            configurationWithoutUserFile.Save();
-
-            // Create the TwoFilesConfiguration object when a user file exists
-            var configurationWithUserFile = TwoFilesConfiguration
-                .Create(GetUserSettingsFilePath());
-
-            // Test reading config values again 
-            TestReadingStringValues(configurationWithUserFile, userFileShouldHaveValues: true);
-        }
-
-        #region Private methods
         // From https://stackoverflow.com/questions/3874627/floating-point-comparison-functions-for-c-sharp
-        private static bool NearlyEqual(double a, double b, double epsilon = 0.0000f)
+        static bool NearlyEqual(double a, double b, double epsilon = 0.0000f)
         {
             double absA = Math.Abs(a);
             double absB = Math.Abs(b);
             double diff = Math.Abs(a - b);
 
             if (a == b)
-            { // shortcut, handles infinities
+            {
+                // shortcut, handles infinities
                 return true;
             }
             else if (a == 0 || b == 0 || diff < Double.Epsilon)
@@ -517,10 +773,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 return diff < epsilon;
             }
             else
-            { // use relative error
+            {
+                // use relative error
                 return diff / (absA + absB) < epsilon;
             }
         }
+
         #endregion
     }
 }

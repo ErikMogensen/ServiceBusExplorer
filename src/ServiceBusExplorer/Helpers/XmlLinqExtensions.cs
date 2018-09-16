@@ -21,28 +21,34 @@
 
 #region Using Directives
 
-using System.Collections.Generic;
-using System.Configuration;
+using System.Xml.Linq;
 
 #endregion
 
 namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 {
-    class ConfigurationHandler
+    public static class XmlLinqExtensions
     {
-        #region Constants
+        public static XElement AquireElement(this XContainer container, 
+            string name, bool addFirst = false)
+        {
+            var element = container.Element(name);
 
- 
+            if (null == element)
+            {
+                element = new XElement(name);
 
-        #endregion
+                if (addFirst)
+                {
+                    container.AddFirst(element);
+                }
+                else
+                {
+                    container.Add(element);
+                }
+            }
 
-        #region Public methods
-
-        //static public TwoFilesConfiguration OpenConfiguration()
-        //{
-        //    return TwoFilesConfiguration.Create();
-        //}
-
-        #endregion
+            return element;
+        }
     }
 }

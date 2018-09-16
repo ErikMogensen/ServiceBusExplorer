@@ -384,6 +384,7 @@
       <DependentUpon>DeleteForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AttributeList.cs" />
+    <Compile Include="Helpers\XmlLinqExtensions.cs" />
     <Compile Include="Helpers\UserPropertyWrapper.cs" />
     <Compile Include="Helpers\DoubleHelper.cs" />
     <Compile Include="Helpers\TwoFilesConfiguration.cs" />

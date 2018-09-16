@@ -39,12 +39,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using Microsoft.Azure.ServiceBusExplorer.Enums;
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.ServiceBusExplorer.Controls;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
 using Microsoft.ServiceBus.Messaging;
+
 using ConnectivityMode = Microsoft.ServiceBus.ConnectivityMode;
+
 #endregion
 
 namespace Microsoft.Azure.ServiceBusExplorer.Forms
@@ -281,7 +284,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
 
             try
             {
-                ConfigurationHandler.GetMessagingNamespacesFromConfiguration(serviceBusHelper, WriteToLog);
+                var configuration = TwoFilesConfiguration.Create();
+                serviceBusHelper.ServiceBusNamespaces =
+                    ServiceBusNamespace.GetMessagingNamespaces(configuration, WriteToLog);
             }
             catch (Exception ex)
             {
@@ -3533,7 +3538,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 return;
             }
 
-            var configuration = ConfigurationHandler.OpenConfiguration();
+            var configuration = TwoFilesConfiguration.Create();
 
             RetryHelper.TraceEnabled = serviceBusHelper.TraceEnabled = 
                 configuration.GetBoolValue(ConfigurationParameters.DebugFlagParameter, serviceBusHelper.TraceEnabled);

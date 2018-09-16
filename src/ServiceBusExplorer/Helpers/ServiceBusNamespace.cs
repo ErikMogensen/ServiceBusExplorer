@@ -27,6 +27,8 @@ using Microsoft.ServiceBus.Messaging;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Linq;
+using System.Collections.Generic;
+using System.Configuration;
 
 #endregion
 
@@ -45,6 +47,16 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
     public class ServiceBusNamespace
     {
         #region Private Constants
+        //***************************
+        // Constants for accessing configuration files
+        //***************************
+        const string ServiceBusNamespaces = "serviceBusNamespaces";
+
+        //***************************
+        // Messages
+        //***************************
+        const string ServiceBusNamespacesNotConfigured = "Service bus accounts have not been properly configured in the configuration file.";
+
         //***************************
         // Formats
         //***************************
@@ -126,16 +138,16 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                                    string entityPath = "")
         {
             ConnectionStringType = connectionStringType;
-            Uri = string.IsNullOrWhiteSpace(uri) ? 
-                  ServiceBusEnvironment.CreateServiceUri("sb", ns, servicePath).ToString() : 
+            Uri = string.IsNullOrWhiteSpace(uri) ?
+                  ServiceBusEnvironment.CreateServiceUri("sb", ns, servicePath).ToString() :
                   uri;
-            ConnectionString = ConnectionStringType == ServiceBusNamespaceType.Custom ? 
+            ConnectionString = ConnectionStringType == ServiceBusNamespaceType.Custom ?
                                string.Format(ConnectionStringFormat,
                                              Uri,
                                              name,
                                              key,
-                                             transportType) : 
-                               connectionString;            
+                                             transportType) :
+                               connectionString;
             Namespace = ns;
             IssuerName = name;
             if (isSas)
@@ -206,7 +218,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Public methods
-        public static ServiceBusNamespace GetServiceBusNamespace(string key, string connectionString, 
+        public static ServiceBusNamespace GetServiceBusNamespace(string key, string connectionString,
             WriteToLogDelegate staticWriteToLog)
         {
 
@@ -478,6 +490,64 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 
                 return new ServiceBusNamespace(ServiceBusNamespaceType.Custom, connectionString, uriString, ns, servicePath, issuerName, issuerSecret, null, transportType);
             }
+        }
+
+        public static Dictionary<string, ServiceBusNamespace> GetMessagingNamespaces
+            (TwoFilesConfiguration configuration, WriteToLogDelegate writeToLog)
+        {
+            var hashtable = configuration.GetHashtableFromSection(ServiceBusNamespaces);
+
+            if (hashtable == null || hashtable.Count == 0)
+            {
+                writeToLog(ServiceBusNamespacesNotConfigured);
+            }
+
+            var serviceBusNamespaces = new Dictionary<string, ServiceBusNamespace>();
+
+            if (hashtable == null)
+            {
+                return serviceBusNamespaces;
+            }
+
+            var e = hashtable.GetEnumerator();
+
+            while (e.MoveNext())
+            {
+                if (!(e.Key is string) || !(e.Value is string))
+                {
+                    continue;
+                }
+
+                var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace((string)e.Key, (string)e.Value, writeToLog);
+
+                if (serviceBusNamespace != null)
+                {
+                    serviceBusNamespaces.Add((string)e.Key, serviceBusNamespace);
+                }
+            }
+
+            var microsoftServiceBusConnectionString = ConfigurationManager.AppSettings[ConfigurationParameters.MicrosoftServiceBusConnectionString];
+
+            if (!string.IsNullOrWhiteSpace(microsoftServiceBusConnectionString))
+            {
+                var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace(ConfigurationParameters.MicrosoftServiceBusConnectionString, microsoftServiceBusConnectionString, writeToLog);
+
+                if (serviceBusNamespace != null)
+                {
+                    serviceBusNamespaces.
+                        Add(ConfigurationParameters.MicrosoftServiceBusConnectionString, serviceBusNamespace);
+                }
+            }
+
+            return serviceBusNamespaces;
+        }
+
+        public static void SaveConnectionString(TwoFilesConfiguration configuration,
+            string key, string value, WriteToLogDelegate staticWriteToLog)
+        {
+            var configurationSection = configuration.GetHashtableFromSection(ServiceBusNamespaces);
+
+            configuration.AddEntryToDictionarySection(ServiceBusNamespaces, key, value);
         }
         #endregion
 

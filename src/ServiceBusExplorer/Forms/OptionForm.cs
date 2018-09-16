@@ -390,7 +390,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            var configuration = ConfigurationHandler.OpenConfiguration();
+            var configuration = TwoFilesConfiguration.Create();
 
             configuration.SetValue(ConfigurationParameters.LogFontSize, LogFontSize);
             configuration.SetValue(ConfigurationParameters.TreeViewFontSize, TreeViewFontSize);

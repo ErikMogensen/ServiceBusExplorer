@@ -588,7 +588,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     }
 
                     var value = txtUri.Text;
-                    ConfigurationHandler.SaveConnectionString(key, value, MainForm.StaticWriteToLog);
+                    var configuration = TwoFilesConfiguration.Create();
+                    ServiceBusNamespace.SaveConnectionString(configuration, 
+                        key, value, MainForm.StaticWriteToLog);
 
                     serviceBusHelper.ServiceBusNamespaces.Add(key, ServiceBusNamespace.GetServiceBusNamespace(key,
                         value, MainForm.StaticWriteToLog));
