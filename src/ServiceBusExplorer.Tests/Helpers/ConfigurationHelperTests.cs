@@ -6,6 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
 using Microsoft.ServiceBus;
 
@@ -30,7 +31,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
     }
 
     [TestFixture]
-    public class ConfigurationHelperTests
+    public class TwoFilesConfigurationTests
     {
         #region Constants
         // Common values
@@ -52,6 +53,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         const string KeyCrustaceanWillExistOnlyInUserConfig = "crustacean";
 
         // Float testing constants
+        double delta = 0.0000f;
+
         const string KeyWhaleWeightWillExistOnlyInUserConfig = "whaleWeight";
         const string KeySharkWeightWhichWillBeOverridden = "sharkWeight";
         const float ValueSharkWeightInAppConfig = 44.12f;
@@ -72,7 +75,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         const string ValueAlaskaPollockOldName = "Theragra chalcogramma";
         const string ValueAlaskaPollockNewName = "Gadus chalcogrammus";
 
-
         // MessagingNamespaces constants
 
         const string ServiceBusNamespaces = "serviceBusNamespaces"; // For accessing configuration files
@@ -88,14 +90,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         readonly int IndexSecondNamespaceInBothFiles = 3;
         readonly int IndexNamespaceInAppFile1 = 4;
 
-
         // Indent size in config files
         const string indent = "  ";
-
         #endregion
 
         #region Private fields
-
         WriteToLogDelegate writeToLog;
         string logInMemory;
 
@@ -131,18 +130,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             { new KeyValuePair<string, string>("treasureInAppFile",
                 "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=54442=") }
         };
-
-
         #endregion
 
         #region The constructor
-
-        public ConfigurationHelperTests()
+        public TwoFilesConfigurationTests()
         {
             // Initialize the delegate that handles logging
             writeToLog = WriteToLogInMemory;
         }
-
         #endregion
 
         #region Public methods   
@@ -378,11 +373,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 namespaces[KeyNamespaceInUserFile2].ConnectionString);
 
 
-            // Add a connection to the application config file, but let the two connection strings in the user
-            // file stay.
-            var applicationConfiguration = ConfigurationManager
-                .OpenExeConfiguration(ConfigurationUserLevel.None);
-
+            // Add a connection to the application config file, but let the two connection 
+            // strings in the user file stay.
             SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
             configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
             namespaces = ServiceBusNamespace.GetMessagingNamespaces
@@ -396,6 +388,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             Assert.AreEqual(fakeConnectionStrings[IndexSecondNamespaceInBothFiles].Value,
                 namespaces[KeyNamespaceInBothFiles].ConnectionString);
 
+            // Add a connection string to the user file with the same index as an existing entry 
+            // in the application file.
             SaveConnectionStringInUserFile(configurationOpenedWithoutUserFile, IndexFirstNamespaceInBothFiles);
             configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
             namespaces = ServiceBusNamespace.GetMessagingNamespaces
@@ -409,10 +403,10 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             Assert.AreEqual(fakeConnectionStrings[IndexFirstNamespaceInBothFiles].Value,
                 namespaces[KeyNamespaceInBothFiles].ConnectionString);
 
-            applicationConfiguration = ConfigurationManager
-                .OpenExeConfiguration(ConfigurationUserLevel.None);
+            // Add a connection string to the application file
             SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
-            configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+            configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create
+                (GetUserSettingsFilePath());
             namespaces = ServiceBusNamespace.GetMessagingNamespaces
                 (configurationOpenedWithoutUserFile, writeToLog);
 
@@ -439,27 +433,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 namespaces[KeyNamespaceInAppFile1].ConnectionString);
         }
 
-        void RemoveNamespaceSectionFromApplicationFile()
-        {
-            var applicationConfiguration = ConfigurationManager
-                .OpenExeConfiguration(ConfigurationUserLevel.None);
-            var section = applicationConfiguration.GetSection(ServiceBusNamespaces);
+        #endregion
 
-            if (null != section)
-            {
-                applicationConfiguration.Sections.Remove(ServiceBusNamespaces);
-                section.SectionInformation.ForceSave = true;
-                applicationConfiguration.Save(ConfigurationSaveMode.Full);
-            }
-        }
-
-        void SaveConnectionStringInUserFile(TwoFilesConfiguration configuration, int index)
-        {
-            Assert.IsEmpty(logInMemory);
-            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key,
-                fakeConnectionStrings[index].Value, writeToLog);
-            Assert.IsEmpty(logInMemory);
-        }
+        #region Private instance methods
 
         // Since we are bypassing the Configuration class for this the existing Configuration object(s)
         // become invalid.
@@ -481,22 +457,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             appConfiguration.Save();
             ConfigurationManager.RefreshSection(ServiceBusNamespaces);
         }
-
-        //void EnsureSectionExistsInApplicationConfig(string sectionName)
-        //{
-
-        //    var section = applicationConfiguration.GetSection(sectionName);
-
-        //    if (null == section)
-        //    {
-        //        // Create the section in the application file
-        //        CreateDictionarySectionInApplicationConfigFile(applicationConfiguration, sectionName);
-        //        applicationConfiguration = ConfigurationManager.OpenExeConfiguration
-        //            (ConfigurationUserLevel.None);
-        //        section = applicationConfiguration.GetSection(sectionName);
-        //        Assert.IsNotNull(section);
-        //    }
-        //}
 
         void EnsureSectionExistsInApplicationConfig(string sectionName)
         {
@@ -528,29 +488,27 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             ConfigurationManager.RefreshSection(sectionName);
         }
 
-        void WriteToLogInMemory(string message, bool async = true)
+        void RemoveNamespaceSectionFromApplicationFile()
         {
-            logInMemory += message;
+            var applicationConfiguration = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.None);
+            var section = applicationConfiguration.GetSection(ServiceBusNamespaces);
+
+            if (null != section)
+            {
+                applicationConfiguration.Sections.Remove(ServiceBusNamespaces);
+                section.SectionInformation.ForceSave = true;
+                applicationConfiguration.Save(ConfigurationSaveMode.Full);
+            }
         }
 
-        static void CreateSectionUsingRawXml(XDocument document, string sectionName)
+        void SaveConnectionStringInUserFile(TwoFilesConfiguration configuration, int index)
         {
-            var configElement = document.AquireElement("configuration", addFirst: true);
-            var configSections = configElement.AquireElement("configSections", addFirst: true);
-
-            // Create the section element
-            var newSection = new XElement("section",
-                    new XAttribute("name", sectionName),
-                    new XAttribute("type", "System.Configuration.DictionarySectionHandler, System, " +
-                        "Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
-
-            configSections.Add(newSection);
-            configElement.AquireElement(sectionName);
+            Assert.IsEmpty(logInMemory);
+            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key,
+                fakeConnectionStrings[index].Value, writeToLog);
+            Assert.IsEmpty(logInMemory);
         }
-
-        #endregion
-
-        #region Private instance methods
 
         void DeleteUserConfigFile()
         {
@@ -629,48 +587,36 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
 
             // Get a value that do not exist in the application config file defaulting to empty
             var nonExistingValueAsDefault = configuration.GetFloatValue(keyDoesNotExistAnywhere);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsDefault, 0),
-                $"Value read from {nameof(keyDoesNotExistAnywhere)} was " +
-                    $"{nonExistingValueAsDefault} instead of 0.");
+            Assert.AreEqual(nonExistingValueAsDefault, 0F, delta);
 
             // Get a value that do not exist in the application config file defaulting to mediumNumber
             var nonExistingValueAsMediumNumber = configuration.GetFloatValue(keyDoesNotExistAnywhere,
                 mediumNumber);
-            Assert.IsTrue(NearlyEqual(nonExistingValueAsMediumNumber, mediumNumber),
-                $"Value read from {nameof(keyDoesNotExistAnywhere)} was {nonExistingValueAsMediumNumber}" +
-                 " instead of {mediumNumber}.");
+            Assert.AreEqual(nonExistingValueAsMediumNumber, mediumNumber, delta);
 
-            // Get the value from the user file defaulting to empty. If userFileShouldHaveValues
-            // is false then we should read from the application config and that value should be
-            // ValueSharkWeightInAppConfig
-            var sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden);
+           // Get the value from the user file defaulting to empty. If userFileShouldHaveValues
+           // is false then we should read from the application config and that value should be
+           // ValueSharkWeightInAppConfig
+           var sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden);
             var expectedWeight = userFileShouldHaveValues ?
                 ValueSharkWeightInUserConfig : ValueSharkWeightInAppConfig;
-            Assert.IsTrue(NearlyEqual(sharkWeight, expectedWeight),
-                $"Value read from {nameof(KeySharkWeightWhichWillBeOverridden)} "
-                    + $"was {sharkWeight} instead of {expectedWeight}.");
+            Assert.AreEqual(sharkWeight, expectedWeight, delta);
 
             // Get the value from the user file defaulting to a large number
             sharkWeight = configuration.GetFloatValue(KeySharkWeightWhichWillBeOverridden,
                 4789276579f);
-            Assert.IsTrue(NearlyEqual(sharkWeight, expectedWeight),
-               $"Value read from {nameof(KeySharkWeightWhichWillBeOverridden)} "
-                   + $"was {sharkWeight} instead of {expectedWeight}.");
+            Assert.AreEqual(sharkWeight, expectedWeight, delta);
 
             // Get a value that do not exist in the user file
             const float valueMorayEelWeight = 588f;
             var morayEelWeight = configuration.GetFloatValue(keyOnlyInAppConfig);
-            Assert.IsTrue(NearlyEqual(morayEelWeight, valueMorayEelWeight),
-                $"Value read from {nameof(keyDoesNotExistAnywhere)} was {morayEelWeight}" +
-                    $" instead of {valueMorayEelWeight}.");
+            Assert.AreEqual(morayEelWeight, valueMorayEelWeight, delta);
 
             // Get a value that will only exist in the user file
             var onlyInUserFile = configuration.GetFloatValue(KeyWhaleWeightWillExistOnlyInUserConfig,
                 mediumNumber);
             expectedWeight = userFileShouldHaveValues ? ValueWhaleWeightInUserConfig : mediumNumber;
-            Assert.IsTrue(NearlyEqual(onlyInUserFile, expectedWeight),
-                $"Value read from {nameof(KeyWhaleWeightWillExistOnlyInUserConfig)} was " +
-                    $"{onlyInUserFile} instead of {expectedWeight}.");
+            Assert.AreEqual(onlyInUserFile, expectedWeight, delta);
         }
 
         void TestReadingIntValues(TwoFilesConfiguration configuration, bool userFileShouldHaveValues)
@@ -786,9 +732,28 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 Assert.AreEqual("Esox lucius", freshWaterFishes["Pike"]);
             }
         }
+
+        void WriteToLogInMemory(string message, bool async = true)
+        {
+            logInMemory += message;
+        }
         #endregion
 
         #region Private static methods
+        static void CreateSectionUsingRawXml(XDocument document, string sectionName)
+        {
+            var configElement = document.AquireElement("configuration", addFirst: true);
+            var configSections = configElement.AquireElement("configSections", addFirst: true);
+
+            // Create the section element
+            var newSection = new XElement("section",
+                    new XAttribute("name", sectionName),
+                    new XAttribute("type", "System.Configuration.DictionarySectionHandler, System, " +
+                        "Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"));
+
+            configSections.Add(newSection);
+            configElement.AquireElement(sectionName);
+        }
 
         static void DeleteFile(string filename)
         {
@@ -803,31 +768,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 TestDirectoryName,
                 "UserSettings.config");
-        }
-
-        // From https://stackoverflow.com/questions/3874627/floating-point-comparison-functions-for-c-sharp
-        static bool NearlyEqual(double a, double b, double epsilon = 0.0000f)
-        {
-            double absA = Math.Abs(a);
-            double absB = Math.Abs(b);
-            double diff = Math.Abs(a - b);
-
-            if (a == b)
-            {
-                // shortcut, handles infinities
-                return true;
-            }
-            else if (a == 0 || b == 0 || diff < Double.Epsilon)
-            {
-                // a or b is zero or both are extremely close to it
-                // relative error is less meaningful here
-                return diff < epsilon;
-            }
-            else
-            {
-                // use relative error
-                return diff / (absA + absB) < epsilon;
-            }
         }
 
         #endregion
