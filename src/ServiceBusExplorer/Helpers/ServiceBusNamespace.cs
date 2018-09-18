@@ -545,8 +545,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         public static void SaveConnectionString(TwoFilesConfiguration configuration,
             string key, string value, WriteToLogDelegate staticWriteToLog)
         {
-            var configurationSection = configuration.GetHashtableFromSection(ServiceBusNamespaces);
-
             configuration.AddEntryToDictionarySection(ServiceBusNamespaces, key, value);
         }
         #endregion

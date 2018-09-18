@@ -72,7 +72,11 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         const string ValueAlaskaPollockOldName = "Theragra chalcogramma";
         const string ValueAlaskaPollockNewName = "Gadus chalcogrammus";
 
+
         // MessagingNamespaces constants
+
+        const string ServiceBusNamespaces = "serviceBusNamespaces"; // For accessing configuration files
+
         const string KeyNamespaceInUserFile1 = "treasureInUserFile";
         const string KeyNamespaceInUserFile2 = "anotherTreasureInUserFile";
         const string KeyNamespaceInBothFiles = "usedInUserFileAndAppFile";
@@ -80,9 +84,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
 
         readonly int IndexNamespaceInUserFile1 = 0;
         readonly int IndexNamespaceInUserFile2 = 1;
-        //readonly int IndexFirstNamespaceInBothFiles = 2;
-        //readonly int IndexSecondNamespaceInBothFiles = 3;
-        //readonly int IndexNamespaceInAppFile1 = 4;
+        readonly int IndexFirstNamespaceInBothFiles = 2;
+        readonly int IndexSecondNamespaceInBothFiles = 3;
+        readonly int IndexNamespaceInAppFile1 = 4;
 
 
         // Indent size in config files
@@ -109,23 +113,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             { "Zander","Sander lucioperca" }
         };
 
-        readonly List<KeyValuePair<string, string>> fakeConnectionStrings = new List<KeyValuePair<string, string>>()
+        readonly List<KeyValuePair<string, string>> fakeConnectionStrings =
+            new List<KeyValuePair<string, string>>()
         {
-            //{ KeyNamespaceInUserFile1,
-            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=SomeKey;SharedAccessKey=18347=" },
-
-            //{ KeyNamespaceInUserFile2,
-            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=21452=" },
-
-            //{ KeyNamespaceInBothFiles,
-            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=UserFile;SharedAccessKey=32345=" },
-
-            //{ KeyNamespaceInBothFiles,
-            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=AppFile;SharedAccessKey=444445=" },
-
-            //{ KeyNamespaceInAppFile1,
-            //    "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=54442=" }
-
             { new KeyValuePair<string, string>("treasureInUserFile",
                 "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=SomeKey;SharedAccessKey=18347=") },
 
@@ -360,6 +350,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
         [Test]
         public void TestMessagingNamespacesReadAndWrite()
         {
+            RemoveNamespaceSectionFromApplicationFile();
+
             // Create the TwoFilesConfiguration object without a user file
             var configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
 
@@ -370,92 +362,154 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
             Assert.IsTrue(logInMemory.Contains("Service bus accounts have not been properly configured"));
             logInMemory = string.Empty;
 
-            // Add connection strings to the user file config values - application config section is still missing
-            SaveConnectionString(configurationOpenedWithoutUserFile, IndexNamespaceInUserFile1);
-            SaveConnectionString(configurationOpenedWithoutUserFile, IndexNamespaceInUserFile2);
+            // Add connection strings to the user file config values - application config 
+            // section is still missing
+            SaveConnectionStringInUserFile(configurationOpenedWithoutUserFile, IndexNamespaceInUserFile1);
+            SaveConnectionStringInUserFile(configurationOpenedWithoutUserFile, IndexNamespaceInUserFile2);
             Assert.IsEmpty(logInMemory);
 
             namespaces = ServiceBusNamespace.GetMessagingNamespaces
                 (configurationOpenedWithoutUserFile, writeToLog);
             Assert.IsEmpty(logInMemory);
             Assert.AreEqual(2, namespaces.Count);
-            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile1].Value, 
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile1].Value,
                 namespaces[KeyNamespaceInUserFile1].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile2].Value,
+                namespaces[KeyNamespaceInUserFile2].ConnectionString);
 
-            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile2].Value, namespaces[KeyNamespaceInUserFile2].ConnectionString);
 
+            // Add a connection to the application config file, but let the two connection strings in the user
+            // file stay.
+            var applicationConfiguration = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
+            configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
             namespaces = ServiceBusNamespace.GetMessagingNamespaces
                 (configurationOpenedWithoutUserFile, writeToLog);
 
+            Assert.AreEqual(3, namespaces.Count);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile1].Value,
+                namespaces[KeyNamespaceInUserFile1].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile2].Value,
+                namespaces[KeyNamespaceInUserFile2].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexSecondNamespaceInBothFiles].Value,
+                namespaces[KeyNamespaceInBothFiles].ConnectionString);
+
+            SaveConnectionStringInUserFile(configurationOpenedWithoutUserFile, IndexFirstNamespaceInBothFiles);
+            configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
             namespaces = ServiceBusNamespace.GetMessagingNamespaces
                 (configurationOpenedWithoutUserFile, writeToLog);
 
-            // Add a namespace section existing in the application config that should end up in the user config 
+            Assert.AreEqual(3, namespaces.Count);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile1].Value,
+                namespaces[KeyNamespaceInUserFile1].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile2].Value,
+                namespaces[KeyNamespaceInUserFile2].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexFirstNamespaceInBothFiles].Value,
+                namespaces[KeyNamespaceInBothFiles].ConnectionString);
 
-            //configurationOpenedWithoutUserFile.AddEntryToDictionarySection(KeySaltWaterFishesWhichWillBeMerged,
-            //    "Atlantic mackerel", "Scomber scombrus");
+            applicationConfiguration = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.None);
+            SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
+            configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+            namespaces = ServiceBusNamespace.GetMessagingNamespaces
+                (configurationOpenedWithoutUserFile, writeToLog);
 
-            //// Add an existing entry to a section existing in the application config that 
-            //// should end up in the user config. 
-            //configurationOpenedWithoutUserFile.AddEntryToDictionarySection(KeySaltWaterFishesWhichWillBeMerged,
-            //    "Alaska Pollock", ValueAlaskaPollockNewName);
+            Assert.AreEqual(4, namespaces.Count);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile1].Value,
+                namespaces[KeyNamespaceInUserFile1].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInUserFile2].Value,
+                namespaces[KeyNamespaceInUserFile2].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexFirstNamespaceInBothFiles].Value,
+                namespaces[KeyNamespaceInBothFiles].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInAppFile1].Value,
+                namespaces[KeyNamespaceInAppFile1].ConnectionString);
 
-            //foreach (var freshWaterFish in freshWaterFishes)
-            //{
-            //    configurationOpenedWithoutUserFile.AddEntryToDictionarySection
-            //        (KeyFreshWaterFishesWhichWillOnlyExistInUserConfig, freshWaterFish.Key, freshWaterFish.Value);
-            //}
-
-            //// Test reading config values again
-            //TestReadingMessagingNamespacesSection(configurationOpenedWithoutUserFile, userFileShouldHaveValues: true);
-
-            //// Persist the configuration
-            //configurationOpenedWithoutUserFile.Save();
-
-            //// Create the TwoFilesConfiguration object when a user file exists
-            //var configurationOpenedWithUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
-
-            //// Test reading config values again 
-            //TestReadingMessagingNamespacesSection(configurationOpenedWithUserFile, userFileShouldHaveValues: true);
+            // Delete the user file so reading will only be from the application file
+            DeleteUserConfigFile();
+            configurationOpenedWithoutUserFile = TwoFilesConfiguration.Create(GetUserSettingsFilePath());
+            namespaces = ServiceBusNamespace.GetMessagingNamespaces
+               (configurationOpenedWithoutUserFile, writeToLog);
+            Assert.IsEmpty(logInMemory);
+            Assert.AreEqual(2, namespaces.Count);
+            Assert.AreEqual(fakeConnectionStrings[IndexSecondNamespaceInBothFiles].Value,
+                namespaces[KeyNamespaceInBothFiles].ConnectionString);
+            Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInAppFile1].Value,
+                namespaces[KeyNamespaceInAppFile1].ConnectionString);
         }
 
-        void SaveConnectionString(TwoFilesConfiguration configuration, int index)
+        void RemoveNamespaceSectionFromApplicationFile()
+        {
+            var applicationConfiguration = ConfigurationManager
+                .OpenExeConfiguration(ConfigurationUserLevel.None);
+            var section = applicationConfiguration.GetSection(ServiceBusNamespaces);
+
+            if (null != section)
+            {
+                applicationConfiguration.Sections.Remove(ServiceBusNamespaces);
+                section.SectionInformation.ForceSave = true;
+                applicationConfiguration.Save(ConfigurationSaveMode.Full);
+            }
+        }
+
+        void SaveConnectionStringInUserFile(TwoFilesConfiguration configuration, int index)
         {
             Assert.IsEmpty(logInMemory);
-            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key, 
+            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key,
                 fakeConnectionStrings[index].Value, writeToLog);
             Assert.IsEmpty(logInMemory);
         }
 
-        ConfigurationSection AquireSectionInApplicationConfig(string sectionName)
+        // Since we are bypassing the Configuration class for this the existing Configuration object(s)
+        // become invalid.
+        void SaveConnectionStringInApplicationFile(int index)
         {
-            //var configurationFileMap = new ExeConfigurationFileMap(userFilePath);
-            var localApplicationConfiguration = ConfigurationManager
-                .OpenExeConfiguration(ConfigurationUserLevel.None);
+            EnsureSectionExistsInApplicationConfig(ServiceBusNamespaces);
+            var appConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var section = appConfiguration.GetSection(ServiceBusNamespaces);
 
-            var section = localApplicationConfiguration.GetSection(sectionName);
+            var xml = section.SectionInformation.GetRawXml();
+            var element = XElement.Parse(xml);
 
-            if (null == section)
-            {
-                // Create the section in the user file
-                CreateDictionarySectionInApplicationConfigFile(localApplicationConfiguration, sectionName);
+            element.Add(new XElement("add",
+                new XAttribute("key", fakeConnectionStrings[index].Key),
+                new XAttribute("value", fakeConnectionStrings[index].Value)
+                ));
 
-                section = localApplicationConfiguration.GetSection(sectionName);
-            }
-
-            return section;
+            section.SectionInformation.SetRawXml(element.ToString());
+            appConfiguration.Save();
+            ConfigurationManager.RefreshSection(ServiceBusNamespaces);
         }
 
-        void CreateDictionarySectionInApplicationConfigFile(Configuration configuration, string sectionName)
+        //void EnsureSectionExistsInApplicationConfig(string sectionName)
+        //{
+
+        //    var section = applicationConfiguration.GetSection(sectionName);
+
+        //    if (null == section)
+        //    {
+        //        // Create the section in the application file
+        //        CreateDictionarySectionInApplicationConfigFile(applicationConfiguration, sectionName);
+        //        applicationConfiguration = ConfigurationManager.OpenExeConfiguration
+        //            (ConfigurationUserLevel.None);
+        //        section = applicationConfiguration.GetSection(sectionName);
+        //        Assert.IsNotNull(section);
+        //    }
+        //}
+
+        void EnsureSectionExistsInApplicationConfig(string sectionName)
         {
-            var section = configuration.GetSection(sectionName);
+            var applicationConfiguration = ConfigurationManager.OpenExeConfiguration
+                (ConfigurationUserLevel.None);
+            var section = applicationConfiguration.GetSection(sectionName);
 
             if (null != section)
             {
                 return; // Section already exists
             }
 
-            var document = XDocument.Load(configuration.FilePath);
+            var document = XDocument.Load(applicationConfiguration.FilePath);
 
             CreateSectionUsingRawXml(document, sectionName);
 
@@ -465,15 +519,13 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 IndentChars = indent
             };
 
-            using (var writer = XmlWriter.Create(configuration.FilePath, settings))
+            using (var writer = XmlWriter.Create(applicationConfiguration.FilePath, settings))
             {
                 document.Save(writer);
             }
 
             // Refresh the configuration object
             ConfigurationManager.RefreshSection(sectionName);
-            //userConfiguration = null;
-            //AquireUserConfiguration();
         }
 
         void WriteToLogInMemory(string message, bool async = true)
@@ -734,7 +786,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Tests.Helpers
                 Assert.AreEqual("Esox lucius", freshWaterFishes["Pike"]);
             }
         }
-
         #endregion
 
         #region Private static methods
