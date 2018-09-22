@@ -3531,7 +3531,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             }
         }
 
-        private void GetServiceBusNamespaceSettingsFromConfiguration()
+        void GetServiceBusNamespaceSettingsFromConfiguration()
         {
             if (serviceBusHelper == null)
             {
@@ -3547,10 +3547,10 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                 BodyType.Stream.ToString());
 
             ServiceBusHelper.ConnectivityMode = configuration.GetEnumValue<ConnectivityMode>
-                (ConfigurationParameters.ConnectivityMode, ServiceBusHelper.ConnectivityMode);
+                (ConfigurationParameters.ConnectivityMode, WriteToLog, ServiceBusHelper.ConnectivityMode);
 
             ServiceBusHelper.EncodingType = configuration.GetEnumValue(ConfigurationParameters.Encoding,
-                ServiceBusHelper.EncodingType);
+                WriteToLog, ServiceBusHelper.EncodingType);
 
             showMessageCount = configuration.GetBoolValue(ConfigurationParameters.ShowMessageCountParameter,
                  showMessageCount);
@@ -3592,14 +3592,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
 
             label = configuration.GetStringValue(ConfigurationParameters.LabelParameter, DefaultLabel);
 
-            var tempLogFontSize = configuration.GetFloatValue(ConfigurationParameters.LogFontSize, logFontSize);
+            var tempLogFontSize = configuration.GetFloatValue(ConfigurationParameters.LogFontSize, WriteToLog, logFontSize);
             if (!DoubleHelper.NearlyEqual(tempLogFontSize, logFontSize))
             {
                 logFontSize = tempLogFontSize;
                 lstLog.Font = new Font(lstLog.Font.FontFamily, logFontSize);
             }
-
-            var tempTreeViewFontSize = configuration.GetFloatValue(ConfigurationParameters.TreeViewFontSize, 
+            
+            var tempTreeViewFontSize = configuration.GetFloatValue(ConfigurationParameters.TreeViewFontSize, WriteToLog,
                 treeViewFontSize);
             if (!DoubleHelper.NearlyEqual(tempTreeViewFontSize, treeViewFontSize))
             {
@@ -3608,49 +3608,53 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             }
 
             RetryHelper.RetryCount = configuration.GetIntValue(ConfigurationParameters.RetryCountParameter,
-                RetryHelper.RetryCount);
+                WriteToLog, RetryHelper.RetryCount);
 
             RetryHelper.RetryTimeout = configuration.GetIntValue(ConfigurationParameters.RetryTimeoutParameter,
-                RetryHelper.RetryTimeout);
+                 WriteToLog, RetryHelper.RetryTimeout);
 
-            var tempReceiveTimeout = configuration.GetIntValue(ConfigurationParameters.ReceiveTimeoutParameter, -1);
+            var tempReceiveTimeout = configuration.GetIntValue(ConfigurationParameters.ReceiveTimeoutParameter, 
+                WriteToLog, -1);
             if (tempReceiveTimeout >= 0)
             {
                 receiveTimeout = tempReceiveTimeout;
             }
 
-            var tempServerTimeout = configuration.GetIntValue(ConfigurationParameters.ServerTimeoutParameter, -1);
+            var tempServerTimeout = configuration.GetIntValue(ConfigurationParameters.ServerTimeoutParameter, 
+                WriteToLog, -1);
             if (tempServerTimeout >= 0)
             {
                 serverTimeout = tempServerTimeout;
             }
 
-            var tempSenderThinkTime = configuration.GetIntValue(ConfigurationParameters.SenderThinkTimeParameter, -1);
+            var tempSenderThinkTime = configuration.GetIntValue(ConfigurationParameters.SenderThinkTimeParameter,
+                WriteToLog, -1);
             if (tempSenderThinkTime >= 0)
             {
                 senderThinkTime = tempSenderThinkTime;
             }
 
-            var tempReceiverThinkTime = configuration.GetIntValue(ConfigurationParameters.ReceiverThinkTimeParameter, -1);
+            var tempReceiverThinkTime = configuration.GetIntValue(ConfigurationParameters.ReceiverThinkTimeParameter, 
+                WriteToLog, -1);
             if (tempReceiverThinkTime >= 0)
             {
                 receiverThinkTime = tempReceiverThinkTime;
             }
 
             var monitorRefreshIntervalValue = configuration.GetIntValue
-                (ConfigurationParameters.MonitorRefreshIntervalParameter, -1);
+                (ConfigurationParameters.MonitorRefreshIntervalParameter, WriteToLog, -1);
             if (tempReceiverThinkTime >= 0)
             {
                 monitorRefreshInterval = tempReceiverThinkTime;
             }
 
-            var tempPrefetchCount = configuration.GetIntValue(ConfigurationParameters.PrefetchCountParameter, -1);
+            var tempPrefetchCount = configuration.GetIntValue(ConfigurationParameters.PrefetchCountParameter, WriteToLog, -1);
             if (tempPrefetchCount >= 0)
             {
                 prefetchCount = tempPrefetchCount;
             }
 
-            var tempTopValue = configuration.GetIntValue(ConfigurationParameters.TopParameter, -1);
+            var tempTopValue = configuration.GetIntValue(ConfigurationParameters.TopParameter, WriteToLog, -1);
             if (tempTopValue > 0)
             {
                 topCount = tempTopValue;

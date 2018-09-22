@@ -128,7 +128,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 else
                 {
                     WriteParsingFailure(writeToLogDelegate, userConfigFilePath,
-                        AppSettingKey, resultStringUser);
+                        AppSettingKey, resultStringUser, typeof(bool));
                 }
             }
 
@@ -143,14 +143,15 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                 else
                 {
                     WriteParsingFailure(writeToLogDelegate, userConfigFilePath,
-                        AppSettingKey, resultStringApp);
+                        AppSettingKey, resultStringApp, typeof(bool));
                 }
             }
 
             return defaultValue;
         }
 
-        public T GetEnumValue<T>(string AppSettingKey, T defaultValue = default) where T : struct
+        public T GetEnumValue<T>(string AppSettingKey, WriteToLogDelegate writeToLog = null, T defaultValue = default)
+            where T : struct
         {
             if (userConfiguration != null)
             {
@@ -161,7 +162,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                // TODO Add handling of unparsed
+                WriteParsingFailure(writeToLog, AppSettingKey, resultStringUser, userConfigFilePath,
+                    typeof(T));
             }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
@@ -173,13 +175,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                // TODO Add handling of unparsed
+                WriteParsingFailure(writeToLog, AppSettingKey, resultStringApp, userConfigFilePath,
+                    typeof(T));
             }
 
             return defaultValue;
         }
 
-        public float GetFloatValue(string AppSettingKey, float defaultValue = default)
+        public float GetFloatValue(string AppSettingKey, WriteToLogDelegate writeToLog = null, float defaultValue = default)
         {
             if (userConfiguration != null)
             {
@@ -191,7 +194,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                // TODO Add handling of unparsed
+                WriteParsingFailure(writeToLog, AppSettingKey, resultStringUser, userConfigFilePath,
+                    typeof(float));
             }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
@@ -204,13 +208,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                // TODO Add handling of unparsed
+                WriteParsingFailure(writeToLog, AppSettingKey, resultStringApp, userConfigFilePath,
+                    typeof(float));
             }
 
             return defaultValue;
         }
 
-        public int GetIntValue(string AppSettingKey, int defaultValue = default)
+        public int GetIntValue(string AppSettingKey, WriteToLogDelegate writeToLog = null, int defaultValue = default)
         {
             if (userConfiguration != null)
             {
@@ -221,7 +226,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                // TODO Add handling of unparsed
+                WriteParsingFailure(writeToLog, AppSettingKey, resultStringUser, userConfigFilePath, typeof(int));
             }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
@@ -233,7 +238,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                // TODO Add handling of unparsed
+                WriteParsingFailure(writeToLog, AppSettingKey, resultStringApp, userConfigFilePath, typeof(int));
             }
 
             return defaultValue;
@@ -314,6 +319,16 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Private static methods
+        static void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile,
+            string appSettingsKey, string value, Type type)
+        {
+            if (null != writeToLogDelegate)
+            {
+                writeToLogDelegate($"The configuration file {configFile} has a setting, {appSettingsKey}" +
+                    $" which an value, {value}, which cannot be parsed to a {type.ToString()}. " +
+                    "The setting is ignored.");
+            }
+        }
 
         static Hashtable GetHashtableFromConfigurationSection(ConfigurationSection section)
         {
@@ -477,16 +492,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             else
             {
                 userConfiguration.AppSettings.Settings[AppSettingKey].Value = stringValue;
-            }
-        }
-
-        void WriteParsingFailure(WriteToLogDelegate writeToLogDelegate, string configFile,
-            string appSettingsKey, string value)
-        {
-            if (null != writeToLogDelegate)
-            {
-                writeToLogDelegate($"The configuration file {configFile} has a setting, {appSettingsKey}" +
-                    $" which has the invalid value: {value}. It has been ignored.");
             }
         }
 
