@@ -226,7 +226,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                WriteParsingFailure(writeToLog, AppSettingKey, resultStringUser, userConfigFilePath, typeof(int));
+                WriteParsingFailure(writeToLog, userConfigFilePath, AppSettingKey, resultStringUser, 
+                    typeof(int));
             }
 
             string resultStringApp = applicationConfiguration.AppSettings.Settings[AppSettingKey]?.Value;
@@ -238,7 +239,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
                     return result;
                 }
 
-                WriteParsingFailure(writeToLog, AppSettingKey, resultStringApp, userConfigFilePath, typeof(int));
+                WriteParsingFailure(writeToLog, userConfigFilePath, AppSettingKey, resultStringApp, 
+                    typeof(int));
             }
 
             return defaultValue;
@@ -325,8 +327,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             if (null != writeToLogDelegate)
             {
                 writeToLogDelegate($"The configuration file {configFile} has a setting, {appSettingsKey}" +
-                    $" which an value, {value}, which cannot be parsed to a {type.ToString()}. " +
-                    "The setting is ignored.");
+                    $" having the value {value}, which cannot be parsed to a(n) {type.ToString()}. " +
+                    "The setting is therefore ignored.");
             }
         }
 
