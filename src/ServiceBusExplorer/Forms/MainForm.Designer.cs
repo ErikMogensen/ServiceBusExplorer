@@ -79,9 +79,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
             this.expandSubTreeMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseSubTreeMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.metricsToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.metricsSDIMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.metricsMDIMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queuesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.createQueueMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteQueuesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,6 +138,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.changeStatusTopicMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteTopicMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshTopicMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameTopicMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.exportTopicMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -321,7 +319,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.toolStripSeparator69 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem27 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem28 = new System.Windows.Forms.ToolStripMenuItem();
-            this.renameTopicMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.savedConnectionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -393,6 +391,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectToolStripMenuItem,
+            this.savedConnectionsToolStripMenuItem,
             this.toolStripSeparatorMain,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -403,20 +402,20 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
             this.connectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.connectToolStripMenuItem.Text = "&Connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // toolStripSeparatorMain
             // 
             this.toolStripSeparatorMain.Name = "toolStripSeparatorMain";
-            this.toolStripSeparatorMain.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparatorMain.Size = new System.Drawing.Size(170, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.close_Click);
             // 
@@ -679,6 +678,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // logContextMenuStrip
             // 
+            this.logContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.logContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyAllToolStripMenuItem,
             this.copySelectedToolStripMenuItem,
@@ -745,6 +745,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // rootContextMenuStrip
             // 
+            this.rootContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.rootContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteEntityMenuItem,
             this.refreshRootMenuItem,
@@ -753,17 +754,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.importEntityMenuItem,
             this.toolStripSeparator15,
             this.expandSubTreeMenuItem1,
-            this.collapseSubTreeMenuItem1,
-            this.metricsToolStripSeparator,
-            this.metricsSDIMenuItem,
-            this.metricsMDIMenuItem});
+            this.collapseSubTreeMenuItem1});
             this.rootContextMenuStrip.Name = "rootContextMenuStrip";
-            this.rootContextMenuStrip.Size = new System.Drawing.Size(237, 198);
+            this.rootContextMenuStrip.Size = new System.Drawing.Size(174, 148);
             // 
             // deleteEntityMenuItem
             // 
             this.deleteEntityMenuItem.Name = "deleteEntityMenuItem";
-            this.deleteEntityMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.deleteEntityMenuItem.Size = new System.Drawing.Size(173, 22);
             this.deleteEntityMenuItem.Text = "Delete Entities";
             this.deleteEntityMenuItem.ToolTipText = "Delete the entities contained in the current namespace.";
             this.deleteEntityMenuItem.Click += new System.EventHandler(this.deleteEntity_Click);
@@ -772,7 +770,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             this.refreshRootMenuItem.Name = "refreshRootMenuItem";
             this.refreshRootMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshRootMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.refreshRootMenuItem.Size = new System.Drawing.Size(173, 22);
             this.refreshRootMenuItem.Text = "Refresh Entities";
             this.refreshRootMenuItem.ToolTipText = "Refresh the entities contained in the current namespace.";
             this.refreshRootMenuItem.Click += new System.EventHandler(this.refreshEntityMenuItem_Click);
@@ -780,12 +778,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(233, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(170, 6);
             // 
             // exportEntityMenuItem
             // 
             this.exportEntityMenuItem.Name = "exportEntityMenuItem";
-            this.exportEntityMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.exportEntityMenuItem.Size = new System.Drawing.Size(173, 22);
             this.exportEntityMenuItem.Text = "Export Entities";
             this.exportEntityMenuItem.ToolTipText = "Export entity definition to file.";
             this.exportEntityMenuItem.Click += new System.EventHandler(this.exportEntity_Click);
@@ -793,7 +791,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // importEntityMenuItem
             // 
             this.importEntityMenuItem.Name = "importEntityMenuItem";
-            this.importEntityMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.importEntityMenuItem.Size = new System.Drawing.Size(173, 22);
             this.importEntityMenuItem.Text = "Import Entities";
             this.importEntityMenuItem.ToolTipText = "Import entity definition from file.";
             this.importEntityMenuItem.Click += new System.EventHandler(this.importEntity_Click);
@@ -801,12 +799,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(233, 6);
+            this.toolStripSeparator15.Size = new System.Drawing.Size(170, 6);
             // 
             // expandSubTreeMenuItem1
             // 
             this.expandSubTreeMenuItem1.Name = "expandSubTreeMenuItem1";
-            this.expandSubTreeMenuItem1.Size = new System.Drawing.Size(236, 22);
+            this.expandSubTreeMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.expandSubTreeMenuItem1.Text = "Expand Subtree";
             this.expandSubTreeMenuItem1.ToolTipText = "Expand the subtree.";
             this.expandSubTreeMenuItem1.Click += new System.EventHandler(this.expandEntity_Click);
@@ -814,36 +812,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // collapseSubTreeMenuItem1
             // 
             this.collapseSubTreeMenuItem1.Name = "collapseSubTreeMenuItem1";
-            this.collapseSubTreeMenuItem1.Size = new System.Drawing.Size(236, 22);
+            this.collapseSubTreeMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.collapseSubTreeMenuItem1.Text = "Collapse Subtree";
             this.collapseSubTreeMenuItem1.ToolTipText = "Collapse the subtree.";
             this.collapseSubTreeMenuItem1.Click += new System.EventHandler(this.collapseEntity_Click);
             // 
-            // metricsToolStripSeparator
-            // 
-            this.metricsToolStripSeparator.Name = "metricsToolStripSeparator";
-            this.metricsToolStripSeparator.Size = new System.Drawing.Size(233, 6);
-            // 
-            // metricsSDIMenuItem
-            // 
-            this.metricsSDIMenuItem.Name = "metricsSDIMenuItem";
-            this.metricsSDIMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.metricsSDIMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.metricsSDIMenuItem.Text = "Open Metrics in SDI Mode";
-            this.metricsSDIMenuItem.ToolTipText = "Access metrics data for the current namespace.";
-            this.metricsSDIMenuItem.Click += new System.EventHandler(this.openMetrics_Click);
-            // 
-            // metricsMDIMenuItem
-            // 
-            this.metricsMDIMenuItem.Name = "metricsMDIMenuItem";
-            this.metricsMDIMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.metricsMDIMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.metricsMDIMenuItem.Text = "Open Metrics in MDI Mode";
-            this.metricsMDIMenuItem.ToolTipText = "Access metrics data for the current namespace.";
-            this.metricsMDIMenuItem.Click += new System.EventHandler(this.openMetrics_Click);
-            // 
             // queuesContextMenuStrip
             // 
+            this.queuesContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.queuesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createQueueMenuItem,
             this.deleteQueuesMenuItem,
@@ -938,6 +914,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // ruleContextMenuStrip
             // 
+            this.ruleContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.ruleContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.removeRuleMenuItem});
             this.ruleContextMenuStrip.Name = "ruleContextMenuStrip";
@@ -953,6 +930,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // rulesContextMenuStrip
             // 
+            this.rulesContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.rulesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addRuleMenuItem2,
             this.deleteRulesMenuItem,
@@ -993,6 +971,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // subscriptionsContextMenuStrip
             // 
+            this.subscriptionsContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.subscriptionsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addSubscriptionMenuItem2,
             this.deleteSubscriptionsMenuItem,
@@ -1072,6 +1051,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // subscriptionContextMenuStrip
             // 
+            this.subscriptionContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.subscriptionContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.removeSubscriptionMenuItem,
             this.changeStatusSubscriptionMenuItem,
@@ -1276,6 +1256,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // topicContextMenuStrip
             // 
+            this.topicContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.topicContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeStatusTopicMenuItem,
             this.deleteTopicMenuItem,
@@ -1297,7 +1278,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.toolStripSeparator35,
             this.sendMessagesTopicMenuItem});
             this.topicContextMenuStrip.Name = "topicContextMenuStrip";
-            this.topicContextMenuStrip.Size = new System.Drawing.Size(200, 348);
+            this.topicContextMenuStrip.Size = new System.Drawing.Size(200, 326);
             // 
             // changeStatusTopicMenuItem
             // 
@@ -1322,6 +1303,13 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.refreshTopicMenuItem.Text = "Refresh Topic";
             this.refreshTopicMenuItem.ToolTipText = "Refresh the current topic.";
             this.refreshTopicMenuItem.Click += new System.EventHandler(this.refreshEntity_Click);
+            // 
+            // renameTopicMenuItem
+            // 
+            this.renameTopicMenuItem.Name = "renameTopicMenuItem";
+            this.renameTopicMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.renameTopicMenuItem.Text = "Rename Topic";
+            this.renameTopicMenuItem.Click += new System.EventHandler(this.renameEntity_Click);
             // 
             // toolStripSeparator6
             // 
@@ -1427,6 +1415,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // queueContextMenuStrip
             // 
+            this.queueContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.queueContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeStatusQueueMenuItem,
             this.deleteQueueMenuItem,
@@ -1625,6 +1614,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // topicsContextMenuStrip
             // 
+            this.topicsContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.topicsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createTopicMenuItem,
             this.deleteTopicsMenuItem,
@@ -1719,6 +1709,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // relayServicesContextMenuStrip
             // 
+            this.relayServicesContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.relayServicesContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem15,
             this.toolStripMenuItem16,
@@ -1799,6 +1790,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // mainMenuStrip
             // 
             this.mainMenuStrip.BackColor = System.Drawing.Color.Transparent;
+            this.mainMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -1807,12 +1799,14 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.helpToolStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
+            this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
             this.mainMenuStrip.Size = new System.Drawing.Size(1416, 24);
             this.mainMenuStrip.TabIndex = 22;
             this.mainMenuStrip.Text = "menuStrip1";
             // 
             // queueFolderContextMenuStrip
             // 
+            this.queueFolderContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.queueFolderContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.folderCreateQueueMenuItem,
             this.folderDeleteQueuesMenuItem,
@@ -1876,6 +1870,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // topicFolderContextMenuStrip
             // 
+            this.topicFolderContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.topicFolderContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.folderCreateTopicMenuItem,
             this.folderDeleteTopicsMenuItem,
@@ -1939,6 +1934,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // relayFolderContextMenuStrip
             // 
+            this.relayFolderContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.relayFolderContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.expandSubTreeMenuItem12,
             this.collapseSubTreeMenuItem12});
@@ -1963,6 +1959,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // notificationHubContextMenuStrip
             // 
+            this.notificationHubContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.notificationHubContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteNotificationHubMenuItem,
             this.refreshNotificationHubMenuItem,
@@ -2033,6 +2030,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // notificationHubsContextMenuStrip
             // 
+            this.notificationHubsContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.notificationHubsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createNotificationHubMenuItem,
             this.deleteNotificationHubsMenuItem,
@@ -2112,6 +2110,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // eventHubContextMenuStrip
             // 
+            this.eventHubContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.eventHubContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeStatusEventHubMenuItem,
             this.deleteEventHubMenuItem,
@@ -2239,6 +2238,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // eventHubsContextMenuStrip
             // 
+            this.eventHubsContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.eventHubsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createEventHubMenuItem,
             this.deleteEventHubsMenuItem,
@@ -2318,6 +2318,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // consumerGroupsContextMenuStrip
             // 
+            this.consumerGroupsContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.consumerGroupsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createConsumerGroupMenuItem1,
             this.deleteConsumerGroupsMenuItem1,
@@ -2382,6 +2383,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // partitionContextMenuStrip
             // 
+            this.partitionContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.partitionContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshPartitionMenuItem,
             this.toolStripSeparator58,
@@ -2442,6 +2444,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // partitionsContextMenuStrip
             // 
+            this.partitionsContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.partitionsContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshPartitionsMenuItem,
             this.toolStripSeparator57,
@@ -2482,6 +2485,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // consumerGroupContextMenuStrip
             // 
+            this.consumerGroupContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.consumerGroupContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteConsumerGroupMenuItem,
             this.refreshConsumerGroupMenuItem,
@@ -2580,14 +2584,16 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.logoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.logoPictureBox.BackgroundImage = global::Microsoft.Azure.ServiceBusExplorer.Properties.Resources.MicrosoftAzureWhiteLogo;
             this.logoPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.logoPictureBox.Location = new System.Drawing.Point(1290, 13);
+            this.logoPictureBox.Location = new System.Drawing.Point(1304, 16);
+            this.logoPictureBox.Margin = new System.Windows.Forms.Padding(4);
             this.logoPictureBox.Name = "logoPictureBox";
-            this.logoPictureBox.Size = new System.Drawing.Size(110, 14);
+            this.logoPictureBox.Size = new System.Drawing.Size(96, 12);
             this.logoPictureBox.TabIndex = 23;
             this.logoPictureBox.TabStop = false;
             // 
             // relayServiceFolderContextMenuStrip
             // 
+            this.relayServiceFolderContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.relayServiceFolderContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
             this.toolStripMenuItem2,
@@ -2651,6 +2657,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             // 
             // relayContextMenuStrip
             // 
+            this.relayContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.relayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteRelayMenuItem,
             this.refreshRelayMenuItem,
@@ -2728,12 +2735,12 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.toolStripMenuItem28.ToolTipText = "Test the current relay in MDI mode.";
             this.toolStripMenuItem28.Click += new System.EventHandler(this.testEntityInMDIMode_Click);
             // 
-            // renameTopicMenuItem
+            // savedConnectionsToolStripMenuItem
             // 
-            this.renameTopicMenuItem.Name = "renameTopicMenuItem";
-            this.renameTopicMenuItem.Size = new System.Drawing.Size(199, 22);
-            this.renameTopicMenuItem.Text = "Rename Topic";
-            this.renameTopicMenuItem.Click += new System.EventHandler(this.renameEntity_Click);
+            this.savedConnectionsToolStripMenuItem.Enabled = false;
+            this.savedConnectionsToolStripMenuItem.Name = "savedConnectionsToolStripMenuItem";
+            this.savedConnectionsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.savedConnectionsToolStripMenuItem.Text = "&Saved connections";
             // 
             // MainForm
             // 
@@ -2961,9 +2968,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private System.Windows.Forms.ToolStripSeparator getQueueMessageSessionsSeparator;
         private System.Windows.Forms.ToolStripMenuItem getSubscriptionMessageSessionsMenuItem;
         private System.Windows.Forms.ToolStripSeparator getSubscriptionMessageSessionsSeparator;
-        private System.Windows.Forms.ToolStripSeparator metricsToolStripSeparator;
-        private System.Windows.Forms.ToolStripMenuItem metricsSDIMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem metricsMDIMenuItem;
         private System.Windows.Forms.ContextMenuStrip notificationHubContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem deleteNotificationHubMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshNotificationHubMenuItem;
@@ -3090,6 +3094,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         private System.Windows.Forms.ToolStripMenuItem subscriptionReceiveTransferDeadletterQueueMessagesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameQueueMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameTopicMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem savedConnectionsToolStripMenuItem;
     }
 }
 

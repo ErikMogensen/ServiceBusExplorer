@@ -19,24 +19,59 @@
 //=======================================================================================
 #endregion
 
+#region Using Directives
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+#endregion
+
+
 namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 {
-    public class MetricDataPoint
+    public class UserPropertyWrapper
     {
-        #region Public Properties
-        public string Entity { get; set; }
-        public string Type { get; set; }
-        public string Metric { get; set; }
-        public string Granularity { get; set; }
-        public string FilterOperator1 { get; set; }
-        public string FilterValue1 { get; set; }
-        public string FilterOperator2 { get; set; }
-        public string FilterValue2 { get; set; }
-        private bool graph = true;
-        public bool Graph
+        #region Private Fields
+        private string name;
+        private object val;
+        #endregion
+
+        #region Public Constructor
+		public UserPropertyWrapper()
         {
-            get { return graph; }
-            set { graph = value; }
+        }
+
+        public UserPropertyWrapper(KeyValuePair<string, object> property)
+        {
+            name = property.Key;
+            val = property.Value;
+        }
+	    #endregion
+
+        #region Public Properties
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value; 
+            }
+        }
+
+        public object Value
+        {
+            get
+            {
+                return val;
+            }
+            set
+            {
+                val = value;
+            }
         }
         #endregion
     }

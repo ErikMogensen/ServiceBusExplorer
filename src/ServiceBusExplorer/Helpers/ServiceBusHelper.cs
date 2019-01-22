@@ -40,6 +40,7 @@ using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.ServiceBusExplorer.Controls;
 using Microsoft.Azure.ServiceBusExplorer.Forms;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
+using Microsoft.Azure.ServiceBusExplorer.Enums;
 #endregion
 
 // ReSharper disable CheckNamespace
@@ -180,6 +181,7 @@ namespace Microsoft.Azure.ServiceBusExplorer
         private ServiceBus.TokenProvider tokenProvider;
         private NotificationHubs.TokenProvider notificationHubTokenProvider;
         private Uri namespaceUri;
+        private ServiceBusNamespaceType connectionStringType;
         private Uri atomFeedUri;
         private string ns;
         private string servicePath;
@@ -266,12 +268,13 @@ namespace Microsoft.Azure.ServiceBusExplorer
             get
             {
                 string uri;
-                return namespaceUri != null &&
+                return connectionStringType == ServiceBusNamespaceType.Cloud ||
+                      (namespaceUri != null &&
                        !string.IsNullOrWhiteSpace(uri = namespaceUri.ToString()) &&
                        (uri.Contains(CloudServiceBusPostfix) ||
                         uri.Contains(TestServiceBusPostFix) ||
                         uri.Contains(GermanyServiceBusPostfix) ||
-                        uri.Contains(ChinaServiceBusPostfix));
+                        uri.Contains(ChinaServiceBusPostfix)));
             }
         }
 
@@ -900,6 +903,7 @@ namespace Microsoft.Azure.ServiceBusExplorer
 
                 // Create the service URI using the uri specified in the Connect form
                 namespaceUri = new Uri(uri);
+                connectionStringType = ServiceBusNamespaceType.Cloud;
                 if (!string.IsNullOrWhiteSpace(namespaceUri.Host) &&
                     namespaceUri.Host.Contains('.'))
                 {
@@ -1015,13 +1019,18 @@ namespace Microsoft.Azure.ServiceBusExplorer
         {
             this.serviceBusNamespaceInstance = serviceBusNamespace;
 
+            if (string.IsNullOrWhiteSpace(serviceBusNamespace?.ConnectionString))
+            {
+                throw new ArgumentException(ServiceBusConnectionStringCannotBeNull);
+            }
+
+            if (!TestNamespaceHostIsContactable(serviceBusNamespace))
+            {
+                throw new Exception($"Could not contact host in connection string: { serviceBusNamespace.ConnectionString }.");
+            }
+
             Func<bool> func = (() =>
             {
-                if (string.IsNullOrWhiteSpace(serviceBusNamespace?.ConnectionString))
-                {
-                    throw new ArgumentException(ServiceBusConnectionStringCannotBeNull);
-                }
-
                 connectionString = serviceBusNamespace.ConnectionString;
                 currentIssuerName = serviceBusNamespace.IssuerName;
                 currentIssuerSecret = serviceBusNamespace.IssuerSecret;
@@ -1074,6 +1083,7 @@ namespace Microsoft.Azure.ServiceBusExplorer
                 }
                 WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, ServiceBusIsConnected, namespaceManager.Address.AbsoluteUri));
                 namespaceUri = namespaceManager.Address;
+                connectionStringType = serviceBusNamespace.ConnectionStringType;
                 ns = IsCloudNamespace ? namespaceUri.Host.Split('.')[0] : namespaceUri.Segments[namespaceUri.Segments.Length - 1];
                 atomFeedUri = new Uri($"{Uri.UriSchemeHttp}://{namespaceUri.Host}");
 
@@ -2915,7 +2925,6 @@ namespace Microsoft.Azure.ServiceBusExplorer
                                                 replyToSessionId,
                                                 timeToLive,
                                                 scheduledEnqueueTimeUtc,
-                                                forcePersistence,
                                                 properties);
         }
 
@@ -2934,7 +2943,6 @@ namespace Microsoft.Azure.ServiceBusExplorer
         /// <param name="replyToSessionId">The value of the ReplyToSessionId property of the message.</param>
         /// <param name="timeToLive">The value of the TimeToLive property of the message.</param>
         /// <param name="scheduledEnqueueTimeUtc">The receiveTimeout in seconds after which the message will be enqueued.</param>
-        /// <param name="forcePersistence">The value of the ForcePersistence property of the message.</param>
         /// <param name="properties">The user-defined properties of the message.</param>
         /// <returns>The newly created BrokeredMessage object.</returns>
         public BrokeredMessage CreateBrokeredMessageTemplate(Stream stream,
@@ -2949,7 +2957,6 @@ namespace Microsoft.Azure.ServiceBusExplorer
                                                              string replyToSessionId,
                                                              string timeToLive,
                                                              string scheduledEnqueueTimeUtc,
-                                                             bool forcePersistence,
                                                              IEnumerable<MessagePropertyInfo> properties)
         {
             var warningCollection = new ConcurrentBag<string>();
@@ -4508,7 +4515,7 @@ namespace Microsoft.Azure.ServiceBusExplorer
                             messageList = messageEnumerable as IList<BrokeredMessage> ?? messageEnumerable.ToList();
                             if (messageInspector != null)
                             {
-                                messageList = messageList.Select(b => messageInspector.AfterReceiveMessage(b, writeToLog)).ToList();
+                                messageList = messageList.Select(b => messageInspector.AfterReceiveMessage(b)).ToList();
                             }
                             isCompleted = messageEnumerable == null || !messageList.Any();
                             if (isCompleted)
@@ -5426,8 +5433,7 @@ namespace Microsoft.Azure.ServiceBusExplorer
         /// <param name="deadletterQueue">This parameter indicates whether to read messages from the deadletter queue.</param>
         /// <param name="receiveTimeout">Receive receiveTimeout.</param>
         /// <param name="sessionTimeout">Session timeout</param>
-        /// <param name="cancellationTokenSource">Cancellation token source.</param>
-        public void ReceiveMessages(EntityDescription entityDescription, int? messageCount, bool complete, bool deadletterQueue, TimeSpan receiveTimeout, TimeSpan sessionTimeout, CancellationTokenSource cancellationTokenSource)
+        public void ReceiveMessages(EntityDescription entityDescription, int? messageCount, bool complete, bool deadletterQueue, TimeSpan receiveTimeout, TimeSpan sessionTimeout)
         {
             // ReSharper disable once CollectionNeverQueried.Local
             var receiverList = new List<MessageReceiver>();
@@ -5845,6 +5851,26 @@ namespace Microsoft.Azure.ServiceBusExplorer
                     return Encoding.UTF8;
             }
         }
+
+        private static bool TestNamespaceHostIsContactable(ServiceBusNamespace serviceBusNamespace)
+        {
+            if (!Uri.TryCreate(serviceBusNamespace.Uri, UriKind.Absolute, out var namespaceUri))
+            {
+                return false;
+            }
+
+            try
+            {
+                System.Net.Dns.GetHostEntry(namespaceUri.Host);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         #endregion
     }
 }

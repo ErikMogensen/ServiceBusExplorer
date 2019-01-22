@@ -31,14 +31,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
 {
     public partial class ClipboardForm : Form
     {
-        #region Private Constants
-        //***************************
-        // Message
-        //***************************
-        private const string MessageFormat = "The [{0}] {1} will be permanently deleted.";
-        private const string Unknown = "Unknown";
-        #endregion
-
         #region Public Constructor
         public ClipboardForm(string url)
         {
@@ -83,6 +75,6 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
         {
             e.Graphics.DrawLine(new Pen(Color.FromArgb(153, 180, 209), 1), 0, mainPanel.Size.Height - 1, mainPanel.Size.Width, mainPanel.Size.Height - 1);
         }
-        #endregion
+        #endregion 
     }
 }

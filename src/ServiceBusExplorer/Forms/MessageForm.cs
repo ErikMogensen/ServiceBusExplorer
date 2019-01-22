@@ -34,6 +34,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
 using Microsoft.ServiceBus.Messaging;
+using FastColoredTextBoxNS;
 
 #endregion
 
@@ -108,11 +109,26 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             this.writeToLog = writeToLog;
             InitializeComponent();
 
-            cboBodyType.SelectedIndex = 0;
+            cboBodyType.SelectedIndex = (int)MainForm.SingletonMainForm.MessageBodyType;
 
             messagePropertyGrid.SelectedObject = brokeredMessage;
 
-            txtMessageText.Text = JsonSerializerHelper.Indent(XmlHelper.Indent(serviceBusHelper.GetMessageText(brokeredMessage, out _)));
+            var messageText = serviceBusHelper.GetMessageText(brokeredMessage, out _);
+
+            if (JsonSerializerHelper.IsJson(messageText))
+            {
+                txtMessageText.Language = Language.JSON;
+                txtMessageText.Text = JsonSerializerHelper.Indent(messageText);
+            }
+            else if (XmlHelper.IsXml(messageText))
+            {
+                txtMessageText.Language = Language.HTML;
+                txtMessageText.Text = XmlHelper.Indent(messageText);
+            }
+            else
+            {
+                txtMessageText.Text = messageText;
+            }
 
             // Initialize the DataGridView.
             bindingSource.DataSource = new BindingList<MessagePropertyInfo>(brokeredMessage.Properties.Select(p => new MessagePropertyInfo(p.Key,
@@ -217,7 +233,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             Size = new Size(Size.Width - 104, 80);
             cboSenderInspector.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
-            cboBodyType.SelectedIndex = 0;
+            cboBodyType.SelectedIndex = (int)MainForm.SingletonMainForm.MessageBodyType;
 
             // Get Brokered Message Inspector classes
             cboSenderInspector.Items.Add(SelectBrokeredMessageInspector);
@@ -481,7 +497,23 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                         }
                         else
                         {
-                            await messageSender.SendBatchAsync(outboundMessages);
+                            var messageIndex = 0;
+                            try
+                            {
+                                while(messageIndex < outboundMessages.Count)
+                                {
+                                    await messageSender.SendAsync(outboundMessages[messageIndex++]);
+                                }
+                            }
+                            catch (Exception exception)
+                            {
+                                Application.UseWaitCursor = false;
+                                var messageText = $"{outboundMessages.Count} were selected but only" +
+                                    $" {messageIndex} messages were sent. The error message is: {exception.Message}";
+                                MessageBox.Show(messageText, "Not all selected messages were sent",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            }
+
                             stopwatch.Stop();
                             writeToLog(string.Format(MessageSentMessage, sent, messageSender.Path, stopwatch.ElapsedMilliseconds));
                         }

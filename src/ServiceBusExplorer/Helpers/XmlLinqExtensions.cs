@@ -21,27 +21,36 @@
 
 #region Using Directives
 
-using System.Collections.Generic;
-using System.Xml.Serialization;
+using System.Xml.Linq;
 
 #endregion
 
 namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 {
-    [XmlRoot(ElementName = "MetricDataPoints", Namespace = "http://schemas.microsoft.com/servicebusexplorer")]
-    [XmlType(TypeName = "MetricDataPoints", Namespace = "http://schemas.microsoft.com/servicebusexplorer")]
-    public class MetricDataPointList : List<MetricDataPoint>
+    public static class XmlLinqExtensions
     {
-        #region Public Constructors
-        public MetricDataPointList()
-        {}
+        public static XElement AquireElement(this XContainer container,
+            string name, bool addFirst = false)
+        {
+            var element = container.Element(name);
 
-        public MetricDataPointList(int capacity): base(capacity)
-        {}
+            if (null != element)
+            {
+                return element;
+            }
 
-        public MetricDataPointList(IEnumerable<MetricDataPoint> collection)
-            : base(collection)
-        {}
-        #endregion
+            element = new XElement(name);
+
+            if (addFirst)
+            {
+                container.AddFirst(element);
+            }
+            else
+            {
+                container.Add(element);
+            }
+
+            return element;
+        }
     }
 }

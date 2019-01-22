@@ -22,19 +22,23 @@
 #region Using Directives
 
 using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 #endregion
 
 namespace Microsoft.Azure.ServiceBusExplorer.Helpers
 {
-    public class MetricValue
+    internal static class NativeMethods
     {
-        #region Public Propeties
-        public long Min { get; set; }
-        public long Max { get; set; }
-        public long Total { get; set; }
-        public double Average { get; set; }
-        public DateTime Timestamp { get; set; }
+        #region DllImports
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "SendMessageA", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
+        internal static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+
         #endregion
     }
 }

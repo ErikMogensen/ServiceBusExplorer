@@ -18,28 +18,26 @@
             this.components = new System.ComponentModel.Container();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tabPageDescription = new System.Windows.Forms.TabPage();
-            this.grouperPath = new Grouper();
+            this.grouperPath = new Microsoft.Azure.ServiceBusExplorer.Controls.Grouper();
             this.lblRelativeURI = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
-            this.grouperEventHubProperties = new Grouper();
-            this.lblPartitionCount = new System.Windows.Forms.Label();
-            this.trackBarPartitionCount = new CustomTrackBar();
-            this.lblPartitionCountValue = new System.Windows.Forms.Label();
-            this.txtMessageRetentionInDays = new NumericTextBox();
+            this.grouperEventHubProperties = new Microsoft.Azure.ServiceBusExplorer.Controls.Grouper();
+            this.lblMessageRetentionInDaysValue = new System.Windows.Forms.Label();
             this.lblMessageRetentionInDays = new System.Windows.Forms.Label();
+            this.trackBarMessageRetentionInDays = new Microsoft.Azure.ServiceBusExplorer.Controls.CustomTrackBar();
+            this.lblPartitionCount = new System.Windows.Forms.Label();
+            this.trackBarPartitionCount = new Microsoft.Azure.ServiceBusExplorer.Controls.CustomTrackBar();
+            this.lblPartitionCountValue = new System.Windows.Forms.Label();
             this.txtUserMetadata = new System.Windows.Forms.TextBox();
             this.lblUserMetadata = new System.Windows.Forms.Label();
-            this.grouperEventHubInformation = new Grouper();
+            this.grouperEventHubInformation = new Microsoft.Azure.ServiceBusExplorer.Controls.Grouper();
             this.propertyListView = new System.Windows.Forms.ListView();
             this.nameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.valueColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabPageAuthorization = new System.Windows.Forms.TabPage();
-            this.grouperAuthorizationRuleList = new Grouper();
+            this.grouperAuthorizationRuleList = new Microsoft.Azure.ServiceBusExplorer.Controls.Grouper();
             this.authorizationRulesDataGridView = new System.Windows.Forms.DataGridView();
-            this.tabPageMetrics = new System.Windows.Forms.TabPage();
-            this.grouperDatapoints = new Grouper();
-            this.dataPointDataGridView = new System.Windows.Forms.DataGridView();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnChangeStatus = new System.Windows.Forms.Button();
             this.btnCancelUpdate = new System.Windows.Forms.Button();
@@ -47,8 +45,7 @@
             this.authorizationRulesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.entityInformationContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyPartitionInformationToClipboardMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnMetrics = new System.Windows.Forms.Button();
-            this.btnCloseTabs = new System.Windows.Forms.Button();
+            this.dataPointDataGridView = new System.Windows.Forms.DataGridView();
             this.tabPageDescription.SuspendLayout();
             this.grouperPath.SuspendLayout();
             this.grouperEventHubProperties.SuspendLayout();
@@ -57,11 +54,9 @@
             this.tabPageAuthorization.SuspendLayout();
             this.grouperAuthorizationRuleList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.authorizationRulesDataGridView)).BeginInit();
-            this.tabPageMetrics.SuspendLayout();
-            this.grouperDatapoints.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataPointDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.authorizationRulesBindingSource)).BeginInit();
             this.entityInformationContextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataPointDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // tabPageDescription
@@ -81,7 +76,7 @@
             // 
             this.grouperPath.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.grouperPath.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperPath.BackgroundGradientMode = Grouper.GroupBoxGradientMode.None;
+            this.grouperPath.BackgroundGradientMode = Microsoft.Azure.ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperPath.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperPath.BorderThickness = 1F;
             this.grouperPath.Controls.Add(this.lblRelativeURI);
@@ -122,6 +117,7 @@
             this.txtPath.Name = "txtPath";
             this.txtPath.Size = new System.Drawing.Size(576, 20);
             this.txtPath.TabIndex = 0;
+            this.txtPath.TextChanged += new System.EventHandler(this.txtPath_TextChanged);
             // 
             // grouperEventHubProperties
             // 
@@ -129,14 +125,15 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.grouperEventHubProperties.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.grouperEventHubProperties.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperEventHubProperties.BackgroundGradientMode = Grouper.GroupBoxGradientMode.None;
+            this.grouperEventHubProperties.BackgroundGradientMode = Microsoft.Azure.ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperEventHubProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperEventHubProperties.BorderThickness = 1F;
+            this.grouperEventHubProperties.Controls.Add(this.lblMessageRetentionInDaysValue);
+            this.grouperEventHubProperties.Controls.Add(this.lblMessageRetentionInDays);
+            this.grouperEventHubProperties.Controls.Add(this.trackBarMessageRetentionInDays);
             this.grouperEventHubProperties.Controls.Add(this.lblPartitionCount);
             this.grouperEventHubProperties.Controls.Add(this.trackBarPartitionCount);
             this.grouperEventHubProperties.Controls.Add(this.lblPartitionCountValue);
-            this.grouperEventHubProperties.Controls.Add(this.txtMessageRetentionInDays);
-            this.grouperEventHubProperties.Controls.Add(this.lblMessageRetentionInDays);
             this.grouperEventHubProperties.Controls.Add(this.txtUserMetadata);
             this.grouperEventHubProperties.Controls.Add(this.lblUserMetadata);
             this.grouperEventHubProperties.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
@@ -154,6 +151,53 @@
             this.grouperEventHubProperties.ShadowThickness = 1;
             this.grouperEventHubProperties.Size = new System.Drawing.Size(608, 344);
             this.grouperEventHubProperties.TabIndex = 3;
+            // 
+            // lblMessageRetentionInDaysValue
+            // 
+            this.lblMessageRetentionInDaysValue.AutoSize = true;
+            this.lblMessageRetentionInDaysValue.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblMessageRetentionInDaysValue.Location = new System.Drawing.Point(272, 316);
+            this.lblMessageRetentionInDaysValue.Name = "lblMessageRetentionInDaysValue";
+            this.lblMessageRetentionInDaysValue.Size = new System.Drawing.Size(19, 13);
+            this.lblMessageRetentionInDaysValue.TabIndex = 38;
+            this.lblMessageRetentionInDaysValue.Text = "16";
+            // 
+            // lblMessageRetentionInDays
+            // 
+            this.lblMessageRetentionInDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMessageRetentionInDays.AutoSize = true;
+            this.lblMessageRetentionInDays.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblMessageRetentionInDays.Location = new System.Drawing.Point(16, 296);
+            this.lblMessageRetentionInDays.Name = "lblMessageRetentionInDays";
+            this.lblMessageRetentionInDays.Size = new System.Drawing.Size(141, 13);
+            this.lblMessageRetentionInDays.TabIndex = 28;
+            this.lblMessageRetentionInDays.Text = "Message Retention In Days:";
+            // 
+            // trackBarMessageRetentionInDays
+            // 
+            this.trackBarMessageRetentionInDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.trackBarMessageRetentionInDays.BackColor = System.Drawing.Color.Transparent;
+            this.trackBarMessageRetentionInDays.BorderColor = System.Drawing.Color.Black;
+            this.trackBarMessageRetentionInDays.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.trackBarMessageRetentionInDays.ForeColor = System.Drawing.Color.Black;
+            this.trackBarMessageRetentionInDays.IndentHeight = 6;
+            this.trackBarMessageRetentionInDays.LargeChange = 1;
+            this.trackBarMessageRetentionInDays.Location = new System.Drawing.Point(16, 308);
+            this.trackBarMessageRetentionInDays.Maximum = 7;
+            this.trackBarMessageRetentionInDays.Minimum = 1;
+            this.trackBarMessageRetentionInDays.Name = "trackBarMessageRetentionInDays";
+            this.trackBarMessageRetentionInDays.Size = new System.Drawing.Size(256, 29);
+            this.trackBarMessageRetentionInDays.TabIndex = 37;
+            this.trackBarMessageRetentionInDays.TextTickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBarMessageRetentionInDays.TickColor = System.Drawing.Color.Black;
+            this.trackBarMessageRetentionInDays.TickHeight = 4;
+            this.trackBarMessageRetentionInDays.TrackerColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(125)))), ((int)(((byte)(150)))));
+            this.trackBarMessageRetentionInDays.TrackerSize = new System.Drawing.Size(12, 12);
+            this.trackBarMessageRetentionInDays.TrackLineBrushStyle = Microsoft.Azure.ServiceBusExplorer.Controls.BrushStyle.Solid;
+            this.trackBarMessageRetentionInDays.TrackLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(125)))), ((int)(((byte)(150)))));
+            this.trackBarMessageRetentionInDays.TrackLineHeight = 1;
+            this.trackBarMessageRetentionInDays.Value = 1;
+            this.trackBarMessageRetentionInDays.ValueChanged += new Microsoft.Azure.ServiceBusExplorer.Controls.ValueChangedHandler(this.trackBarMessageRetentionInDays_ValueChanged);
             // 
             // lblPartitionCount
             // 
@@ -177,20 +221,21 @@
             this.trackBarPartitionCount.LargeChange = 1;
             this.trackBarPartitionCount.Location = new System.Drawing.Point(312, 308);
             this.trackBarPartitionCount.Maximum = 32;
-            this.trackBarPartitionCount.Minimum = 8;
+            this.trackBarPartitionCount.Minimum = 2;
             this.trackBarPartitionCount.Name = "trackBarPartitionCount";
             this.trackBarPartitionCount.Size = new System.Drawing.Size(256, 29);
             this.trackBarPartitionCount.TabIndex = 36;
             this.trackBarPartitionCount.TextTickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBarPartitionCount.TickColor = System.Drawing.Color.Black;
+            this.trackBarPartitionCount.TickFrequency = 5;
             this.trackBarPartitionCount.TickHeight = 4;
             this.trackBarPartitionCount.TrackerColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(125)))), ((int)(((byte)(150)))));
             this.trackBarPartitionCount.TrackerSize = new System.Drawing.Size(12, 12);
-            this.trackBarPartitionCount.TrackLineBrushStyle = BrushStyle.Solid;
+            this.trackBarPartitionCount.TrackLineBrushStyle = Microsoft.Azure.ServiceBusExplorer.Controls.BrushStyle.Solid;
             this.trackBarPartitionCount.TrackLineColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(125)))), ((int)(((byte)(150)))));
             this.trackBarPartitionCount.TrackLineHeight = 1;
-            this.trackBarPartitionCount.Value = 16;
-            this.trackBarPartitionCount.ValueChanged += new ValueChangedHandler(this.trackBarPartitionCount_ValueChanged);
+            this.trackBarPartitionCount.Value = 2;
+            this.trackBarPartitionCount.ValueChanged += new Microsoft.Azure.ServiceBusExplorer.Controls.ValueChangedHandler(this.trackBarPartitionCount_ValueChanged);
             // 
             // lblPartitionCountValue
             // 
@@ -202,26 +247,6 @@
             this.lblPartitionCountValue.TabIndex = 35;
             this.lblPartitionCountValue.Text = "16";
             // 
-            // txtMessageRetentionInDays
-            // 
-            this.txtMessageRetentionInDays.AllowSpace = false;
-            this.txtMessageRetentionInDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtMessageRetentionInDays.Location = new System.Drawing.Point(16, 312);
-            this.txtMessageRetentionInDays.Name = "txtMessageRetentionInDays";
-            this.txtMessageRetentionInDays.Size = new System.Drawing.Size(280, 20);
-            this.txtMessageRetentionInDays.TabIndex = 29;
-            // 
-            // lblMessageRetentionInDays
-            // 
-            this.lblMessageRetentionInDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblMessageRetentionInDays.AutoSize = true;
-            this.lblMessageRetentionInDays.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblMessageRetentionInDays.Location = new System.Drawing.Point(16, 296);
-            this.lblMessageRetentionInDays.Name = "lblMessageRetentionInDays";
-            this.lblMessageRetentionInDays.Size = new System.Drawing.Size(141, 13);
-            this.lblMessageRetentionInDays.TabIndex = 28;
-            this.lblMessageRetentionInDays.Text = "Message Retention In Days:";
-            // 
             // txtUserMetadata
             // 
             this.txtUserMetadata.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -229,6 +254,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUserMetadata.BackColor = System.Drawing.SystemColors.Window;
             this.txtUserMetadata.Location = new System.Drawing.Point(16, 48);
+            this.txtUserMetadata.MaxLength = 0;
             this.txtUserMetadata.Multiline = true;
             this.txtUserMetadata.Name = "txtUserMetadata";
             this.txtUserMetadata.Size = new System.Drawing.Size(576, 240);
@@ -251,7 +277,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grouperEventHubInformation.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.grouperEventHubInformation.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperEventHubInformation.BackgroundGradientMode = Grouper.GroupBoxGradientMode.None;
+            this.grouperEventHubInformation.BackgroundGradientMode = Microsoft.Azure.ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperEventHubInformation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperEventHubInformation.BorderThickness = 1F;
             this.grouperEventHubInformation.Controls.Add(this.propertyListView);
@@ -308,7 +334,6 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainTabControl.Controls.Add(this.tabPageDescription);
             this.mainTabControl.Controls.Add(this.tabPageAuthorization);
-            this.mainTabControl.Controls.Add(this.tabPageMetrics);
             this.mainTabControl.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.mainTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.mainTabControl.Location = new System.Drawing.Point(16, 16);
@@ -317,7 +342,6 @@
             this.mainTabControl.Size = new System.Drawing.Size(976, 480);
             this.mainTabControl.TabIndex = 19;
             this.mainTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.mainTabControl_DrawItem);
-            this.mainTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.mainTabControl_Selected);
             // 
             // tabPageAuthorization
             // 
@@ -337,7 +361,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grouperAuthorizationRuleList.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.grouperAuthorizationRuleList.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperAuthorizationRuleList.BackgroundGradientMode = Grouper.GroupBoxGradientMode.None;
+            this.grouperAuthorizationRuleList.BackgroundGradientMode = Microsoft.Azure.ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperAuthorizationRuleList.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperAuthorizationRuleList.BorderThickness = 1F;
             this.grouperAuthorizationRuleList.Controls.Add(this.authorizationRulesDataGridView);
@@ -385,66 +409,6 @@
             this.authorizationRulesDataGridView.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.authorizationRulesDataGridView_RowsRemoved);
             this.authorizationRulesDataGridView.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.authorizationRulesDataGridView_UserDeletingRow);
             this.authorizationRulesDataGridView.Resize += new System.EventHandler(this.authorizationRulesDataGridView_Resize);
-            // 
-            // tabPageMetrics
-            // 
-            this.tabPageMetrics.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.tabPageMetrics.Controls.Add(this.grouperDatapoints);
-            this.tabPageMetrics.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tabPageMetrics.Location = new System.Drawing.Point(4, 24);
-            this.tabPageMetrics.Name = "tabPageMetrics";
-            this.tabPageMetrics.Size = new System.Drawing.Size(968, 452);
-            this.tabPageMetrics.TabIndex = 4;
-            this.tabPageMetrics.Text = "Metrics";
-            // 
-            // grouperDatapoints
-            // 
-            this.grouperDatapoints.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grouperDatapoints.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.grouperDatapoints.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperDatapoints.BackgroundGradientMode = Grouper.GroupBoxGradientMode.None;
-            this.grouperDatapoints.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperDatapoints.BorderThickness = 1F;
-            this.grouperDatapoints.Controls.Add(this.dataPointDataGridView);
-            this.grouperDatapoints.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperDatapoints.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.grouperDatapoints.ForeColor = System.Drawing.Color.White;
-            this.grouperDatapoints.GroupImage = null;
-            this.grouperDatapoints.GroupTitle = "Metrics Rules";
-            this.grouperDatapoints.Location = new System.Drawing.Point(16, 8);
-            this.grouperDatapoints.Name = "grouperDatapoints";
-            this.grouperDatapoints.Padding = new System.Windows.Forms.Padding(20);
-            this.grouperDatapoints.PaintGroupBox = true;
-            this.grouperDatapoints.RoundCorners = 4;
-            this.grouperDatapoints.ShadowColor = System.Drawing.Color.DarkGray;
-            this.grouperDatapoints.ShadowControl = false;
-            this.grouperDatapoints.ShadowThickness = 1;
-            this.grouperDatapoints.Size = new System.Drawing.Size(936, 432);
-            this.grouperDatapoints.TabIndex = 3;
-            // 
-            // dataPointDataGridView
-            // 
-            this.dataPointDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataPointDataGridView.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.dataPointDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dataPointDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataPointDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataPointDataGridView.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.dataPointDataGridView.Location = new System.Drawing.Point(16, 32);
-            this.dataPointDataGridView.Name = "dataPointDataGridView";
-            this.dataPointDataGridView.RowHeadersWidth = 24;
-            this.dataPointDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataPointDataGridView.Size = new System.Drawing.Size(904, 384);
-            this.dataPointDataGridView.TabIndex = 27;
-            this.dataPointDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataPointDataGridView_CellClick);
-            this.dataPointDataGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataPointDataGridView_DataError);
-            this.dataPointDataGridView.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataPointDataGridView_RowsAdded);
-            this.dataPointDataGridView.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dataPointDataGridView_RowsRemoved);
-            this.dataPointDataGridView.Resize += new System.EventHandler(this.dataPointDataGridView_Resize);
             // 
             // btnRefresh
             // 
@@ -524,6 +488,7 @@
             // 
             // entityInformationContextMenuStrip
             // 
+            this.entityInformationContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.entityInformationContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyPartitionInformationToClipboardMenuItem});
             this.entityInformationContextMenuStrip.Name = "registrationContextMenuStrip";
@@ -537,48 +502,18 @@
             this.copyPartitionInformationToClipboardMenuItem.ToolTipText = "Copy event hub information to clipboard.";
             this.copyPartitionInformationToClipboardMenuItem.Click += new System.EventHandler(this.copyPartitionInformationToClipboardMenuItem_Click);
             // 
-            // btnMetrics
+            // dataPointDataGridView
             // 
-            this.btnMetrics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMetrics.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.btnMetrics.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnMetrics.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnMetrics.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnMetrics.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMetrics.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnMetrics.Location = new System.Drawing.Point(520, 504);
-            this.btnMetrics.Name = "btnMetrics";
-            this.btnMetrics.Size = new System.Drawing.Size(72, 24);
-            this.btnMetrics.TabIndex = 0;
-            this.btnMetrics.Text = "Get Metrics";
-            this.btnMetrics.UseVisualStyleBackColor = false;
-            this.btnMetrics.Click += new System.EventHandler(this.btnMetrics_Click);
-            // 
-            // btnCloseTabs
-            // 
-            this.btnCloseTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCloseTabs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.btnCloseTabs.Enabled = false;
-            this.btnCloseTabs.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnCloseTabs.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnCloseTabs.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnCloseTabs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCloseTabs.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnCloseTabs.Location = new System.Drawing.Point(600, 504);
-            this.btnCloseTabs.Name = "btnCloseTabs";
-            this.btnCloseTabs.Size = new System.Drawing.Size(72, 24);
-            this.btnCloseTabs.TabIndex = 1;
-            this.btnCloseTabs.Text = "Close Tabs";
-            this.btnCloseTabs.UseVisualStyleBackColor = false;
-            this.btnCloseTabs.Click += new System.EventHandler(this.btnCloseTabs_Click);
+            this.dataPointDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.dataPointDataGridView.Name = "dataPointDataGridView";
+            this.dataPointDataGridView.Size = new System.Drawing.Size(240, 150);
+            this.dataPointDataGridView.TabIndex = 0;
             // 
             // HandleEventHubControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.Controls.Add(this.btnCloseTabs);
-            this.Controls.Add(this.btnMetrics);
             this.Controls.Add(this.mainTabControl);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnChangeStatus);
@@ -596,11 +531,9 @@
             this.tabPageAuthorization.ResumeLayout(false);
             this.grouperAuthorizationRuleList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.authorizationRulesDataGridView)).EndInit();
-            this.tabPageMetrics.ResumeLayout(false);
-            this.grouperDatapoints.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataPointDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.authorizationRulesBindingSource)).EndInit();
             this.entityInformationContextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataPointDataGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -628,17 +561,14 @@
         private Grouper grouperAuthorizationRuleList;
         private System.Windows.Forms.DataGridView authorizationRulesDataGridView;
         private System.Windows.Forms.Label lblPartitionCount;
-        private NumericTextBox txtMessageRetentionInDays;
         private System.Windows.Forms.Label lblMessageRetentionInDays;
         private CustomTrackBar trackBarPartitionCount;
         private System.Windows.Forms.Label lblPartitionCountValue;
         private System.Windows.Forms.BindingSource authorizationRulesBindingSource;
         private System.Windows.Forms.ContextMenuStrip entityInformationContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem copyPartitionInformationToClipboardMenuItem;
-        private System.Windows.Forms.TabPage tabPageMetrics;
-        private Grouper grouperDatapoints;
         private System.Windows.Forms.DataGridView dataPointDataGridView;
-        private System.Windows.Forms.Button btnMetrics;
-        private System.Windows.Forms.Button btnCloseTabs;
+        private CustomTrackBar trackBarMessageRetentionInDays;
+        private System.Windows.Forms.Label lblMessageRetentionInDaysValue;
     }
 }

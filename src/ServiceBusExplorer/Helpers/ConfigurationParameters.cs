@@ -27,6 +27,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         //***************************
         // Parameters
         //***************************
+        public const string ConfigurationConfigFileParameter = "ConfigFile";
         public const string DebugFlagParameter = "debug";
         public const string ShowMessageCountParameter = "showMessageCount";
         public const string SaveMessageToFileParameter = "saveMessageToFile";
@@ -47,10 +48,9 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         public const string MonitorRefreshIntervalParameter = "monitorRefreshInterval";
         public const string PrefetchCountParameter = "prefetchCount";
         public const string MessageDeferProviderParameter = "messageDeferProvider";
-        public const string SubscriptionIdParameter = "subscriptionId";
-        public const string CertificateThumbprintParameter = "certificateThumbprint";
         public const string LogFontSize = "logFontSize";
         public const string TreeViewFontSize = "treeViewFontSize";
+        public const string MessageBodyType = "messageBodyType";
         public const string ConnectivityMode = "connectivityMode";
         public const string Encoding = "encoding";
         public const string SelectedEntitiesParameter = "selectedEntities";
