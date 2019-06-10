@@ -22,11 +22,11 @@
 #region Using Directives
 
 using System.Diagnostics;
-using Microsoft.Azure.ServiceBusExplorer.Forms;
+//using Microsoft.Azure.ServiceBusExplorer.Forms;
 
 #endregion
 
-namespace Microsoft.Azure.ServiceBusExplorer.Helpers
+namespace Microsoft.Azure.ServiceBusExplorer.UIHelpers
 {
     #region Delegates
     public delegate void WriteToLogDelegate(string message, bool async = true);
@@ -39,13 +39,13 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         #endregion
 
         #region Public Constructors
-        /// <summary>
-        /// Initializes a new instance of the LogTraceListener class.
-        /// </summary>
-        public LogTraceListener()
-        {
-            writeToLog = MainForm.StaticWriteToLog;
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the LogTraceListener class.
+        ///// </summary>
+        //public LogTraceListener()
+        //{
+        //    writeToLog = MainForm.StaticWriteToLog;
+        //}
 
         /// <summary>
         /// Initializes a new instance of the LogTraceListener class.

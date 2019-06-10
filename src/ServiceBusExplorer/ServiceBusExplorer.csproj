@@ -73,6 +73,9 @@
     <Prefer32Bit>false</Prefer32Bit>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FastColoredTextBox">
       <HintPath>Libraries\FastColoredTextBox.dll</HintPath>
@@ -388,8 +391,8 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ConversionHelper.cs" />
-    <Compile Include="Helpers\CustomCollectionEditor.cs" />
-    <Compile Include="Helpers\CustomTextEditor.cs" />
+    <Compile Include="UIHelpers\CustomCollectionEditor.cs" />
+    <Compile Include="UIHelpers\CustomTextEditor.cs" />
     <Compile Include="Helpers\BrokeredMessageTemplate.cs" />
     <Compile Include="Helpers\EventDataTemplate.cs" />
     <Compile Include="Helpers\EventProcessor.cs" />
@@ -638,6 +641,10 @@
       <SubType>Designer</SubType>
       <Link>App.config</Link>
     </None>
+    <AdditionalFiles Include="..\DependencyValidation1\DependencyValidation1.layerdiagram">
+      <Link>DependencyValidation1.layerdiagram</Link>
+      <Visible>False</Visible>
+    </AdditionalFiles>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -661,10 +668,13 @@
     <PackageReference Include="GitVersionTask" Version="3.6.5" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="2.16.0.234" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />
+    <PackageReference Include="Microsoft.DependencyValidation.Analyzers">
+      <Version>0.10.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.4" />
-    <PackageReference Include="WindowsAzure.ServiceBus" Version="5.0.0" />
+    <PackageReference Include="WindowsAzure.ServiceBus" Version="5.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icons\Add.ico" />
@@ -757,6 +767,37 @@
     <None Include="Images\MicrosoftAzureLogo.png" />
     <None Include="Images\MicrosoftAzureWhiteLogo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{d1ae04a9-ee81-4a2c-b235-df9aad821012}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EventHubs\EventHubs.csproj">
+      <Project>{7eb5ea53-5031-4e4e-b78c-38d370af9a9f}</Project>
+      <Name>EventHubs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NotificationHub\NotificationHub.csproj">
+      <Project>{a82872b5-5a0e-49ed-bd6a-daac7b07a2ff}</Project>
+      <Name>NotificationHub</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Relay\Relay.csproj">
+      <Project>{c6f6fa8e-2003-421d-8f06-aaf6bf205f01}</Project>
+      <Name>Relay</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceBus\ServiceBus.csproj">
+      <Project>{6e3c130a-6b47-47d1-84df-7270977e8857}</Project>
+      <Name>ServiceBus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ToMigrate\ToMigrate.csproj">
+      <Project>{82070314-a7e4-437e-81de-bdb558d2af15}</Project>
+      <Name>ToMigrate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{93e8bc02-bcd2-4867-a990-fec96d24e9ee}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -23,16 +23,18 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Design;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using Microsoft.Azure.ServiceBusExplorer.Forms;
 
 #endregion
 
-namespace Microsoft.Azure.ServiceBusExplorer.Helpers
+namespace Microsoft.Azure.ServiceBusExplorer.UIHelpers
 {
-    public class CustomCollectionEditor : UITypeEditor
+    public class CustomTextEditor : UITypeEditor
     {
         #region Public Methods
         public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
@@ -43,29 +45,31 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             var service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
-            if (service != null && value != null)
+            if (service != null && context.Instance is CustomObject)
             {
+                var customObject = context.Instance as CustomObject;
                 
+                var valueAsString = value as string;
                 // ReSharper disable SuspiciousTypeConversion.Global
                 var gridItem = provider as GridItem;
                 // ReSharper restore SuspiciousTypeConversion.Global
-                var propertyName = value.GetType().Name;
+                
+
+                var propertyName = "Value";
                 if (gridItem != null)
                 {
                     propertyName = gridItem.Label;
+                    if (customObject.Properties.All(p => p.Name != gridItem.Label && p.Type != typeof(string)))
+                    {
+                        return string.Empty;
+                    }
                 }
-                var label = propertyName;
-                var oldJson = JsonSerializerHelper.Serialize(value);
-                using (var form = new CollectionEditorForm(string.Format("Edit {0}", propertyName), label, value))
+                using (var form = new TextForm(string.Format("Edit {0}", propertyName), propertyName, valueAsString, true))
                 {
+                    form.Size = new Size(600, 320);
                     if (service.ShowDialog(form) == DialogResult.OK)
                     {
-                        if (string.Compare(oldJson,
-                                           JsonSerializerHelper.Serialize(value),
-                                           StringComparison.InvariantCulture) != 0)
-                        {
-                            value = GenericCopier<object>.DeepCopy(form.Value);
-                        }
+                        value = form.Content;
                     }
                 }
             }
@@ -74,7 +78,5 @@ namespace Microsoft.Azure.ServiceBusExplorer.Helpers
             // ReSharper restore AssignNullToNotNullAttribute
         } 
         #endregion
-
-        
     }
 }
