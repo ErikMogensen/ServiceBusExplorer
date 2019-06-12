@@ -25,6 +25,7 @@ using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.ServiceBusExplorer.Controls;
 using Microsoft.Azure.ServiceBusExplorer.Enums;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
+using Microsoft.Azure.ServiceBusExplorer.UIHelpers;
 using Microsoft.ServiceBus.Messaging;
 using System;
 using System.Collections;
@@ -260,7 +261,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
             splitterContainerDistance = splitContainer.SplitterDistance;
             treeViewFontSize = (decimal)serviceBusTreeView.Font.Size;
             logFontSize = (decimal)lstLog.Font.Size;
-            Trace.Listeners.Add(new LogTraceListener());
+            Trace.Listeners.Add(new LogTraceListener(MainForm.StaticWriteToLog));
             mainSingletonMainForm = this;
             serviceBusHelper = new ServiceBusHelper(WriteToLog);
             serviceBusHelper.OnCreate += serviceBusHelper_OnCreate;

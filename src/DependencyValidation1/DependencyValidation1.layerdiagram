@@ -96,6 +96,9 @@
         <dependencyFromLayerToLayer Id="aaf26db4-9f2e-40aa-bde3-675debce4780" direction="Forward">
           <layerMoniker Id="dc75839c-3ced-42d8-8861-8846fe7c5055" />
         </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="21ffc310-07a4-4806-987a-66b7e1997094" direction="Forward">
+          <layerMoniker Id="9599bd62-9a65-4773-90bf-8a43ccae7717" />
+        </dependencyFromLayerToLayer>
       </dependencyToLayers>
       <references>
         <reference Id="1e0d4cd9-bfe0-477d-9214-c1427b0efbd5" name="Microsoft.Azure.ServiceBusExplorer.Helpers">
