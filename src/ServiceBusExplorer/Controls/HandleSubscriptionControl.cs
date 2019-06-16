@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Azure.ServiceBusExplorer.Forms;
 using Microsoft.Azure.ServiceBusExplorer.Helpers;
+using Microsoft.Azure.ServiceBusExplorer.UIHelpers;
 using Microsoft.ServiceBus.Messaging;
 
 #endregion
@@ -2999,7 +3000,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Controls
                 }
                 using (var writer = new StreamWriter(saveFileDialog.FileName))
                 {
-                    var bodies = brokeredMessages.Select(bm => serviceBusHelper.GetMessageText(bm, out _));
+                    var bodies = brokeredMessages.Select(bm => serviceBusHelper.GetMessageText(bm, 
+                        MainForm.SingletonMainForm.UseAscii, out _));
                     writer.Write(MessageSerializationHelper.Serialize(brokeredMessages, bodies));
                 }
             }
@@ -3079,7 +3081,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Controls
                 }
                 using (var writer = new StreamWriter(saveFileDialog.FileName))
                 {
-                    var bodies = brokeredMessages.Select(bm => serviceBusHelper.GetMessageText(bm, out _));
+                    var bodies = brokeredMessages.Select(bm => serviceBusHelper.GetMessageText(bm,
+                        MainForm.SingletonMainForm.UseAscii, out _));
                     writer.Write(MessageSerializationHelper.Serialize(brokeredMessages, bodies));
                 }
             }

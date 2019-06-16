@@ -55,6 +55,10 @@
       <Project>{32754f39-e353-4607-94fe-b9b9acfd58ef}</Project>
       <Name>ServiceBusExplorer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ToMigrate\ToMigrate.csproj">
+      <Project>{82070314-a7e4-437e-81de-bdb558d2af15}</Project>
+      <Name>ToMigrate</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

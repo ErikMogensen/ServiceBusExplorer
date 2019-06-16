@@ -120,6 +120,14 @@
       </references>
     </layer>
     <layer Id="2353be4e-f0b2-4048-9eb0-1d0a7a60a84a" name="Microsoft.Azure.ServiceBusExplorer.UIHelpers">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="7e235040-595b-405b-ba57-723013c38db4" direction="Forward">
+          <layerMoniker Id="9599bd62-9a65-4773-90bf-8a43ccae7717" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="dc0ec976-1b02-46d3-b0bf-30372d31df67" direction="Forward">
+          <layerMoniker Id="1c2ef635-62f2-44c0-8207-4075429a92d1" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
       <references>
         <reference Id="56a2b1a8-4860-46f6-aff4-1bed88b7711d" name="Microsoft.Azure.ServiceBusExplorer.UIHelpers">
           <ArtifactNode Label="Microsoft.Azure.ServiceBusExplorer.UIHelpers" Category="CodeSchema_Namespace" Id="(Namespace=Microsoft.Azure.ServiceBusExplorer.UIHelpers)" />

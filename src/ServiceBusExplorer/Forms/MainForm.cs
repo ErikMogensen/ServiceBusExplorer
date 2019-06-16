@@ -1792,7 +1792,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                         var description = nodeTag;
                         if (description.IsDynamic)
                         {
-                            var relayCollection = serviceBusHelper.GetRelays();
+                            var relayCollection = serviceBusHelper.GetRelays(MainForm.SingletonMainForm.ServerTimeout);
                             var relayDescriptions = relayCollection as IList<RelayDescription> ?? relayCollection.ToList();
                             if (relayDescriptions.Any())
                             {
@@ -4402,7 +4402,7 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                         {
                             try
                             {
-                                var relayServices = serviceBusHelper.GetRelays();
+                                var relayServices = serviceBusHelper.GetRelays(MainForm.SingletonMainForm.ServerTimeout);
 
                                 relayServiceListNode.Text = Constants.RelayEntities;
 
@@ -4439,7 +4439,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     {
                         try
                         {
-                            var queues = serviceBusHelper.GetQueues(FilterExpressionHelper.QueueFilterExpression);
+                            var queues = serviceBusHelper.GetQueues(FilterExpressionHelper.QueueFilterExpression, 
+                                MainForm.SingletonMainForm.ServerTimeout);
                             queueListNode.Text = string.IsNullOrWhiteSpace(FilterExpressionHelper.QueueFilterExpression)
                                 ? Constants.QueueEntities
                                 : FilteredQueueEntities;
@@ -4475,7 +4476,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                     {
                         try
                         {
-                            var topics = serviceBusHelper.GetTopics(FilterExpressionHelper.TopicFilterExpression);
+                            var topics = serviceBusHelper.GetTopics(FilterExpressionHelper.TopicFilterExpression, 
+                                MainForm.SingletonMainForm.ServerTimeout);
                             topicListNode.Text = string.IsNullOrWhiteSpace(FilterExpressionHelper.TopicFilterExpression)
                                 ? Constants.TopicEntities
                                 : FilteredTopicEntities;

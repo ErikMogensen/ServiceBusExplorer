@@ -113,7 +113,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
 
             messagePropertyGrid.SelectedObject = brokeredMessage;
 
-            var messageText = serviceBusHelper.GetMessageText(brokeredMessage, out _);
+            var messageText = serviceBusHelper.GetMessageText(brokeredMessage, 
+                MainForm.SingletonMainForm.UseAscii, out _);
 
             if (JsonSerializerHelper.IsJson(messageText))
             {
@@ -405,7 +406,8 @@ namespace Microsoft.Azure.ServiceBusExplorer.Forms
                                 }
                                 else
                                 {
-                                    var messageText = serviceBusHelper.GetMessageText(message, out bodyType);
+                                    var messageText = serviceBusHelper.GetMessageText(message, 
+                                        MainForm.SingletonMainForm.UseAscii, out bodyType);
 
                                     // For body type ByteArray cloning is not an option. When cloned, supplied body can be only of a string or stream types, but not byte array :(
                                     outboundMessage = bodyType == BodyType.ByteArray ?
