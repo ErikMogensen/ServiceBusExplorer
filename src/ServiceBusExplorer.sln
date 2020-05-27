@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationHubs", "NotificationHubs\NotificationHubs.csproj", "{E836C914-9BFE-4C1C-96E5-6A414CDEF485}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ServiceBusExplorer.Setup", "ServiceBusExplorer.Setup\ServiceBusExplorer.Setup.wixproj", "{754E235A-6FB3-42A9-90B9-2FA15461D9F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,12 @@ Global
 		{E836C914-9BFE-4C1C-96E5-6A414CDEF485}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E836C914-9BFE-4C1C-96E5-6A414CDEF485}.Release|x86.ActiveCfg = Release|Any CPU
 		{E836C914-9BFE-4C1C-96E5-6A414CDEF485}.Release|x86.Build.0 = Release|Any CPU
+		{754E235A-6FB3-42A9-90B9-2FA15461D9F5}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{754E235A-6FB3-42A9-90B9-2FA15461D9F5}.Debug|x86.ActiveCfg = Debug|x86
+		{754E235A-6FB3-42A9-90B9-2FA15461D9F5}.Debug|x86.Build.0 = Debug|x86
+		{754E235A-6FB3-42A9-90B9-2FA15461D9F5}.Release|Any CPU.ActiveCfg = Release|x86
+		{754E235A-6FB3-42A9-90B9-2FA15461D9F5}.Release|x86.ActiveCfg = Release|x86
+		{754E235A-6FB3-42A9-90B9-2FA15461D9F5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
