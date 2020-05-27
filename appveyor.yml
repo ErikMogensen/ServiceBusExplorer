@@ -8,7 +8,7 @@ skip_commits:
     - '**/images/*'
     - '**/icons/*'
 
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 assembly_info:
   patch: false
