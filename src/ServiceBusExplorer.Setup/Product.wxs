@@ -4,6 +4,8 @@
   <Product Id="*" Name="ServiceBusExplorer" Language="1033" Version="1.0.0.0" Manufacturer="Paolo Salvatori" UpgradeCode="bb5e9198-31d7-4596-bbb7-b360b1fcd624">
 
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    
+    <UIRef Id="WixUI_Minimal" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate />
