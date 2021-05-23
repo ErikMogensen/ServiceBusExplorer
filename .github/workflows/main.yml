@@ -50,7 +50,13 @@ jobs:
           nuget-version: latest
           
       - name: Navigate to Workspace
-        run: cd $GITHUB_WORKSPACE/src
+        run: cd $GITHUB_WORKSPACE
+        
+      - name: List it
+        run: dir
+        
+      - name: Change dir
+        run: cd src
 
       - name: Create Build Directory
         run: mkdir _build          
