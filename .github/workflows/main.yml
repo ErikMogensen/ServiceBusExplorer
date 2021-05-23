@@ -64,6 +64,9 @@ jobs:
       - name: List it again
         run: dir
         
+      - name: Restore Packages
+        run: nuget restore src\ServiceBusExplorer.sln
+  
       - name: Build Solution
         run: |
           msbuild.exe src\ServiceBusExplorer.sln /p:platform="Any CPU" /p:configuration="Release"
