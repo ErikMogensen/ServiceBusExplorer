@@ -60,7 +60,10 @@ jobs:
 
       - name: Create Build Directory
         run: mkdir _build          
-          
+        
+      - name: List it again
+        run: dir
+        
       - name: Build Solution
         run: |
           msbuild.exe ServiceBusExplorer.sln /p:platform="Any CPU" /p:configuration="Release"
