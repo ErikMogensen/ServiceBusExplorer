@@ -184,7 +184,7 @@ namespace ServiceBusExplorer
         private bool traceEnabled;
         private string scheme = DefaultScheme;
         private Microsoft.ServiceBus.TokenProvider tokenProvider;
-        private AzureNotificationHubs.TokenProvider notificationHubTokenProvider;
+        //private AzureNotificationHubs.TokenProvider notificationHubTokenProvider;
         private Uri namespaceUri;
         private ServiceBusNamespaceType connectionStringType;
         private Uri atomFeedUri;
@@ -251,7 +251,7 @@ namespace ServiceBusExplorer
             EventDataGenerators = serviceBusHelper.EventDataGenerators;
             ServicePath = serviceBusHelper.ServicePath;
             TokenProvider = serviceBusHelper.TokenProvider;
-            notificationHubTokenProvider = serviceBusHelper.notificationHubTokenProvider;
+            // notificationHubTokenProvider = serviceBusHelper.notificationHubTokenProvider;
             TraceEnabled = serviceBusHelper.TraceEnabled;
             SharedAccessKey = serviceBusHelper.SharedAccessKey;
             SharedAccessKeyName = serviceBusHelper.SharedAccessKeyName;
@@ -751,24 +751,42 @@ namespace ServiceBusExplorer
                                                                                             RetryHelper.RetryCount);
                 }
 
-                try
-                {
-                    notificationHubNamespaceManager = AzureNotificationHubs.NamespaceManager.CreateFromConnectionString(serviceBusNamespace.ConnectionStringWithoutTransportType);
+                //try
+                //{
+                var settings = new AzureNotificationHubs.NotificationHubSettings();
+
+                //var retryOptions = new AzureNotificationHubs.NotificationHubRetryOptions();
+
+                settings.RetryOptions.MaxRetries = RetryHelper.RetryCount;
+
+                notificationHubNamespaceManager = new AzureNotificationHubs.NamespaceManager(
+                    serviceBusNamespace.ConnectionStringWithoutTransportType,
+                    settings
+                    );
+
+#if old
+                   notificationHubNamespaceManager = 
+                        AzureNotificationHubs.NamespaceManager.CreateFromConnectionString(
+                            serviceBusNamespace.ConnectionStringWithoutTransportType);
 
                     // Set retry count
-                    if (notificationHubNamespaceManager.Settings.RetryPolicy is AzureNotificationHubs.RetryExponential defaultNotificationHubsRetryExponential)
+                    if (notificationHubNamespaceManager.Settings.RetryPolicy is 
+                        AzureNotificationHubs.RetryExponential defaultNotificationHubsRetryExponential)
                     {
-                        notificationHubNamespaceManager.Settings.RetryPolicy = new AzureNotificationHubs.RetryExponential(defaultNotificationHubsRetryExponential.MinimalBackoff,
-                                                                                                                     defaultNotificationHubsRetryExponential.MaximumBackoff,
-                                                                                                                     defaultNotificationHubsRetryExponential.DeltaBackoff,
-                                                                                                                     defaultNotificationHubsRetryExponential.TerminationTimeBuffer,
-                                                                                                                     RetryHelper.RetryCount);
+                        notificationHubNamespaceManager.Settings.RetryPolicy = 
+                        new AzureNotificationHubs.RetryExponential(defaultNotificationHubsRetryExponential.MinimalBackoff,
+                                defaultNotificationHubsRetryExponential.MaximumBackoff,
+                                defaultNotificationHubsRetryExponential.DeltaBackoff,
+                                defaultNotificationHubsRetryExponential.TerminationTimeBuffer,
+                                RetryHelper.RetryCount);
                     }
                 }
                 catch (Exception)
                 {
                     // ignored
                 }
+#endif
+
                 WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, ServiceBusIsConnected, namespaceManager.Address.AbsoluteUri));
                 namespaceUri = namespaceManager.Address;
                 connectionStringType = serviceBusNamespace.ConnectionStringType;
@@ -5313,9 +5331,9 @@ namespace ServiceBusExplorer
             var administrationClient = new ServiceBusAdministrationClient(connectionString);
             var result = new List<QueueProperties>();
 
-            foreach(QueueDescription oldQueueDescription in oldQueueDescriptions)
+            foreach (QueueDescription oldQueueDescription in oldQueueDescriptions)
             {
-               result.Add(await administrationClient.GetQueueAsync(oldQueueDescription.Path).ConfigureAwait(false));
+                result.Add(await administrationClient.GetQueueAsync(oldQueueDescription.Path).ConfigureAwait(false));
             }
 
             return result;
