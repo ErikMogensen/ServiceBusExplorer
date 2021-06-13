@@ -51,8 +51,8 @@ namespace ServiceBusExplorer.Forms
         private const string WindowsTemplateRegistrationDescription = "WindowsTemplateRegistrationDescription";
         private const string AppleRegistrationDescription = "AppleRegistrationDescription";
         private const string AppleTemplateRegistrationDescription = "AppleTemplateRegistrationDescription";
-        private const string GcmRegistrationDescription = "GcmRegistrationDescription";
-        private const string GcmTemplateRegistrationDescription = "GcmTemplateRegistrationDescription";
+        private const string FcmRegistrationDescription = "FcmRegistrationDescription";
+        private const string FcmTemplateRegistrationDescription = "FcmTemplateRegistrationDescription";
         private const string DeviceToken = "DeviceToken";
         private const string ChannelUri = "ChannelUri";
         private const string GcmRegistrationId = "GcmRegistrationId";
@@ -81,8 +81,8 @@ namespace ServiceBusExplorer.Forms
                                                             WindowsTemplateRegistrationDescription,
                                                             AppleRegistrationDescription,
                                                             AppleTemplateRegistrationDescription,
-                                                            GcmRegistrationDescription,
-                                                            GcmTemplateRegistrationDescription});
+                                                            FcmRegistrationDescription,
+                                                            FcmTemplateRegistrationDescription});
         }
 
         #endregion
