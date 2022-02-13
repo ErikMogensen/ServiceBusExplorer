@@ -162,7 +162,7 @@ namespace ServiceBusExplorer.Controls
         #endregion
 
         #region Private Fields
-        private readonly List<CollectionQueryResult<RegistrationDescription>> registrationPageList = new List<CollectionQueryResult<RegistrationDescription>>();
+        private readonly List<ICollectionQueryResult<RegistrationDescription>> registrationPageList = new List<ICollectionQueryResult<RegistrationDescription>>();
         private int currentRegistrationPage = -1;
         private NotificationHubDescription notificationHubDescription;
         private readonly ServiceBusHelper serviceBusHelper;
@@ -253,12 +253,15 @@ namespace ServiceBusExplorer.Controls
                         currentPnsHandle = registrationsForm.PnsHandle;
                     }
                 }
-                CollectionQueryResult<RegistrationDescription> collectionQueryResult = null;
+                
+                ICollectionQueryResult<RegistrationDescription> collectionQueryResult = null;
+                
                 if (string.IsNullOrWhiteSpace(continuationToken))
                 {
                     registrationPageList.Clear();
                     currentRegistrationPage = -1;
                 }
+                
                 switch (currentGetRegistrationsMethod)
                 {
                     case GetRegistrationsMethod.All:
@@ -2074,20 +2077,21 @@ namespace ServiceBusExplorer.Controls
                     }
                     
                     var bindingList = authorizationRulesBindingSource.DataSource as BindingList<NotificationHubAuthorizationRuleWrapper>;
+
                     if (bindingList != null)
                     {
                         for (var i = 0; i < bindingList.Count; i++)
                         {
                             var rule = bindingList[i];
-                            if (serviceBusHelper.IsCloudNamespace)
+
+                            if (string.IsNullOrWhiteSpace(rule.KeyName))
                             {
-                                if (string.IsNullOrWhiteSpace(rule.KeyName))
-                                {
-                                    writeToLog(string.Format(KeyNameCannotBeNull, i));
-                                    continue;
-                                }
+                                writeToLog(string.Format(KeyNameCannotBeNull, i));
+                                continue;
                             }
+                            
                             var rightList = new List<AccessRights>();
+
                             if (rule.Manage)
                             {
                                 rightList.AddRange(new[] { AccessRights.Manage, AccessRights.Send, AccessRights.Listen });
@@ -2103,28 +2107,19 @@ namespace ServiceBusExplorer.Controls
                                     rightList.Add(AccessRights.Listen);
                                 }
                             }
-                            if (serviceBusHelper.IsCloudNamespace)
+
+                            if (string.IsNullOrWhiteSpace(rule.SecondaryKey))
                             {
-                                if (string.IsNullOrWhiteSpace(rule.SecondaryKey))
-                                {
-                                    description.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
-                                                                                                    rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
-                                                                                                    rightList));
-                                }
-                                else
-                                {
-                                    description.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
-                                                                                                    rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
-                                                                                                    rule.SecondaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
-                                                                                                    rightList));
-                                }
+                                description.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
+                                                                                                rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
+                                                                                                rightList));
                             }
                             else
                             {
-                                description.Authorization.Add(new AllowRule(rule.IssuerName,
-                                                                                                            rule.ClaimType,
-                                                                                                            rule.ClaimValue,
-                                                                                                            rightList));
+                                description.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
+                                                                                                rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
+                                                                                                rule.SecondaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
+                                                                                                rightList));
                             }
                         }
                     }
@@ -2208,15 +2203,18 @@ namespace ServiceBusExplorer.Controls
                     notificationHubDescription.UserMetadata = txtUserMetadata.Text;
 
                     var bindingList = authorizationRulesBindingSource.DataSource as BindingList<NotificationHubAuthorizationRuleWrapper>;
+
                     if (bindingList != null)
                     {
                         for (var i = 0; i < bindingList.Count; i++)
                         {
                             var rule = bindingList[i];
+                            
                             if (rule.AuthorizationRule != null)
                             {
                                 continue;
                             }
+                            
                             if (serviceBusHelper.IsCloudNamespace)
                             {
                                 if (string.IsNullOrWhiteSpace(rule.KeyName))
@@ -2225,7 +2223,9 @@ namespace ServiceBusExplorer.Controls
                                     continue;
                                 }
                             }
+
                             var rightList = new List<AccessRights>();
+
                             if (rule.Manage)
                             {
                                 rightList.AddRange(new[] { AccessRights.Manage, AccessRights.Send, AccessRights.Listen });
@@ -2241,28 +2241,19 @@ namespace ServiceBusExplorer.Controls
                                     rightList.Add(AccessRights.Listen);
                                 }
                             }
-                            if (serviceBusHelper.IsCloudNamespace)
+   
+                            if (string.IsNullOrWhiteSpace(rule.SecondaryKey))
                             {
-                                if (string.IsNullOrWhiteSpace(rule.SecondaryKey))
-                                {
-                                    notificationHubDescription.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
-                                                                                                         rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
-                                                                                                         rightList));
-                                }
-                                else
-                                {
-                                    notificationHubDescription.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
-                                                                                                         rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
-                                                                                                         rule.SecondaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
-                                                                                                         rightList));
-                                }
+                                notificationHubDescription.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
+                                                                                                        rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
+                                                                                                        rightList));
                             }
                             else
                             {
-                                notificationHubDescription.Authorization.Add(new AllowRule(rule.IssuerName,
-                                                                                 rule.ClaimType,
-                                                                                 rule.ClaimValue,
-                                                                                 rightList));
+                                notificationHubDescription.Authorization.Add(new SharedAccessAuthorizationRule(rule.KeyName,
+                                                                                                        rule.PrimaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
+                                                                                                        rule.SecondaryKey ?? SharedAccessAuthorizationRule.GenerateRandomKey(),
+                                                                                                        rightList));
                             }
                         }
                     }
