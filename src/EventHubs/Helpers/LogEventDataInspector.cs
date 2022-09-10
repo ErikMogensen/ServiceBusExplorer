@@ -21,16 +21,17 @@
 
 #region Using Directives
 
+using Azure.Messaging.EventHubs;
 using System;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.ServiceModel.Channels;
+//using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Microsoft.ServiceBus.Messaging;
+//using Microsoft.ServiceBus.Messaging;
 
 #endregion
 
@@ -133,7 +134,9 @@ namespace ServiceBusExplorer.Helpers
             {
                 return null;
             }
+
             var inboundMessage = eventDataToRead.Clone();
+            
             try
             {
                 stream = inboundMessage.GetBodyStream();

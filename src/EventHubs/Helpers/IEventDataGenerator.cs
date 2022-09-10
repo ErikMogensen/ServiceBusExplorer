@@ -21,15 +21,17 @@
 
 #region Using Directives
 
-using Microsoft.ServiceBus.Messaging;
+using System.Collections.Generic;
+using Azure.Messaging.EventHubs;
+using ServiceBusExplorer.Utilities.Helpers;
+//using Microsoft.ServiceBus.Messaging;
 
 #endregion
 
 namespace ServiceBusExplorer.Helpers
 {
-    public interface IEventDataInspector
+    public interface IEventDataGenerator
     {
-        EventData BeforeSendMessage(EventData eventData);
-        EventData AfterReceiveMessage(EventData eventData);
+        IEnumerable<EventData> GenerateEventDataCollection(int eventDataCount, WriteToLogDelegate writeToLog = null);
     }
 }

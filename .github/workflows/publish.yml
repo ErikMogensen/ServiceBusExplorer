@@ -80,6 +80,12 @@ jobs:
         Start-Sleep 1 
         gh release upload ${{ env.RELEASE_VERSION }} $env:ZipFilename $env:NupkgFilename
 
+    - name: Show secret through env
+      env: 
+        CHOCO_TOKEN: ${{ secrets.CHOKO_TOKEN }}
+      run: |
+        echo "Begins with $($env:CHOCO_TOKEN.substring(0,3))"
+        
     - name: Publish to Chocolatey
       run: |
         choco push $env:NupkgFilename -k="${{ secrets.CHOKO_TOKEN }}"
