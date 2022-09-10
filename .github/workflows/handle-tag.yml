@@ -52,6 +52,12 @@ jobs:
           echo "RELEASE_VERSION=0.0.0" >> $env:GITHUB_ENV
         }
         
+    - name: Show secret through env
+      env: 
+        CHOCO_TOKEN: ${{ secrets.CHOKO_TOKEN }}
+      run: |
+        echo "Begins with $($env:CHOCO_TOKEN.substring(0,3))"
+                
     outputs:
         release-version: ${{ env.RELEASE_VERSION }}
 
