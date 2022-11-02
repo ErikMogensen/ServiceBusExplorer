@@ -65,11 +65,11 @@ jobs:
         .\SetVersion -FileName $sbeFileName -PropertyName 'AssemblyInformationalVersion' -Version ${{env.ReleaseVersion}}   
 
         $commonInfoFile = "$env:GITHUB_WORKSPACE\src\Common\Properties\AssemblyInfo.cs"
-        .\SetVersion -FileName $commonInfoFile -PropertyName 'AssemblyFileVersion' -Version ${{env.digitalVersion}}
+        .\SetVersion -FileName $commonInfoFile -PropertyName 'AssemblyFileVersion' -Version ${{env.NUMBER_VERSION}}
         .\SetVersion -FileName $commonInfoFile -PropertyName 'AssemblyInformationalVersion' -Version ${{env.ReleaseVersion}}   
 
         $notificationHubsInfoFile = "$env:GITHUB_WORKSPACE\src\NotificationHubs\Properties\AssemblyInfo.cs"
-        .\SetVersion -FileName $notificationHubsInfoFile -PropertyName 'AssemblyFileVersion' -Version ${{env.digitalVersion}}      
+        .\SetVersion -FileName $notificationHubsInfoFile -PropertyName 'AssemblyFileVersion' -Version ${{env.NUMBER_VERSION}}      
         .\SetVersion -FileName $notificationHubsInfoFile -PropertyName 'AssemblyInformationalVersion' -Version ${{env.ReleaseVersion}}   
 
     - name: Build
