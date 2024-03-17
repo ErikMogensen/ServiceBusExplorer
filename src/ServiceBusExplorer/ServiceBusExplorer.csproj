@@ -335,6 +335,14 @@
     <Compile Update="Forms\SelectEntityForm.Designer.cs">
       <DependentUpon>SelectEntityForm.cs</DependentUpon>
     </Compile>
+
+    <Compile Update="Forms\FcmForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\FcmForm.Designer.cs">
+      <DependentUpon>FcmForm.cs</DependentUpon>
+    </Compile>
+
     <Compile Update="Forms\TextForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -497,6 +505,11 @@
     <EmbeddedResource Update="Forms\SelectEntityForm.resx">
       <DependentUpon>SelectEntityForm.cs</DependentUpon>
     </EmbeddedResource>
+
+    <EmbeddedResource Update="Forms\FcmForm.resx">
+      <DependentUpon>FcmForm.cs</DependentUpon>
+    </EmbeddedResource>
+
     <EmbeddedResource Update="Forms\TextForm.resx">
       <DependentUpon>TextForm.cs</DependentUpon>
     </EmbeddedResource>
