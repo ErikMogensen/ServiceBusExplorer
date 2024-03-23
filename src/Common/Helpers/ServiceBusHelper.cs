@@ -55,6 +55,8 @@ namespace ServiceBusExplorer
     using System.IO.Compression;
     using System.Web.UI.WebControls;
     using Abstractions;
+    using Microsoft.Azure.NotificationHubs;
+
     using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnectionStringBuilder;
 
     public enum BodyType
@@ -187,7 +189,7 @@ namespace ServiceBusExplorer
         private bool traceEnabled;
         private string scheme = DefaultScheme;
         private Microsoft.ServiceBus.TokenProvider tokenProvider;
-        private AzureNotificationHubs.TokenProvider notificationHubTokenProvider;
+        private Microsoft.Azure.NotificationHubs.Auth.TokenProvider notificationHubTokenProvider;
         private Uri namespaceUri;
         private ServiceBusNamespaceType connectionStringType;
         private Uri atomFeedUri;
@@ -756,24 +758,26 @@ namespace ServiceBusExplorer
                                                                                             RetryHelper.RetryCount);
                 }
 
-                try
-                {
-                    notificationHubNamespaceManager = AzureNotificationHubs.NamespaceManager.CreateFromConnectionString(serviceBusNamespace.ConnectionStringWithoutTransportType);
+                //try
+                //{
+                    notificationHubNamespaceManager = new AzureNotificationHubs.NamespaceManager                           (serviceBusNamespace.ConnectionStringWithoutTransportType);
 
-                    // Set retry count
-                    if (notificationHubNamespaceManager.Settings.RetryPolicy is AzureNotificationHubs.RetryExponential defaultNotificationHubsRetryExponential)
-                    {
-                        notificationHubNamespaceManager.Settings.RetryPolicy = new AzureNotificationHubs.RetryExponential(defaultNotificationHubsRetryExponential.MinimalBackoff,
-                                                                                                                     defaultNotificationHubsRetryExponential.MaximumBackoff,
-                                                                                                                     defaultNotificationHubsRetryExponential.DeltaBackoff,
-                                                                                                                     defaultNotificationHubsRetryExponential.TerminationTimeBuffer,
-                                                                                                                     RetryHelper.RetryCount);
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                    //notificationHubNamespaceManager = AzureNotificationHubs.NamespaceManager.CreateFromConnectionString(serviceBusNamespace.ConnectionStringWithoutTransportType);
+
+                    //// Set retry count
+                    //if (notificationHubNamespaceManager.RetryPolicy is AzureNotificationHubs.RetryExponential defaultNotificationHubsRetryExponential)
+                    //{
+                    //    notificationHubNamespaceManager.Settings.RetryPolicy = new AzureNotificationHubs.RetryExponential(defaultNotificationHubsRetryExponential.MinimalBackoff,
+                    //                                                                                                 defaultNotificationHubsRetryExponential.MaximumBackoff,
+                    //                                                                                                 defaultNotificationHubsRetryExponential.DeltaBackoff,
+                    //                                                                                                 defaultNotificationHubsRetryExponential.TerminationTimeBuffer,
+                    //                                                                                                 RetryHelper.RetryCount);
+                    //}
+                //}
+                //catch (Exception)
+                //{
+                //    // ignored
+                //}
                 WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, ServiceBusIsConnected, namespaceManager.Address.AbsoluteUri));
                 namespaceUri = namespaceManager.Address;
                 connectionStringType = serviceBusNamespace.ConnectionStringType;
