@@ -50,12 +50,12 @@ namespace ServiceBusExplorer.NotificationHubs.Helpers
             TemplateHeaders = new List<NotificationInfo>();
             MpnsHeaders = new List<NotificationInfo>();
             WnsHeaders = new List<NotificationInfo>();
-            GcmHeaders = new List<NotificationInfo>();
+            FcmHeaders = new List<NotificationInfo>();
             ApnsHeaders = new List<NotificationInfo>();
             TemplateTags = new List<TagInfo>();
             MpnsTags = new List<TagInfo>();
             WnsTags = new List<TagInfo>();
-            GcmTags = new List<TagInfo>();
+            FcmTags = new List<TagInfo>();
             ApnsTags = new List<TagInfo>();
         }
         #endregion
@@ -70,12 +70,12 @@ namespace ServiceBusExplorer.NotificationHubs.Helpers
         public static List<NotificationInfo> TemplateHeaders { get; private set; }
         public static List<NotificationInfo> MpnsHeaders { get; private set; }
         public static List<NotificationInfo> WnsHeaders { get; private set; }
-        public static List<NotificationInfo> GcmHeaders { get; private set; }
+        public static List<NotificationInfo> FcmHeaders { get; private set; }
         public static List<NotificationInfo> ApnsHeaders { get; private set; }
         public static List<TagInfo> TemplateTags { get; private set; }
         public static List<TagInfo> MpnsTags { get; private set; } 
         public static List<TagInfo> WnsTags { get; private set; }
-        public static List<TagInfo> GcmTags { get; private set; } 
+        public static List<TagInfo> FcmTags { get; private set; } 
         public static List<TagInfo> ApnsTags { get; private set; } 
         #endregion
     }

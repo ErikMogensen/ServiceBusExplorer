@@ -336,13 +336,6 @@
       <DependentUpon>SelectEntityForm.cs</DependentUpon>
     </Compile>
 
-    <Compile Update="Forms\FcmForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\FcmForm.Designer.cs">
-      <DependentUpon>FcmForm.cs</DependentUpon>
-    </Compile>
-
     <Compile Update="Forms\TextForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -506,10 +499,6 @@
       <DependentUpon>SelectEntityForm.cs</DependentUpon>
     </EmbeddedResource>
 
-    <EmbeddedResource Update="Forms\FcmForm.resx">
-      <DependentUpon>FcmForm.cs</DependentUpon>
-    </EmbeddedResource>
-
     <EmbeddedResource Update="Forms\TextForm.resx">
       <DependentUpon>TextForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -556,7 +545,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="1.0.9" />
+    <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="4.2.0" />
     <PackageReference Include="WindowsAzure.ServiceBus" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>

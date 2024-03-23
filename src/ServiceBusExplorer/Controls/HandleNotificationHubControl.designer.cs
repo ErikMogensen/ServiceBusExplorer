@@ -29,12 +29,16 @@
             this.txtUserMetadata = new System.Windows.Forms.TextBox();
             this.lblUserMetadata = new System.Windows.Forms.Label();
             this.btnOpenDescriptionForm = new System.Windows.Forms.Button();
-            this.grouperGoogleCloudMessaggingSettings = new ServiceBusExplorer.Controls.Grouper();
-            this.btnClearGcmNotification = new System.Windows.Forms.Button();
-            this.txtGcmEndpoint = new System.Windows.Forms.TextBox();
-            this.lblGcmEndpoint = new System.Windows.Forms.Label();
-            this.lblGcmApiKey = new System.Windows.Forms.Label();
-            this.txtGcmApiKey = new System.Windows.Forms.TextBox();
+            this.grouperFirebaseCloudMessagingSettings = new ServiceBusExplorer.Controls.Grouper();
+            this.lblFcmV1Email = new System.Windows.Forms.Label();
+            this.txtFcmEmail = new System.Windows.Forms.TextBox();
+            this.lblFcmProjectId = new System.Windows.Forms.Label();
+            this.txtFcmProjectId = new System.Windows.Forms.TextBox();
+            this.btnClearFcmNotification = new System.Windows.Forms.Button();
+            this.txtFcmEndpoint = new System.Windows.Forms.TextBox();
+            this.lblFcmV1Endpoint = new System.Windows.Forms.Label();
+            this.lblFcmApiKey = new System.Windows.Forms.Label();
+            this.txtFcmPrivateKey = new System.Windows.Forms.TextBox();
             this.grouperWindowsPhoneNotificationSettings = new ServiceBusExplorer.Controls.Grouper();
             this.btnClearMpnsNotification = new System.Windows.Forms.Button();
             this.checkBoxEnableUnauthenticatedMpns = new System.Windows.Forms.CheckBox();
@@ -160,18 +164,18 @@
             this.tabPageGoogleNativeNotification = new System.Windows.Forms.TabPage();
             this.gcmSplitContainer = new System.Windows.Forms.SplitContainer();
             this.grouper1 = new ServiceBusExplorer.Controls.Grouper();
-            this.txtGcmJsonPayload = new System.Windows.Forms.TextBox();
+            this.txtFcmJsonPayload = new System.Windows.Forms.TextBox();
             this.gcmLowerSplitContainer = new System.Windows.Forms.SplitContainer();
             this.gcmTagsTabControl = new System.Windows.Forms.TabControl();
-            this.tabGcmTagExpression = new System.Windows.Forms.TabPage();
-            this.grouperGcmTagExpression = new ServiceBusExplorer.Controls.Grouper();
-            this.txtGcmTagExpression = new System.Windows.Forms.TextBox();
-            this.tabGcmNotificationTags = new System.Windows.Forms.TabPage();
-            this.grouperGcmTags = new ServiceBusExplorer.Controls.Grouper();
+            this.tabFcmTagExpression = new System.Windows.Forms.TabPage();
+            this.grouperFcmTagExpression = new ServiceBusExplorer.Controls.Grouper();
+            this.txtFcmTagExpression = new System.Windows.Forms.TextBox();
+            this.tabFcmNotificationTags = new System.Windows.Forms.TabPage();
+            this.grouperFcmTags = new ServiceBusExplorer.Controls.Grouper();
             this.gcmTagsDataGridView = new System.Windows.Forms.DataGridView();
             this.gcmAdditionalHeadersTabControl = new System.Windows.Forms.TabControl();
-            this.tabGcmAdditionalHeaders = new System.Windows.Forms.TabPage();
-            this.grouperGcmAdditionalHeaders = new ServiceBusExplorer.Controls.Grouper();
+            this.tabFcmAdditionalHeaders = new System.Windows.Forms.TabPage();
+            this.grouperFcmAdditionalHeaders = new ServiceBusExplorer.Controls.Grouper();
             this.gcmHeadersDataGridView = new System.Windows.Forms.DataGridView();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnCancelUpdate = new System.Windows.Forms.Button();
@@ -190,14 +194,14 @@
             this.mpnsTagsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.appleHeadersBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.appleTagsBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.gcmHeadersBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.gcmTagsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.fcmHeadersBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.fcmTagsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.authorizationRulesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mainTabControl.SuspendLayout();
             this.tabPageDescription.SuspendLayout();
             this.grouperNotificationHubInformation.SuspendLayout();
             this.grouperUserMetadata.SuspendLayout();
-            this.grouperGoogleCloudMessaggingSettings.SuspendLayout();
+            this.grouperFirebaseCloudMessagingSettings.SuspendLayout();
             this.grouperWindowsPhoneNotificationSettings.SuspendLayout();
             this.grouperAppleNotificationSettings.SuspendLayout();
             this.grouperWindowsNotificationSettings.SuspendLayout();
@@ -315,14 +319,14 @@
             this.gcmLowerSplitContainer.Panel2.SuspendLayout();
             this.gcmLowerSplitContainer.SuspendLayout();
             this.gcmTagsTabControl.SuspendLayout();
-            this.tabGcmTagExpression.SuspendLayout();
-            this.grouperGcmTagExpression.SuspendLayout();
-            this.tabGcmNotificationTags.SuspendLayout();
-            this.grouperGcmTags.SuspendLayout();
+            this.tabFcmTagExpression.SuspendLayout();
+            this.grouperFcmTagExpression.SuspendLayout();
+            this.tabFcmNotificationTags.SuspendLayout();
+            this.grouperFcmTags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gcmTagsDataGridView)).BeginInit();
             this.gcmAdditionalHeadersTabControl.SuspendLayout();
-            this.tabGcmAdditionalHeaders.SuspendLayout();
-            this.grouperGcmAdditionalHeaders.SuspendLayout();
+            this.tabFcmAdditionalHeaders.SuspendLayout();
+            this.grouperFcmAdditionalHeaders.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gcmHeadersDataGridView)).BeginInit();
             this.registrationContextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.templatePropertiesBindingSource)).BeginInit();
@@ -335,8 +339,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.mpnsTagsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.appleHeadersBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.appleTagsBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gcmHeadersBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gcmTagsBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fcmHeadersBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fcmTagsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.authorizationRulesBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -349,7 +353,7 @@
             this.btnSend.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSend.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnSend.Location = new System.Drawing.Point(680, 504);
+            this.btnSend.Location = new System.Drawing.Point(680, 538);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(72, 24);
             this.btnSend.TabIndex = 3;
@@ -379,7 +383,7 @@
             this.mainTabControl.Multiline = true;
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(976, 480);
+            this.mainTabControl.Size = new System.Drawing.Size(976, 514);
             this.mainTabControl.TabIndex = 0;
             this.mainTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.mainTabControl_DrawItem);
             this.mainTabControl.SelectedIndexChanged += new System.EventHandler(this.mainTabControl_SelectedIndexChanged);
@@ -389,7 +393,7 @@
             this.tabPageDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.tabPageDescription.Controls.Add(this.grouperNotificationHubInformation);
             this.tabPageDescription.Controls.Add(this.grouperUserMetadata);
-            this.tabPageDescription.Controls.Add(this.grouperGoogleCloudMessaggingSettings);
+            this.tabPageDescription.Controls.Add(this.grouperFirebaseCloudMessagingSettings);
             this.tabPageDescription.Controls.Add(this.grouperWindowsPhoneNotificationSettings);
             this.tabPageDescription.Controls.Add(this.grouperAppleNotificationSettings);
             this.tabPageDescription.Controls.Add(this.grouperWindowsNotificationSettings);
@@ -399,7 +403,7 @@
             this.tabPageDescription.Location = new System.Drawing.Point(4, 22);
             this.tabPageDescription.Name = "tabPageDescription";
             this.tabPageDescription.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDescription.Size = new System.Drawing.Size(968, 454);
+            this.tabPageDescription.Size = new System.Drawing.Size(968, 488);
             this.tabPageDescription.TabIndex = 3;
             this.tabPageDescription.Text = "Description";
             // 
@@ -426,7 +430,7 @@
             this.grouperNotificationHubInformation.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperNotificationHubInformation.ShadowControl = false;
             this.grouperNotificationHubInformation.ShadowThickness = 1;
-            this.grouperNotificationHubInformation.Size = new System.Drawing.Size(296, 325);
+            this.grouperNotificationHubInformation.Size = new System.Drawing.Size(296, 359);
             this.grouperNotificationHubInformation.TabIndex = 7;
             // 
             // propertyListView
@@ -441,7 +445,7 @@
             this.propertyListView.Location = new System.Drawing.Point(16, 32);
             this.propertyListView.Name = "propertyListView";
             this.propertyListView.OwnerDraw = true;
-            this.propertyListView.Size = new System.Drawing.Size(264, 277);
+            this.propertyListView.Size = new System.Drawing.Size(264, 311);
             this.propertyListView.TabIndex = 0;
             this.propertyListView.UseCompatibleStateImageBehavior = false;
             this.propertyListView.View = System.Windows.Forms.View.Details;
@@ -485,7 +489,7 @@
             this.grouperUserMetadata.ShadowControl = false;
             this.grouperUserMetadata.ShadowThickness = 1;
             this.grouperUserMetadata.Size = new System.Drawing.Size(304, 88);
-            this.grouperUserMetadata.TabIndex = 3;
+            this.grouperUserMetadata.TabIndex = 1;
             // 
             // txtUserMetadata
             // 
@@ -495,7 +499,7 @@
             this.txtUserMetadata.Location = new System.Drawing.Point(20, 48);
             this.txtUserMetadata.Name = "txtUserMetadata";
             this.txtUserMetadata.Size = new System.Drawing.Size(232, 20);
-            this.txtUserMetadata.TabIndex = 2;
+            this.txtUserMetadata.TabIndex = 1;
             // 
             // lblUserMetadata
             // 
@@ -504,7 +508,7 @@
             this.lblUserMetadata.Location = new System.Drawing.Point(20, 32);
             this.lblUserMetadata.Name = "lblUserMetadata";
             this.lblUserMetadata.Size = new System.Drawing.Size(142, 13);
-            this.lblUserMetadata.TabIndex = 1;
+            this.lblUserMetadata.TabIndex = 0;
             this.lblUserMetadata.Text = "Notification Hub Description:";
             // 
             // btnOpenDescriptionForm
@@ -519,100 +523,146 @@
             this.btnOpenDescriptionForm.Location = new System.Drawing.Point(260, 48);
             this.btnOpenDescriptionForm.Name = "btnOpenDescriptionForm";
             this.btnOpenDescriptionForm.Size = new System.Drawing.Size(24, 21);
-            this.btnOpenDescriptionForm.TabIndex = 0;
+            this.btnOpenDescriptionForm.TabIndex = 2;
             this.btnOpenDescriptionForm.Text = "...";
             this.btnOpenDescriptionForm.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnOpenDescriptionForm.UseVisualStyleBackColor = false;
             this.btnOpenDescriptionForm.Click += new System.EventHandler(this.btnOpenDescriptionForm_Click);
             // 
-            // grouperGoogleCloudMessaggingSettings
+            // grouperFirebaseCloudMessagingSettings
             // 
-            this.grouperGoogleCloudMessaggingSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.grouperFirebaseCloudMessagingSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grouperGoogleCloudMessaggingSettings.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.grouperGoogleCloudMessaggingSettings.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperGoogleCloudMessaggingSettings.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
-            this.grouperGoogleCloudMessaggingSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGoogleCloudMessaggingSettings.BorderThickness = 1F;
-            this.grouperGoogleCloudMessaggingSettings.Controls.Add(this.btnClearGcmNotification);
-            this.grouperGoogleCloudMessaggingSettings.Controls.Add(this.txtGcmEndpoint);
-            this.grouperGoogleCloudMessaggingSettings.Controls.Add(this.lblGcmEndpoint);
-            this.grouperGoogleCloudMessaggingSettings.Controls.Add(this.lblGcmApiKey);
-            this.grouperGoogleCloudMessaggingSettings.Controls.Add(this.txtGcmApiKey);
-            this.grouperGoogleCloudMessaggingSettings.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGoogleCloudMessaggingSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.grouperGoogleCloudMessaggingSettings.ForeColor = System.Drawing.Color.White;
-            this.grouperGoogleCloudMessaggingSettings.GroupImage = null;
-            this.grouperGoogleCloudMessaggingSettings.GroupTitle = "Google Cloud Messagging Settings";
-            this.grouperGoogleCloudMessaggingSettings.Location = new System.Drawing.Point(336, 112);
-            this.grouperGoogleCloudMessaggingSettings.Name = "grouperGoogleCloudMessaggingSettings";
-            this.grouperGoogleCloudMessaggingSettings.Padding = new System.Windows.Forms.Padding(20);
-            this.grouperGoogleCloudMessaggingSettings.PaintGroupBox = true;
-            this.grouperGoogleCloudMessaggingSettings.RoundCorners = 4;
-            this.grouperGoogleCloudMessaggingSettings.ShadowColor = System.Drawing.Color.DarkGray;
-            this.grouperGoogleCloudMessaggingSettings.ShadowControl = false;
-            this.grouperGoogleCloudMessaggingSettings.ShadowThickness = 1;
-            this.grouperGoogleCloudMessaggingSettings.Size = new System.Drawing.Size(304, 160);
-            this.grouperGoogleCloudMessaggingSettings.TabIndex = 4;
+            this.grouperFirebaseCloudMessagingSettings.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.grouperFirebaseCloudMessagingSettings.BackgroundGradientColor = System.Drawing.Color.White;
+            this.grouperFirebaseCloudMessagingSettings.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
+            this.grouperFirebaseCloudMessagingSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFirebaseCloudMessagingSettings.BorderThickness = 1F;
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmV1Email);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmEmail);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmProjectId);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmProjectId);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.btnClearFcmNotification);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmEndpoint);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmV1Endpoint);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmApiKey);
+            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmPrivateKey);
+            this.grouperFirebaseCloudMessagingSettings.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFirebaseCloudMessagingSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.grouperFirebaseCloudMessagingSettings.ForeColor = System.Drawing.Color.White;
+            this.grouperFirebaseCloudMessagingSettings.GroupImage = null;
+            this.grouperFirebaseCloudMessagingSettings.GroupTitle = "Firebase Cloud Messaging v1 Settings";
+            this.grouperFirebaseCloudMessagingSettings.Location = new System.Drawing.Point(336, 112);
+            this.grouperFirebaseCloudMessagingSettings.Name = "grouperFirebaseCloudMessagingSettings";
+            this.grouperFirebaseCloudMessagingSettings.Padding = new System.Windows.Forms.Padding(20);
+            this.grouperFirebaseCloudMessagingSettings.PaintGroupBox = true;
+            this.grouperFirebaseCloudMessagingSettings.RoundCorners = 4;
+            this.grouperFirebaseCloudMessagingSettings.ShadowColor = System.Drawing.Color.DarkGray;
+            this.grouperFirebaseCloudMessagingSettings.ShadowControl = false;
+            this.grouperFirebaseCloudMessagingSettings.ShadowThickness = 1;
+            this.grouperFirebaseCloudMessagingSettings.Size = new System.Drawing.Size(304, 194);
+            this.grouperFirebaseCloudMessagingSettings.TabIndex = 0;
             // 
-            // btnClearGcmNotification
+            // lblFcmV1Email
             // 
-            this.btnClearGcmNotification.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearGcmNotification.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.btnClearGcmNotification.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnClearGcmNotification.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnClearGcmNotification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnClearGcmNotification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearGcmNotification.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClearGcmNotification.Location = new System.Drawing.Point(216, 124);
-            this.btnClearGcmNotification.Name = "btnClearGcmNotification";
-            this.btnClearGcmNotification.Size = new System.Drawing.Size(72, 24);
-            this.btnClearGcmNotification.TabIndex = 4;
-            this.btnClearGcmNotification.Text = "Clear";
-            this.btnClearGcmNotification.UseVisualStyleBackColor = false;
-            this.btnClearGcmNotification.Click += new System.EventHandler(this.btnClearGcmNotification_Click);
+            this.lblFcmV1Email.AutoSize = true;
+            this.lblFcmV1Email.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblFcmV1Email.Location = new System.Drawing.Point(16, 96);
+            this.lblFcmV1Email.Name = "lblFcmV1Email";
+            this.lblFcmV1Email.Size = new System.Drawing.Size(35, 13);
+            this.lblFcmV1Email.TabIndex = 4;
+            this.lblFcmV1Email.Text = "Email:";
             // 
-            // txtGcmEndpoint
+            // txtFcmEmail
             // 
-            this.txtGcmEndpoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtFcmEmail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGcmEndpoint.BackColor = System.Drawing.SystemColors.Window;
-            this.txtGcmEndpoint.Location = new System.Drawing.Point(16, 92);
-            this.txtGcmEndpoint.Name = "txtGcmEndpoint";
-            this.txtGcmEndpoint.ReadOnly = true;
-            this.txtGcmEndpoint.Size = new System.Drawing.Size(272, 20);
-            this.txtGcmEndpoint.TabIndex = 3;
+            this.txtFcmEmail.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFcmEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtFcmEmail.Location = new System.Drawing.Point(97, 93);
+            this.txtFcmEmail.Name = "txtFcmEmail";
+            this.txtFcmEmail.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmEmail.TabIndex = 5;
             // 
-            // lblGcmEndpoint
+            // lblFcmProjectId
             // 
-            this.lblGcmEndpoint.AutoSize = true;
-            this.lblGcmEndpoint.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblGcmEndpoint.Location = new System.Drawing.Point(16, 76);
-            this.lblGcmEndpoint.Name = "lblGcmEndpoint";
-            this.lblGcmEndpoint.Size = new System.Drawing.Size(79, 13);
-            this.lblGcmEndpoint.TabIndex = 2;
-            this.lblGcmEndpoint.Text = "GCM Endpoint:";
+            this.lblFcmProjectId.AutoSize = true;
+            this.lblFcmProjectId.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblFcmProjectId.Location = new System.Drawing.Point(16, 64);
+            this.lblFcmProjectId.Name = "lblFcmProjectId";
+            this.lblFcmProjectId.Size = new System.Drawing.Size(55, 13);
+            this.lblFcmProjectId.TabIndex = 2;
+            this.lblFcmProjectId.Text = "Project Id:";
             // 
-            // lblGcmApiKey
+            // txtFcmProjectId
             // 
-            this.lblGcmApiKey.AutoSize = true;
-            this.lblGcmApiKey.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblGcmApiKey.Location = new System.Drawing.Point(16, 32);
-            this.lblGcmApiKey.Name = "lblGcmApiKey";
-            this.lblGcmApiKey.Size = new System.Drawing.Size(75, 13);
-            this.lblGcmApiKey.TabIndex = 0;
-            this.lblGcmApiKey.Text = "GCM API Key:";
-            // 
-            // txtGcmApiKey
-            // 
-            this.txtGcmApiKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtFcmProjectId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGcmApiKey.BackColor = System.Drawing.SystemColors.Window;
-            this.txtGcmApiKey.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtGcmApiKey.Location = new System.Drawing.Point(16, 48);
-            this.txtGcmApiKey.Name = "txtGcmApiKey";
-            this.txtGcmApiKey.Size = new System.Drawing.Size(272, 20);
-            this.txtGcmApiKey.TabIndex = 1;
+            this.txtFcmProjectId.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFcmProjectId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtFcmProjectId.Location = new System.Drawing.Point(97, 61);
+            this.txtFcmProjectId.Name = "txtFcmProjectId";
+            this.txtFcmProjectId.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmProjectId.TabIndex = 3;
+            // 
+            // btnClearFcmNotification
+            // 
+            this.btnClearFcmNotification.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearFcmNotification.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.btnClearFcmNotification.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.btnClearFcmNotification.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.btnClearFcmNotification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.btnClearFcmNotification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearFcmNotification.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnClearFcmNotification.Location = new System.Drawing.Point(216, 156);
+            this.btnClearFcmNotification.Name = "btnClearFcmNotification";
+            this.btnClearFcmNotification.Size = new System.Drawing.Size(72, 24);
+            this.btnClearFcmNotification.TabIndex = 8;
+            this.btnClearFcmNotification.Text = "Clear";
+            this.btnClearFcmNotification.UseVisualStyleBackColor = false;
+            this.btnClearFcmNotification.Click += new System.EventHandler(this.btnClearFcmNotification_Click);
+            // 
+            // txtFcmEndpoint
+            // 
+            this.txtFcmEndpoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFcmEndpoint.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFcmEndpoint.Location = new System.Drawing.Point(97, 125);
+            this.txtFcmEndpoint.Name = "txtFcmEndpoint";
+            this.txtFcmEndpoint.ReadOnly = true;
+            this.txtFcmEndpoint.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmEndpoint.TabIndex = 7;
+            // 
+            // lblFcmV1Endpoint
+            // 
+            this.lblFcmV1Endpoint.AutoSize = true;
+            this.lblFcmV1Endpoint.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblFcmV1Endpoint.Location = new System.Drawing.Point(16, 128);
+            this.lblFcmV1Endpoint.Name = "lblFcmV1Endpoint";
+            this.lblFcmV1Endpoint.Size = new System.Drawing.Size(52, 13);
+            this.lblFcmV1Endpoint.TabIndex = 6;
+            this.lblFcmV1Endpoint.Text = "Endpoint:";
+            // 
+            // lblFcmApiKey
+            // 
+            this.lblFcmApiKey.AutoSize = true;
+            this.lblFcmApiKey.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblFcmApiKey.Location = new System.Drawing.Point(16, 32);
+            this.lblFcmApiKey.Name = "lblFcmApiKey";
+            this.lblFcmApiKey.Size = new System.Drawing.Size(64, 13);
+            this.lblFcmApiKey.TabIndex = 0;
+            this.lblFcmApiKey.Text = "Private Key:";
+            // 
+            // txtFcmPrivateKey
+            // 
+            this.txtFcmPrivateKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFcmPrivateKey.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFcmPrivateKey.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.txtFcmPrivateKey.Location = new System.Drawing.Point(97, 29);
+            this.txtFcmPrivateKey.Name = "txtFcmPrivateKey";
+            this.txtFcmPrivateKey.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmPrivateKey.TabIndex = 1;
             // 
             // grouperWindowsPhoneNotificationSettings
             // 
@@ -634,7 +684,7 @@
             this.grouperWindowsPhoneNotificationSettings.ForeColor = System.Drawing.Color.White;
             this.grouperWindowsPhoneNotificationSettings.GroupImage = null;
             this.grouperWindowsPhoneNotificationSettings.GroupTitle = "Windows Phone Notification Settings";
-            this.grouperWindowsPhoneNotificationSettings.Location = new System.Drawing.Point(16, 280);
+            this.grouperWindowsPhoneNotificationSettings.Location = new System.Drawing.Point(16, 312);
             this.grouperWindowsPhoneNotificationSettings.Name = "grouperWindowsPhoneNotificationSettings";
             this.grouperWindowsPhoneNotificationSettings.Padding = new System.Windows.Forms.Padding(20);
             this.grouperWindowsPhoneNotificationSettings.PaintGroupBox = true;
@@ -642,7 +692,7 @@
             this.grouperWindowsPhoneNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperWindowsPhoneNotificationSettings.ShadowControl = false;
             this.grouperWindowsPhoneNotificationSettings.ShadowThickness = 1;
-            this.grouperWindowsPhoneNotificationSettings.Size = new System.Drawing.Size(304, 160);
+            this.grouperWindowsPhoneNotificationSettings.Size = new System.Drawing.Size(304, 162);
             this.grouperWindowsPhoneNotificationSettings.TabIndex = 2;
             // 
             // btnClearMpnsNotification
@@ -734,7 +784,7 @@
             this.grouperAppleNotificationSettings.ForeColor = System.Drawing.Color.White;
             this.grouperAppleNotificationSettings.GroupImage = null;
             this.grouperAppleNotificationSettings.GroupTitle = "Apple Notification Settings";
-            this.grouperAppleNotificationSettings.Location = new System.Drawing.Point(336, 280);
+            this.grouperAppleNotificationSettings.Location = new System.Drawing.Point(336, 312);
             this.grouperAppleNotificationSettings.Name = "grouperAppleNotificationSettings";
             this.grouperAppleNotificationSettings.Padding = new System.Windows.Forms.Padding(20);
             this.grouperAppleNotificationSettings.PaintGroupBox = true;
@@ -742,7 +792,7 @@
             this.grouperAppleNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperAppleNotificationSettings.ShadowControl = false;
             this.grouperAppleNotificationSettings.ShadowThickness = 1;
-            this.grouperAppleNotificationSettings.Size = new System.Drawing.Size(304, 160);
+            this.grouperAppleNotificationSettings.Size = new System.Drawing.Size(304, 162);
             this.grouperAppleNotificationSettings.TabIndex = 5;
             // 
             // btnClearApnsNotification
@@ -850,7 +900,7 @@
             this.grouperWindowsNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperWindowsNotificationSettings.ShadowControl = false;
             this.grouperWindowsNotificationSettings.ShadowThickness = 1;
-            this.grouperWindowsNotificationSettings.Size = new System.Drawing.Size(304, 160);
+            this.grouperWindowsNotificationSettings.Size = new System.Drawing.Size(304, 194);
             this.grouperWindowsNotificationSettings.TabIndex = 1;
             // 
             // btnClearWnsNotification
@@ -862,7 +912,7 @@
             this.btnClearWnsNotification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnClearWnsNotification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearWnsNotification.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClearWnsNotification.Location = new System.Drawing.Point(216, 124);
+            this.btnClearWnsNotification.Location = new System.Drawing.Point(216, 156);
             this.btnClearWnsNotification.Name = "btnClearWnsNotification";
             this.btnClearWnsNotification.Size = new System.Drawing.Size(72, 24);
             this.btnClearWnsNotification.TabIndex = 4;
@@ -934,7 +984,7 @@
             this.grouperDuplicateDetectionHistoryTimeWindow.ShadowControl = false;
             this.grouperDuplicateDetectionHistoryTimeWindow.ShadowThickness = 1;
             this.grouperDuplicateDetectionHistoryTimeWindow.Size = new System.Drawing.Size(296, 88);
-            this.grouperDuplicateDetectionHistoryTimeWindow.TabIndex = 6;
+            this.grouperDuplicateDetectionHistoryTimeWindow.TabIndex = 2;
             // 
             // tsRegistrationTimeToLive
             // 
@@ -999,7 +1049,7 @@
             this.tabPageAuthorization.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPageAuthorization.Location = new System.Drawing.Point(4, 22);
             this.tabPageAuthorization.Name = "tabPageAuthorization";
-            this.tabPageAuthorization.Size = new System.Drawing.Size(968, 454);
+            this.tabPageAuthorization.Size = new System.Drawing.Size(968, 488);
             this.tabPageAuthorization.TabIndex = 6;
             this.tabPageAuthorization.Text = "Authorization Rules";
             // 
@@ -1067,7 +1117,7 @@
             this.tabPageRegistrations.Location = new System.Drawing.Point(4, 22);
             this.tabPageRegistrations.Name = "tabPageRegistrations";
             this.tabPageRegistrations.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRegistrations.Size = new System.Drawing.Size(968, 454);
+            this.tabPageRegistrations.Size = new System.Drawing.Size(968, 488);
             this.tabPageRegistrations.TabIndex = 4;
             this.tabPageRegistrations.Text = "Registrations";
             // 
@@ -1387,7 +1437,7 @@
             this.tabPageTemplateNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageTemplateNotification.Name = "tabPageTemplateNotification";
             this.tabPageTemplateNotification.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTemplateNotification.Size = new System.Drawing.Size(968, 454);
+            this.tabPageTemplateNotification.Size = new System.Drawing.Size(968, 488);
             this.tabPageTemplateNotification.TabIndex = 0;
             this.tabPageTemplateNotification.Text = "Template";
             // 
@@ -1738,7 +1788,7 @@
             this.tabPageMpnsNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageMpnsNativeNotification.Name = "tabPageMpnsNativeNotification";
             this.tabPageMpnsNativeNotification.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMpnsNativeNotification.Size = new System.Drawing.Size(968, 454);
+            this.tabPageMpnsNativeNotification.Size = new System.Drawing.Size(968, 488);
             this.tabPageMpnsNativeNotification.TabIndex = 1;
             this.tabPageMpnsNativeNotification.Text = "Windows Phone";
             // 
@@ -2096,7 +2146,7 @@
             this.tabPageWnsNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageWnsNativeNotification.Name = "tabPageWnsNativeNotification";
             this.tabPageWnsNativeNotification.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWnsNativeNotification.Size = new System.Drawing.Size(968, 454);
+            this.tabPageWnsNativeNotification.Size = new System.Drawing.Size(968, 488);
             this.tabPageWnsNativeNotification.TabIndex = 1;
             this.tabPageWnsNativeNotification.Text = "Windows";
             // 
@@ -2453,7 +2503,7 @@
             this.tabPageAppleNativeNotification.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPageAppleNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageAppleNativeNotification.Name = "tabPageAppleNativeNotification";
-            this.tabPageAppleNativeNotification.Size = new System.Drawing.Size(968, 454);
+            this.tabPageAppleNativeNotification.Size = new System.Drawing.Size(968, 488);
             this.tabPageAppleNativeNotification.TabIndex = 2;
             this.tabPageAppleNativeNotification.Text = "Apple";
             // 
@@ -2791,7 +2841,7 @@
             this.tabPageGoogleNativeNotification.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPageGoogleNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageGoogleNativeNotification.Name = "tabPageGoogleNativeNotification";
-            this.tabPageGoogleNativeNotification.Size = new System.Drawing.Size(968, 454);
+            this.tabPageGoogleNativeNotification.Size = new System.Drawing.Size(968, 488);
             this.tabPageGoogleNativeNotification.TabIndex = 5;
             this.tabPageGoogleNativeNotification.Text = "Google";
             // 
@@ -2823,7 +2873,7 @@
             this.grouper1.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouper1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouper1.BorderThickness = 1F;
-            this.grouper1.Controls.Add(this.txtGcmJsonPayload);
+            this.grouper1.Controls.Add(this.txtFcmJsonPayload);
             this.grouper1.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouper1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grouper1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -2841,21 +2891,21 @@
             this.grouper1.Size = new System.Drawing.Size(936, 234);
             this.grouper1.TabIndex = 15;
             // 
-            // txtGcmJsonPayload
+            // txtFcmJsonPayload
             // 
-            this.txtGcmJsonPayload.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.txtFcmJsonPayload.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGcmJsonPayload.BackColor = System.Drawing.SystemColors.Window;
-            this.txtGcmJsonPayload.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGcmJsonPayload.Location = new System.Drawing.Point(16, 32);
-            this.txtGcmJsonPayload.MaxLength = 0;
-            this.txtGcmJsonPayload.Multiline = true;
-            this.txtGcmJsonPayload.Name = "txtGcmJsonPayload";
-            this.txtGcmJsonPayload.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtGcmJsonPayload.Size = new System.Drawing.Size(904, 186);
-            this.txtGcmJsonPayload.TabIndex = 0;
-            this.txtGcmJsonPayload.TextChanged += new System.EventHandler(this.txtGcmJsonPayload_TextChanged);
+            this.txtFcmJsonPayload.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFcmJsonPayload.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFcmJsonPayload.Location = new System.Drawing.Point(16, 32);
+            this.txtFcmJsonPayload.MaxLength = 0;
+            this.txtFcmJsonPayload.Multiline = true;
+            this.txtFcmJsonPayload.Name = "txtFcmJsonPayload";
+            this.txtFcmJsonPayload.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtFcmJsonPayload.Size = new System.Drawing.Size(904, 186);
+            this.txtFcmJsonPayload.TabIndex = 0;
+            this.txtFcmJsonPayload.TextChanged += new System.EventHandler(this.txtFcmJsonPayload_TextChanged);
             // 
             // gcmLowerSplitContainer
             // 
@@ -2877,8 +2927,8 @@
             // 
             // gcmTagsTabControl
             // 
-            this.gcmTagsTabControl.Controls.Add(this.tabGcmTagExpression);
-            this.gcmTagsTabControl.Controls.Add(this.tabGcmNotificationTags);
+            this.gcmTagsTabControl.Controls.Add(this.tabFcmTagExpression);
+            this.gcmTagsTabControl.Controls.Add(this.tabFcmNotificationTags);
             this.gcmTagsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gcmTagsTabControl.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.gcmTagsTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -2889,98 +2939,98 @@
             this.gcmTagsTabControl.TabIndex = 15;
             this.gcmTagsTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.gcmTagsTabControl_DrawItem);
             // 
-            // tabGcmTagExpression
+            // tabFcmTagExpression
             // 
-            this.tabGcmTagExpression.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.tabGcmTagExpression.Controls.Add(this.grouperGcmTagExpression);
-            this.tabGcmTagExpression.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tabGcmTagExpression.Location = new System.Drawing.Point(4, 24);
-            this.tabGcmTagExpression.Name = "tabGcmTagExpression";
-            this.tabGcmTagExpression.Size = new System.Drawing.Size(451, 154);
-            this.tabGcmTagExpression.TabIndex = 2;
-            this.tabGcmTagExpression.Text = "Tag Expression";
+            this.tabFcmTagExpression.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.tabFcmTagExpression.Controls.Add(this.grouperFcmTagExpression);
+            this.tabFcmTagExpression.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tabFcmTagExpression.Location = new System.Drawing.Point(4, 24);
+            this.tabFcmTagExpression.Name = "tabFcmTagExpression";
+            this.tabFcmTagExpression.Size = new System.Drawing.Size(451, 154);
+            this.tabFcmTagExpression.TabIndex = 2;
+            this.tabFcmTagExpression.Text = "Tag Expression";
             // 
-            // grouperGcmTagExpression
+            // grouperFcmTagExpression
             // 
-            this.grouperGcmTagExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.grouperFcmTagExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grouperGcmTagExpression.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.grouperGcmTagExpression.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperGcmTagExpression.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
-            this.grouperGcmTagExpression.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGcmTagExpression.BorderThickness = 1F;
-            this.grouperGcmTagExpression.Controls.Add(this.txtGcmTagExpression);
-            this.grouperGcmTagExpression.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGcmTagExpression.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.grouperGcmTagExpression.ForeColor = System.Drawing.Color.White;
-            this.grouperGcmTagExpression.GroupImage = null;
-            this.grouperGcmTagExpression.GroupTitle = "Tag Expression";
-            this.grouperGcmTagExpression.Location = new System.Drawing.Point(16, 8);
-            this.grouperGcmTagExpression.Name = "grouperGcmTagExpression";
-            this.grouperGcmTagExpression.Padding = new System.Windows.Forms.Padding(20);
-            this.grouperGcmTagExpression.PaintGroupBox = true;
-            this.grouperGcmTagExpression.RoundCorners = 4;
-            this.grouperGcmTagExpression.ShadowColor = System.Drawing.Color.DarkGray;
-            this.grouperGcmTagExpression.ShadowControl = false;
-            this.grouperGcmTagExpression.ShadowThickness = 1;
-            this.grouperGcmTagExpression.Size = new System.Drawing.Size(419, 133);
-            this.grouperGcmTagExpression.TabIndex = 14;
+            this.grouperFcmTagExpression.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.grouperFcmTagExpression.BackgroundGradientColor = System.Drawing.Color.White;
+            this.grouperFcmTagExpression.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
+            this.grouperFcmTagExpression.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFcmTagExpression.BorderThickness = 1F;
+            this.grouperFcmTagExpression.Controls.Add(this.txtFcmTagExpression);
+            this.grouperFcmTagExpression.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFcmTagExpression.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.grouperFcmTagExpression.ForeColor = System.Drawing.Color.White;
+            this.grouperFcmTagExpression.GroupImage = null;
+            this.grouperFcmTagExpression.GroupTitle = "Tag Expression";
+            this.grouperFcmTagExpression.Location = new System.Drawing.Point(16, 8);
+            this.grouperFcmTagExpression.Name = "grouperFcmTagExpression";
+            this.grouperFcmTagExpression.Padding = new System.Windows.Forms.Padding(20);
+            this.grouperFcmTagExpression.PaintGroupBox = true;
+            this.grouperFcmTagExpression.RoundCorners = 4;
+            this.grouperFcmTagExpression.ShadowColor = System.Drawing.Color.DarkGray;
+            this.grouperFcmTagExpression.ShadowControl = false;
+            this.grouperFcmTagExpression.ShadowThickness = 1;
+            this.grouperFcmTagExpression.Size = new System.Drawing.Size(419, 133);
+            this.grouperFcmTagExpression.TabIndex = 14;
             // 
-            // txtGcmTagExpression
+            // txtFcmTagExpression
             // 
-            this.txtGcmTagExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.txtFcmTagExpression.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGcmTagExpression.BackColor = System.Drawing.SystemColors.Window;
-            this.txtGcmTagExpression.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGcmTagExpression.Location = new System.Drawing.Point(16, 32);
-            this.txtGcmTagExpression.MaxLength = 0;
-            this.txtGcmTagExpression.Multiline = true;
-            this.txtGcmTagExpression.Name = "txtGcmTagExpression";
-            this.txtGcmTagExpression.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtGcmTagExpression.Size = new System.Drawing.Size(387, 85);
-            this.txtGcmTagExpression.TabIndex = 0;
+            this.txtFcmTagExpression.BackColor = System.Drawing.SystemColors.Window;
+            this.txtFcmTagExpression.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFcmTagExpression.Location = new System.Drawing.Point(16, 32);
+            this.txtFcmTagExpression.MaxLength = 0;
+            this.txtFcmTagExpression.Multiline = true;
+            this.txtFcmTagExpression.Name = "txtFcmTagExpression";
+            this.txtFcmTagExpression.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtFcmTagExpression.Size = new System.Drawing.Size(387, 85);
+            this.txtFcmTagExpression.TabIndex = 0;
             // 
-            // tabGcmNotificationTags
+            // tabFcmNotificationTags
             // 
-            this.tabGcmNotificationTags.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.tabGcmNotificationTags.Controls.Add(this.grouperGcmTags);
-            this.tabGcmNotificationTags.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tabGcmNotificationTags.Location = new System.Drawing.Point(4, 24);
-            this.tabGcmNotificationTags.Name = "tabGcmNotificationTags";
-            this.tabGcmNotificationTags.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGcmNotificationTags.Size = new System.Drawing.Size(451, 154);
-            this.tabGcmNotificationTags.TabIndex = 5;
-            this.tabGcmNotificationTags.Text = "Notification Tags";
+            this.tabFcmNotificationTags.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.tabFcmNotificationTags.Controls.Add(this.grouperFcmTags);
+            this.tabFcmNotificationTags.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tabFcmNotificationTags.Location = new System.Drawing.Point(4, 24);
+            this.tabFcmNotificationTags.Name = "tabFcmNotificationTags";
+            this.tabFcmNotificationTags.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFcmNotificationTags.Size = new System.Drawing.Size(451, 154);
+            this.tabFcmNotificationTags.TabIndex = 5;
+            this.tabFcmNotificationTags.Text = "Notification Tags";
             // 
-            // grouperGcmTags
+            // grouperFcmTags
             // 
-            this.grouperGcmTags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.grouperFcmTags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grouperGcmTags.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.grouperGcmTags.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperGcmTags.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
-            this.grouperGcmTags.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGcmTags.BorderThickness = 1F;
-            this.grouperGcmTags.Controls.Add(this.gcmTagsDataGridView);
-            this.grouperGcmTags.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGcmTags.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.grouperGcmTags.ForeColor = System.Drawing.Color.White;
-            this.grouperGcmTags.GroupImage = null;
-            this.grouperGcmTags.GroupTitle = "Notification Tags";
-            this.grouperGcmTags.Location = new System.Drawing.Point(16, 8);
-            this.grouperGcmTags.Name = "grouperGcmTags";
-            this.grouperGcmTags.Padding = new System.Windows.Forms.Padding(20);
-            this.grouperGcmTags.PaintGroupBox = true;
-            this.grouperGcmTags.RoundCorners = 4;
-            this.grouperGcmTags.ShadowColor = System.Drawing.Color.DarkGray;
-            this.grouperGcmTags.ShadowControl = false;
-            this.grouperGcmTags.ShadowThickness = 1;
-            this.grouperGcmTags.Size = new System.Drawing.Size(416, 133);
-            this.grouperGcmTags.TabIndex = 16;
-            this.grouperGcmTags.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperGcmTags_CustomPaint);
+            this.grouperFcmTags.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.grouperFcmTags.BackgroundGradientColor = System.Drawing.Color.White;
+            this.grouperFcmTags.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
+            this.grouperFcmTags.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFcmTags.BorderThickness = 1F;
+            this.grouperFcmTags.Controls.Add(this.gcmTagsDataGridView);
+            this.grouperFcmTags.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFcmTags.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.grouperFcmTags.ForeColor = System.Drawing.Color.White;
+            this.grouperFcmTags.GroupImage = null;
+            this.grouperFcmTags.GroupTitle = "Notification Tags";
+            this.grouperFcmTags.Location = new System.Drawing.Point(16, 8);
+            this.grouperFcmTags.Name = "grouperFcmTags";
+            this.grouperFcmTags.Padding = new System.Windows.Forms.Padding(20);
+            this.grouperFcmTags.PaintGroupBox = true;
+            this.grouperFcmTags.RoundCorners = 4;
+            this.grouperFcmTags.ShadowColor = System.Drawing.Color.DarkGray;
+            this.grouperFcmTags.ShadowControl = false;
+            this.grouperFcmTags.ShadowThickness = 1;
+            this.grouperFcmTags.Size = new System.Drawing.Size(416, 133);
+            this.grouperFcmTags.TabIndex = 16;
+            this.grouperFcmTags.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperFcmTags_CustomPaint);
             // 
             // gcmTagsDataGridView
             // 
@@ -3003,7 +3053,7 @@
             // 
             // gcmAdditionalHeadersTabControl
             // 
-            this.gcmAdditionalHeadersTabControl.Controls.Add(this.tabGcmAdditionalHeaders);
+            this.gcmAdditionalHeadersTabControl.Controls.Add(this.tabFcmAdditionalHeaders);
             this.gcmAdditionalHeadersTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gcmAdditionalHeadersTabControl.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.gcmAdditionalHeadersTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -3014,44 +3064,44 @@
             this.gcmAdditionalHeadersTabControl.TabIndex = 16;
             this.gcmAdditionalHeadersTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.gcmAdditionalHeadersTabControl_DrawItem);
             // 
-            // tabGcmAdditionalHeaders
+            // tabFcmAdditionalHeaders
             // 
-            this.tabGcmAdditionalHeaders.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.tabGcmAdditionalHeaders.Controls.Add(this.grouperGcmAdditionalHeaders);
-            this.tabGcmAdditionalHeaders.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.tabGcmAdditionalHeaders.Location = new System.Drawing.Point(4, 24);
-            this.tabGcmAdditionalHeaders.Name = "tabGcmAdditionalHeaders";
-            this.tabGcmAdditionalHeaders.Size = new System.Drawing.Size(453, 154);
-            this.tabGcmAdditionalHeaders.TabIndex = 2;
-            this.tabGcmAdditionalHeaders.Text = "Additional Headers";
+            this.tabFcmAdditionalHeaders.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.tabFcmAdditionalHeaders.Controls.Add(this.grouperFcmAdditionalHeaders);
+            this.tabFcmAdditionalHeaders.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tabFcmAdditionalHeaders.Location = new System.Drawing.Point(4, 24);
+            this.tabFcmAdditionalHeaders.Name = "tabFcmAdditionalHeaders";
+            this.tabFcmAdditionalHeaders.Size = new System.Drawing.Size(453, 154);
+            this.tabFcmAdditionalHeaders.TabIndex = 2;
+            this.tabFcmAdditionalHeaders.Text = "Additional Headers";
             // 
-            // grouperGcmAdditionalHeaders
+            // grouperFcmAdditionalHeaders
             // 
-            this.grouperGcmAdditionalHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.grouperFcmAdditionalHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grouperGcmAdditionalHeaders.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.grouperGcmAdditionalHeaders.BackgroundGradientColor = System.Drawing.Color.White;
-            this.grouperGcmAdditionalHeaders.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
-            this.grouperGcmAdditionalHeaders.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGcmAdditionalHeaders.BorderThickness = 1F;
-            this.grouperGcmAdditionalHeaders.Controls.Add(this.gcmHeadersDataGridView);
-            this.grouperGcmAdditionalHeaders.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.grouperGcmAdditionalHeaders.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.grouperGcmAdditionalHeaders.ForeColor = System.Drawing.Color.White;
-            this.grouperGcmAdditionalHeaders.GroupImage = null;
-            this.grouperGcmAdditionalHeaders.GroupTitle = "Additional Headers";
-            this.grouperGcmAdditionalHeaders.Location = new System.Drawing.Point(16, 8);
-            this.grouperGcmAdditionalHeaders.Name = "grouperGcmAdditionalHeaders";
-            this.grouperGcmAdditionalHeaders.Padding = new System.Windows.Forms.Padding(20);
-            this.grouperGcmAdditionalHeaders.PaintGroupBox = true;
-            this.grouperGcmAdditionalHeaders.RoundCorners = 4;
-            this.grouperGcmAdditionalHeaders.ShadowColor = System.Drawing.Color.DarkGray;
-            this.grouperGcmAdditionalHeaders.ShadowControl = false;
-            this.grouperGcmAdditionalHeaders.ShadowThickness = 1;
-            this.grouperGcmAdditionalHeaders.Size = new System.Drawing.Size(422, 133);
-            this.grouperGcmAdditionalHeaders.TabIndex = 21;
-            this.grouperGcmAdditionalHeaders.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperGcmAdditionalHeaders_CustomPaint);
+            this.grouperFcmAdditionalHeaders.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.grouperFcmAdditionalHeaders.BackgroundGradientColor = System.Drawing.Color.White;
+            this.grouperFcmAdditionalHeaders.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
+            this.grouperFcmAdditionalHeaders.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFcmAdditionalHeaders.BorderThickness = 1F;
+            this.grouperFcmAdditionalHeaders.Controls.Add(this.gcmHeadersDataGridView);
+            this.grouperFcmAdditionalHeaders.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.grouperFcmAdditionalHeaders.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.grouperFcmAdditionalHeaders.ForeColor = System.Drawing.Color.White;
+            this.grouperFcmAdditionalHeaders.GroupImage = null;
+            this.grouperFcmAdditionalHeaders.GroupTitle = "Additional Headers";
+            this.grouperFcmAdditionalHeaders.Location = new System.Drawing.Point(16, 8);
+            this.grouperFcmAdditionalHeaders.Name = "grouperFcmAdditionalHeaders";
+            this.grouperFcmAdditionalHeaders.Padding = new System.Windows.Forms.Padding(20);
+            this.grouperFcmAdditionalHeaders.PaintGroupBox = true;
+            this.grouperFcmAdditionalHeaders.RoundCorners = 4;
+            this.grouperFcmAdditionalHeaders.ShadowColor = System.Drawing.Color.DarkGray;
+            this.grouperFcmAdditionalHeaders.ShadowControl = false;
+            this.grouperFcmAdditionalHeaders.ShadowThickness = 1;
+            this.grouperFcmAdditionalHeaders.Size = new System.Drawing.Size(422, 133);
+            this.grouperFcmAdditionalHeaders.TabIndex = 21;
+            this.grouperFcmAdditionalHeaders.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperFcmAdditionalHeaders_CustomPaint);
             // 
             // gcmHeadersDataGridView
             // 
@@ -3082,7 +3132,7 @@
             this.btnRefresh.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnRefresh.Location = new System.Drawing.Point(760, 504);
+            this.btnRefresh.Location = new System.Drawing.Point(760, 538);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(72, 24);
             this.btnRefresh.TabIndex = 4;
@@ -3101,7 +3151,7 @@
             this.btnCancelUpdate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCancelUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelUpdate.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnCancelUpdate.Location = new System.Drawing.Point(920, 504);
+            this.btnCancelUpdate.Location = new System.Drawing.Point(920, 538);
             this.btnCancelUpdate.Name = "btnCancelUpdate";
             this.btnCancelUpdate.Size = new System.Drawing.Size(72, 24);
             this.btnCancelUpdate.TabIndex = 6;
@@ -3120,7 +3170,7 @@
             this.btnCreateDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCreateDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnCreateDelete.Location = new System.Drawing.Point(840, 504);
+            this.btnCreateDelete.Location = new System.Drawing.Point(840, 538);
             this.btnCreateDelete.Name = "btnCreateDelete";
             this.btnCreateDelete.Size = new System.Drawing.Size(72, 24);
             this.btnCreateDelete.TabIndex = 5;
@@ -3139,7 +3189,7 @@
             this.btnRegistrations.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnRegistrations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRegistrations.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnRegistrations.Location = new System.Drawing.Point(594, 504);
+            this.btnRegistrations.Location = new System.Drawing.Point(594, 538);
             this.btnRegistrations.Name = "btnRegistrations";
             this.btnRegistrations.Size = new System.Drawing.Size(78, 24);
             this.btnRegistrations.TabIndex = 2;
@@ -3184,15 +3234,15 @@
             this.Controls.Add(this.mainTabControl);
             this.Controls.Add(this.btnSend);
             this.Name = "HandleNotificationHubControl";
-            this.Size = new System.Drawing.Size(1008, 544);
+            this.Size = new System.Drawing.Size(1008, 578);
             this.Resize += new System.EventHandler(this.HandleNotificationHubControl_Resize);
             this.mainTabControl.ResumeLayout(false);
             this.tabPageDescription.ResumeLayout(false);
             this.grouperNotificationHubInformation.ResumeLayout(false);
             this.grouperUserMetadata.ResumeLayout(false);
             this.grouperUserMetadata.PerformLayout();
-            this.grouperGoogleCloudMessaggingSettings.ResumeLayout(false);
-            this.grouperGoogleCloudMessaggingSettings.PerformLayout();
+            this.grouperFirebaseCloudMessagingSettings.ResumeLayout(false);
+            this.grouperFirebaseCloudMessagingSettings.PerformLayout();
             this.grouperWindowsPhoneNotificationSettings.ResumeLayout(false);
             this.grouperWindowsPhoneNotificationSettings.PerformLayout();
             this.grouperAppleNotificationSettings.ResumeLayout(false);
@@ -3324,15 +3374,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.gcmLowerSplitContainer)).EndInit();
             this.gcmLowerSplitContainer.ResumeLayout(false);
             this.gcmTagsTabControl.ResumeLayout(false);
-            this.tabGcmTagExpression.ResumeLayout(false);
-            this.grouperGcmTagExpression.ResumeLayout(false);
-            this.grouperGcmTagExpression.PerformLayout();
-            this.tabGcmNotificationTags.ResumeLayout(false);
-            this.grouperGcmTags.ResumeLayout(false);
+            this.tabFcmTagExpression.ResumeLayout(false);
+            this.grouperFcmTagExpression.ResumeLayout(false);
+            this.grouperFcmTagExpression.PerformLayout();
+            this.tabFcmNotificationTags.ResumeLayout(false);
+            this.grouperFcmTags.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gcmTagsDataGridView)).EndInit();
             this.gcmAdditionalHeadersTabControl.ResumeLayout(false);
-            this.tabGcmAdditionalHeaders.ResumeLayout(false);
-            this.grouperGcmAdditionalHeaders.ResumeLayout(false);
+            this.tabFcmAdditionalHeaders.ResumeLayout(false);
+            this.grouperFcmAdditionalHeaders.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gcmHeadersDataGridView)).EndInit();
             this.registrationContextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.templatePropertiesBindingSource)).EndInit();
@@ -3345,8 +3395,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.mpnsTagsBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.appleHeadersBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.appleTagsBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gcmHeadersBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gcmTagsBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fcmHeadersBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fcmTagsBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.authorizationRulesBindingSource)).EndInit();
             this.ResumeLayout(false);
 
@@ -3391,14 +3441,10 @@
         private Grouper grouperRegistrationProperties;
         private System.Windows.Forms.PropertyGrid registrationPropertyGrid;
         private System.Windows.Forms.BindingSource registrationsBindingSource;
-        private Grouper grouperWindowsPhoneNotificationSettings;
-        private System.Windows.Forms.Label lblMpnsCredentialCertificateThumbprint;
-        private System.Windows.Forms.TextBox txtMpnsCredentialCertificateThumbprint;
-        private System.Windows.Forms.Button btnMpnsCredentialUploadCertificate;
         private Grouper grouperAppleNotificationSettings;
-        private Grouper grouperGoogleCloudMessaggingSettings;
-        private System.Windows.Forms.Label lblGcmApiKey;
-        private System.Windows.Forms.TextBox txtGcmApiKey;
+        private Grouper grouperFirebaseCloudMessagingSettings;
+        private System.Windows.Forms.Label lblFcmApiKey;
+        private System.Windows.Forms.TextBox txtFcmPrivateKey;
         private System.Windows.Forms.Button btnApnsCredentialUploadCertificate;
         private System.Windows.Forms.Label lblApnsCredentialCertificateThumbprint;
         private System.Windows.Forms.TextBox txtApnsCredentialCertificateThumbprint;
@@ -3426,17 +3472,17 @@
         private System.Windows.Forms.SplitContainer appleLowerSplitContainer;
         private System.Windows.Forms.BindingSource appleHeadersBindingSource;
         private System.Windows.Forms.BindingSource appleTagsBindingSource;
-        private System.Windows.Forms.TextBox txtGcmEndpoint;
-        private System.Windows.Forms.Label lblGcmEndpoint;
+        private System.Windows.Forms.TextBox txtFcmEndpoint;
+        private System.Windows.Forms.Label lblFcmV1Endpoint;
         private System.Windows.Forms.TextBox txtApnsEndpoint;
         private System.Windows.Forms.Label lblApnsEndpoint;
         private System.Windows.Forms.TabPage tabPageGoogleNativeNotification;
         private System.Windows.Forms.SplitContainer gcmSplitContainer;
         private Grouper grouper1;
-        private System.Windows.Forms.TextBox txtGcmJsonPayload;
+        private System.Windows.Forms.TextBox txtFcmJsonPayload;
         private System.Windows.Forms.SplitContainer gcmLowerSplitContainer;
-        private System.Windows.Forms.BindingSource gcmHeadersBindingSource;
-        private System.Windows.Forms.BindingSource gcmTagsBindingSource;
+        private System.Windows.Forms.BindingSource fcmHeadersBindingSource;
+        private System.Windows.Forms.BindingSource fcmTagsBindingSource;
         private Grouper grouperUserMetadata;
         private System.Windows.Forms.TextBox txtUserMetadata;
         private System.Windows.Forms.Label lblUserMetadata;
@@ -3454,10 +3500,8 @@
         private Grouper grouperAuthorizationRuleList;
         private System.Windows.Forms.DataGridView authorizationRulesDataGridView;
         private System.Windows.Forms.BindingSource authorizationRulesBindingSource;
-        private System.Windows.Forms.CheckBox checkBoxEnableUnauthenticatedMpns;
         private System.Windows.Forms.Button btnClearApnsNotification;
-        private System.Windows.Forms.Button btnClearMpnsNotification;
-        private System.Windows.Forms.Button btnClearGcmNotification;
+        private System.Windows.Forms.Button btnClearFcmNotification;
         private System.Windows.Forms.Button btnClearWnsNotification;
         internal System.Windows.Forms.TabControl templateTagsTabControl;
         private System.Windows.Forms.TabPage tabTemplateTagExpression;
@@ -3488,11 +3532,11 @@
         private Grouper grouperAppleTags;
         private System.Windows.Forms.DataGridView appleTagsDataGridView;
         internal System.Windows.Forms.TabControl gcmTagsTabControl;
-        private System.Windows.Forms.TabPage tabGcmTagExpression;
-        private Grouper grouperGcmTagExpression;
-        private System.Windows.Forms.TextBox txtGcmTagExpression;
-        private System.Windows.Forms.TabPage tabGcmNotificationTags;
-        private Grouper grouperGcmTags;
+        private System.Windows.Forms.TabPage tabFcmTagExpression;
+        private Grouper grouperFcmTagExpression;
+        private System.Windows.Forms.TextBox txtFcmTagExpression;
+        private System.Windows.Forms.TabPage tabFcmNotificationTags;
+        private Grouper grouperFcmTags;
         private System.Windows.Forms.DataGridView gcmTagsDataGridView;
         internal System.Windows.Forms.TabControl wnsTemplateTabControl;
         private System.Windows.Forms.TabPage tabWnsTemplate;
@@ -3524,11 +3568,21 @@
         private System.Windows.Forms.TabPage tabAppleNotificationExpiry;
         private Grouper grouperApnsExpiry;
         internal System.Windows.Forms.TabControl gcmAdditionalHeadersTabControl;
-        private System.Windows.Forms.TabPage tabGcmAdditionalHeaders;
-        private Grouper grouperGcmAdditionalHeaders;
+        private System.Windows.Forms.TabPage tabFcmAdditionalHeaders;
+        private Grouper grouperFcmAdditionalHeaders;
         private System.Windows.Forms.DataGridView gcmHeadersDataGridView;
         private System.Windows.Forms.PictureBox pictFindRegistrations;
         private TimeSpanControl tsRegistrationTimeToLive;
         private TimeSpanControl tsApnsExpiry;
+        private Grouper grouperWindowsPhoneNotificationSettings;
+        private System.Windows.Forms.Button btnClearMpnsNotification;
+        private System.Windows.Forms.CheckBox checkBoxEnableUnauthenticatedMpns;
+        private System.Windows.Forms.Button btnMpnsCredentialUploadCertificate;
+        private System.Windows.Forms.Label lblMpnsCredentialCertificateThumbprint;
+        private System.Windows.Forms.TextBox txtMpnsCredentialCertificateThumbprint;
+        private System.Windows.Forms.Label lblFcmV1Email;
+        private System.Windows.Forms.TextBox txtFcmEmail;
+        private System.Windows.Forms.Label lblFcmProjectId;
+        private System.Windows.Forms.TextBox txtFcmProjectId;
     }
 }
