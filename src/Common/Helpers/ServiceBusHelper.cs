@@ -1530,19 +1530,22 @@ namespace ServiceBusExplorer
         /// </summary>
         /// <param name="description">A NotificationHubDescription object describing the attributes with which the new notification hub will be updated.</param>
         /// <returns>Returns an updated NotificationHubDescription object.</returns>
-        public AzureNotificationHubs.NotificationHubDescription UpdateNotificationHub(AzureNotificationHubs.NotificationHubDescription description)
+        async public Task<AzureNotificationHubs.NotificationHubDescription> UpdateNotificationHubAsync(AzureNotificationHubs.NotificationHubDescription description)
         {
             if (description == null)
             {
                 throw new ArgumentException(DescriptionCannotBeNull);
             }
+            
             if (namespaceManager != null)
             {
-                var notificationHub = RetryHelper.RetryFunc(() => notificationHubNamespaceManager.UpdateNotificationHub(description), writeToLog);
+                var notificationHub = await RetryHelper.RetryFuncAsync(() => notificationHubNamespaceManager.UpdateNotificationHubAsync(description), writeToLog);
                 WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, NotificationHubUpdated, description.Path));
                 OnCreate?.Invoke(new ServiceBusHelperEventArgs(notificationHub, EntityType.NotificationHub));
+
                 return notificationHub;
             }
+
             throw new ApplicationException(ServiceBusIsDisconnected);
         }
 
