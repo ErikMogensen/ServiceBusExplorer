@@ -34,7 +34,6 @@
             this.txtFcmEmail = new System.Windows.Forms.TextBox();
             this.lblFcmProjectId = new System.Windows.Forms.Label();
             this.txtFcmProjectId = new System.Windows.Forms.TextBox();
-            this.btnClearFcmNotification = new System.Windows.Forms.Button();
             this.txtFcmEndpoint = new System.Windows.Forms.TextBox();
             this.lblFcmV1Endpoint = new System.Windows.Forms.Label();
             this.lblFcmApiKey = new System.Windows.Forms.Label();
@@ -353,7 +352,7 @@
             this.btnSend.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSend.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnSend.Location = new System.Drawing.Point(680, 538);
+            this.btnSend.Location = new System.Drawing.Point(680, 552);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(72, 24);
             this.btnSend.TabIndex = 3;
@@ -383,7 +382,7 @@
             this.mainTabControl.Multiline = true;
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(976, 514);
+            this.mainTabControl.Size = new System.Drawing.Size(976, 528);
             this.mainTabControl.TabIndex = 0;
             this.mainTabControl.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.mainTabControl_DrawItem);
             this.mainTabControl.SelectedIndexChanged += new System.EventHandler(this.mainTabControl_SelectedIndexChanged);
@@ -403,7 +402,7 @@
             this.tabPageDescription.Location = new System.Drawing.Point(4, 22);
             this.tabPageDescription.Name = "tabPageDescription";
             this.tabPageDescription.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDescription.Size = new System.Drawing.Size(968, 488);
+            this.tabPageDescription.Size = new System.Drawing.Size(968, 502);
             this.tabPageDescription.TabIndex = 3;
             this.tabPageDescription.Text = "Description";
             // 
@@ -430,7 +429,7 @@
             this.grouperNotificationHubInformation.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperNotificationHubInformation.ShadowControl = false;
             this.grouperNotificationHubInformation.ShadowThickness = 1;
-            this.grouperNotificationHubInformation.Size = new System.Drawing.Size(296, 359);
+            this.grouperNotificationHubInformation.Size = new System.Drawing.Size(296, 373);
             this.grouperNotificationHubInformation.TabIndex = 7;
             // 
             // propertyListView
@@ -445,7 +444,7 @@
             this.propertyListView.Location = new System.Drawing.Point(16, 32);
             this.propertyListView.Name = "propertyListView";
             this.propertyListView.OwnerDraw = true;
-            this.propertyListView.Size = new System.Drawing.Size(264, 311);
+            this.propertyListView.Size = new System.Drawing.Size(264, 325);
             this.propertyListView.TabIndex = 0;
             this.propertyListView.UseCompatibleStateImageBehavior = false;
             this.propertyListView.View = System.Windows.Forms.View.Details;
@@ -542,7 +541,6 @@
             this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmEmail);
             this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmProjectId);
             this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmProjectId);
-            this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.btnClearFcmNotification);
             this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.txtFcmEndpoint);
             this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmV1Endpoint);
             this.grouperFirebaseCloudMessagingSettings.Controls.Add(this.lblFcmApiKey);
@@ -560,14 +558,14 @@
             this.grouperFirebaseCloudMessagingSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperFirebaseCloudMessagingSettings.ShadowControl = false;
             this.grouperFirebaseCloudMessagingSettings.ShadowThickness = 1;
-            this.grouperFirebaseCloudMessagingSettings.Size = new System.Drawing.Size(304, 194);
+            this.grouperFirebaseCloudMessagingSettings.Size = new System.Drawing.Size(304, 208);
             this.grouperFirebaseCloudMessagingSettings.TabIndex = 0;
             // 
             // lblFcmV1Email
             // 
             this.lblFcmV1Email.AutoSize = true;
             this.lblFcmV1Email.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmV1Email.Location = new System.Drawing.Point(16, 96);
+            this.lblFcmV1Email.Location = new System.Drawing.Point(17, 120);
             this.lblFcmV1Email.Name = "lblFcmV1Email";
             this.lblFcmV1Email.Size = new System.Drawing.Size(35, 13);
             this.lblFcmV1Email.TabIndex = 4;
@@ -579,16 +577,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmEmail.BackColor = System.Drawing.SystemColors.Window;
             this.txtFcmEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtFcmEmail.Location = new System.Drawing.Point(97, 93);
+            this.txtFcmEmail.Location = new System.Drawing.Point(17, 136);
             this.txtFcmEmail.Name = "txtFcmEmail";
-            this.txtFcmEmail.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmEmail.Size = new System.Drawing.Size(272, 20);
             this.txtFcmEmail.TabIndex = 5;
             // 
             // lblFcmProjectId
             // 
             this.lblFcmProjectId.AutoSize = true;
             this.lblFcmProjectId.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmProjectId.Location = new System.Drawing.Point(16, 64);
+            this.lblFcmProjectId.Location = new System.Drawing.Point(17, 76);
             this.lblFcmProjectId.Name = "lblFcmProjectId";
             this.lblFcmProjectId.Size = new System.Drawing.Size(55, 13);
             this.lblFcmProjectId.TabIndex = 2;
@@ -600,44 +598,27 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmProjectId.BackColor = System.Drawing.SystemColors.Window;
             this.txtFcmProjectId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtFcmProjectId.Location = new System.Drawing.Point(97, 61);
+            this.txtFcmProjectId.Location = new System.Drawing.Point(17, 92);
             this.txtFcmProjectId.Name = "txtFcmProjectId";
-            this.txtFcmProjectId.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmProjectId.Size = new System.Drawing.Size(272, 20);
             this.txtFcmProjectId.TabIndex = 3;
-            // 
-            // btnClearFcmNotification
-            // 
-            this.btnClearFcmNotification.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearFcmNotification.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.btnClearFcmNotification.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnClearFcmNotification.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnClearFcmNotification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
-            this.btnClearFcmNotification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearFcmNotification.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClearFcmNotification.Location = new System.Drawing.Point(216, 156);
-            this.btnClearFcmNotification.Name = "btnClearFcmNotification";
-            this.btnClearFcmNotification.Size = new System.Drawing.Size(72, 24);
-            this.btnClearFcmNotification.TabIndex = 8;
-            this.btnClearFcmNotification.Text = "Clear";
-            this.btnClearFcmNotification.UseVisualStyleBackColor = false;
-            this.btnClearFcmNotification.Click += new System.EventHandler(this.btnClearFcmNotification_Click);
             // 
             // txtFcmEndpoint
             // 
             this.txtFcmEndpoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmEndpoint.BackColor = System.Drawing.SystemColors.Window;
-            this.txtFcmEndpoint.Location = new System.Drawing.Point(97, 125);
+            this.txtFcmEndpoint.Location = new System.Drawing.Point(17, 180);
             this.txtFcmEndpoint.Name = "txtFcmEndpoint";
             this.txtFcmEndpoint.ReadOnly = true;
-            this.txtFcmEndpoint.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmEndpoint.Size = new System.Drawing.Size(272, 20);
             this.txtFcmEndpoint.TabIndex = 7;
             // 
             // lblFcmV1Endpoint
             // 
             this.lblFcmV1Endpoint.AutoSize = true;
             this.lblFcmV1Endpoint.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmV1Endpoint.Location = new System.Drawing.Point(16, 128);
+            this.lblFcmV1Endpoint.Location = new System.Drawing.Point(17, 164);
             this.lblFcmV1Endpoint.Name = "lblFcmV1Endpoint";
             this.lblFcmV1Endpoint.Size = new System.Drawing.Size(52, 13);
             this.lblFcmV1Endpoint.TabIndex = 6;
@@ -647,7 +628,7 @@
             // 
             this.lblFcmApiKey.AutoSize = true;
             this.lblFcmApiKey.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmApiKey.Location = new System.Drawing.Point(16, 32);
+            this.lblFcmApiKey.Location = new System.Drawing.Point(17, 32);
             this.lblFcmApiKey.Name = "lblFcmApiKey";
             this.lblFcmApiKey.Size = new System.Drawing.Size(64, 13);
             this.lblFcmApiKey.TabIndex = 0;
@@ -659,9 +640,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmPrivateKey.BackColor = System.Drawing.SystemColors.Window;
             this.txtFcmPrivateKey.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtFcmPrivateKey.Location = new System.Drawing.Point(97, 29);
+            this.txtFcmPrivateKey.Location = new System.Drawing.Point(17, 48);
             this.txtFcmPrivateKey.Name = "txtFcmPrivateKey";
-            this.txtFcmPrivateKey.Size = new System.Drawing.Size(191, 20);
+            this.txtFcmPrivateKey.Size = new System.Drawing.Size(272, 20);
             this.txtFcmPrivateKey.TabIndex = 1;
             // 
             // grouperWindowsPhoneNotificationSettings
@@ -684,7 +665,7 @@
             this.grouperWindowsPhoneNotificationSettings.ForeColor = System.Drawing.Color.White;
             this.grouperWindowsPhoneNotificationSettings.GroupImage = null;
             this.grouperWindowsPhoneNotificationSettings.GroupTitle = "Windows Phone Notification Settings";
-            this.grouperWindowsPhoneNotificationSettings.Location = new System.Drawing.Point(16, 312);
+            this.grouperWindowsPhoneNotificationSettings.Location = new System.Drawing.Point(16, 326);
             this.grouperWindowsPhoneNotificationSettings.Name = "grouperWindowsPhoneNotificationSettings";
             this.grouperWindowsPhoneNotificationSettings.Padding = new System.Windows.Forms.Padding(20);
             this.grouperWindowsPhoneNotificationSettings.PaintGroupBox = true;
@@ -692,7 +673,7 @@
             this.grouperWindowsPhoneNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperWindowsPhoneNotificationSettings.ShadowControl = false;
             this.grouperWindowsPhoneNotificationSettings.ShadowThickness = 1;
-            this.grouperWindowsPhoneNotificationSettings.Size = new System.Drawing.Size(304, 162);
+            this.grouperWindowsPhoneNotificationSettings.Size = new System.Drawing.Size(304, 159);
             this.grouperWindowsPhoneNotificationSettings.TabIndex = 2;
             // 
             // btnClearMpnsNotification
@@ -716,7 +697,7 @@
             // 
             this.checkBoxEnableUnauthenticatedMpns.AutoSize = true;
             this.checkBoxEnableUnauthenticatedMpns.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxEnableUnauthenticatedMpns.Location = new System.Drawing.Point(16, 92);
+            this.checkBoxEnableUnauthenticatedMpns.Location = new System.Drawing.Point(16, 88);
             this.checkBoxEnableUnauthenticatedMpns.Name = "checkBoxEnableUnauthenticatedMpns";
             this.checkBoxEnableUnauthenticatedMpns.Size = new System.Drawing.Size(224, 17);
             this.checkBoxEnableUnauthenticatedMpns.TabIndex = 2;
@@ -784,7 +765,7 @@
             this.grouperAppleNotificationSettings.ForeColor = System.Drawing.Color.White;
             this.grouperAppleNotificationSettings.GroupImage = null;
             this.grouperAppleNotificationSettings.GroupTitle = "Apple Notification Settings";
-            this.grouperAppleNotificationSettings.Location = new System.Drawing.Point(336, 312);
+            this.grouperAppleNotificationSettings.Location = new System.Drawing.Point(336, 326);
             this.grouperAppleNotificationSettings.Name = "grouperAppleNotificationSettings";
             this.grouperAppleNotificationSettings.Padding = new System.Windows.Forms.Padding(20);
             this.grouperAppleNotificationSettings.PaintGroupBox = true;
@@ -792,7 +773,7 @@
             this.grouperAppleNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperAppleNotificationSettings.ShadowControl = false;
             this.grouperAppleNotificationSettings.ShadowThickness = 1;
-            this.grouperAppleNotificationSettings.Size = new System.Drawing.Size(304, 162);
+            this.grouperAppleNotificationSettings.Size = new System.Drawing.Size(304, 157);
             this.grouperAppleNotificationSettings.TabIndex = 5;
             // 
             // btnClearApnsNotification
@@ -866,7 +847,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtApnsCredentialCertificateThumbprint.BackColor = System.Drawing.SystemColors.Window;
             this.txtApnsCredentialCertificateThumbprint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtApnsCredentialCertificateThumbprint.Location = new System.Drawing.Point(16, 48);
+            this.txtApnsCredentialCertificateThumbprint.Location = new System.Drawing.Point(17, 48);
             this.txtApnsCredentialCertificateThumbprint.Name = "txtApnsCredentialCertificateThumbprint";
             this.txtApnsCredentialCertificateThumbprint.ReadOnly = true;
             this.txtApnsCredentialCertificateThumbprint.Size = new System.Drawing.Size(272, 20);
@@ -900,7 +881,7 @@
             this.grouperWindowsNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperWindowsNotificationSettings.ShadowControl = false;
             this.grouperWindowsNotificationSettings.ShadowThickness = 1;
-            this.grouperWindowsNotificationSettings.Size = new System.Drawing.Size(304, 194);
+            this.grouperWindowsNotificationSettings.Size = new System.Drawing.Size(304, 208);
             this.grouperWindowsNotificationSettings.TabIndex = 1;
             // 
             // btnClearWnsNotification
@@ -912,7 +893,7 @@
             this.btnClearWnsNotification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnClearWnsNotification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearWnsNotification.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClearWnsNotification.Location = new System.Drawing.Point(216, 156);
+            this.btnClearWnsNotification.Location = new System.Drawing.Point(216, 136);
             this.btnClearWnsNotification.Name = "btnClearWnsNotification";
             this.btnClearWnsNotification.Size = new System.Drawing.Size(72, 24);
             this.btnClearWnsNotification.TabIndex = 4;
@@ -3132,7 +3113,7 @@
             this.btnRefresh.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnRefresh.Location = new System.Drawing.Point(760, 538);
+            this.btnRefresh.Location = new System.Drawing.Point(760, 552);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(72, 24);
             this.btnRefresh.TabIndex = 4;
@@ -3151,7 +3132,7 @@
             this.btnCancelUpdate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCancelUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelUpdate.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnCancelUpdate.Location = new System.Drawing.Point(920, 538);
+            this.btnCancelUpdate.Location = new System.Drawing.Point(920, 552);
             this.btnCancelUpdate.Name = "btnCancelUpdate";
             this.btnCancelUpdate.Size = new System.Drawing.Size(72, 24);
             this.btnCancelUpdate.TabIndex = 6;
@@ -3170,7 +3151,7 @@
             this.btnCreateDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCreateDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateDelete.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnCreateDelete.Location = new System.Drawing.Point(840, 538);
+            this.btnCreateDelete.Location = new System.Drawing.Point(840, 552);
             this.btnCreateDelete.Name = "btnCreateDelete";
             this.btnCreateDelete.Size = new System.Drawing.Size(72, 24);
             this.btnCreateDelete.TabIndex = 5;
@@ -3189,7 +3170,7 @@
             this.btnRegistrations.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnRegistrations.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRegistrations.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnRegistrations.Location = new System.Drawing.Point(594, 538);
+            this.btnRegistrations.Location = new System.Drawing.Point(594, 552);
             this.btnRegistrations.Name = "btnRegistrations";
             this.btnRegistrations.Size = new System.Drawing.Size(78, 24);
             this.btnRegistrations.TabIndex = 2;
@@ -3234,7 +3215,7 @@
             this.Controls.Add(this.mainTabControl);
             this.Controls.Add(this.btnSend);
             this.Name = "HandleNotificationHubControl";
-            this.Size = new System.Drawing.Size(1008, 578);
+            this.Size = new System.Drawing.Size(1008, 592);
             this.Resize += new System.EventHandler(this.HandleNotificationHubControl_Resize);
             this.mainTabControl.ResumeLayout(false);
             this.tabPageDescription.ResumeLayout(false);
@@ -3501,7 +3482,6 @@
         private System.Windows.Forms.DataGridView authorizationRulesDataGridView;
         private System.Windows.Forms.BindingSource authorizationRulesBindingSource;
         private System.Windows.Forms.Button btnClearApnsNotification;
-        private System.Windows.Forms.Button btnClearFcmNotification;
         private System.Windows.Forms.Button btnClearWnsNotification;
         internal System.Windows.Forms.TabControl templateTagsTabControl;
         private System.Windows.Forms.TabPage tabTemplateTagExpression;

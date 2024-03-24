@@ -65,11 +65,7 @@ jobs:
 
         $commonInfoFile = "$env:GITHUB_WORKSPACE\src\Common\Properties\AssemblyInfo.cs"
         .\SetVersion -FileName $commonInfoFile -PropertyName 'AssemblyFileVersion' -Version ${{env.NUMBER_VERSION}}
-        .\SetVersion -FileName $commonInfoFile -PropertyName 'AssemblyInformationalVersion' -VersionString ${{env.ReleaseVersion}}   
-
-        $notificationHubsInfoFile = "$env:GITHUB_WORKSPACE\src\NotificationHubs\Properties\AssemblyInfo.cs"
-        .\SetVersion -FileName $notificationHubsInfoFile -PropertyName 'AssemblyFileVersion' -Version ${{env.NUMBER_VERSION}}      
-        .\SetVersion -FileName $notificationHubsInfoFile -PropertyName 'AssemblyInformationalVersion' -VersionString ${{env.ReleaseVersion}}   
+        .\SetVersion -FileName $commonInfoFile -PropertyName 'AssemblyInformationalVersion' -VersionString ${{env.ReleaseVersion}}     
 
     - name: Build
       run: |
