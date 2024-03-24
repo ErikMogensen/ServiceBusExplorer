@@ -2162,7 +2162,7 @@ namespace ServiceBusExplorer.Controls
             }
         }
 
-        private void btnCancelUpdate_Click(object sender, EventArgs e)
+        async private void btnCancelUpdate_Click(object sender, EventArgs e)
         {
             if (btnCancelUpdate.Text == CancelText)
             {
@@ -2270,7 +2270,8 @@ namespace ServiceBusExplorer.Controls
                             }
                         }
                     }
-                    serviceBusHelper.UpdateNotificationHub(notificationHubDescription);
+
+                    await serviceBusHelper.UpdateNotificationHubAsync(notificationHubDescription);
                 }
                 catch (Exception ex)
                 {
