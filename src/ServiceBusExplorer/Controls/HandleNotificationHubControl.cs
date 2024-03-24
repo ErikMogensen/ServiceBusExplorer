@@ -2276,7 +2276,7 @@ namespace ServiceBusExplorer.Controls
                 catch (Exception ex)
                 {
                     HandleException(ex);
-                    notificationHubDescription = serviceBusHelper.GetNotificationHub(notificationHubDescription.Path);
+                    notificationHubDescription = await serviceBusHelper.GetNotificationHubAsync(notificationHubDescription.Path);
                 }
                 finally
                 {

@@ -3007,7 +3007,7 @@ namespace ServiceBusExplorer.Forms
                     // Notification Hub Node
                     if (serviceBusTreeView.SelectedNode.Tag is NotificationHubDescription)
                     {
-                        var notificationHubDescription = serviceBusHelper.GetNotificationHub(((NotificationHubDescription)serviceBusTreeView.SelectedNode.Tag).Path);
+                        var notificationHubDescription = await serviceBusHelper.GetNotificationHubAsync(((NotificationHubDescription)serviceBusTreeView.SelectedNode.Tag).Path);
                         serviceBusTreeView.SelectedNode.ImageIndex = NotificationHubIconIndex;
                         serviceBusTreeView.SelectedNode.SelectedImageIndex = NotificationHubIconIndex;
                         serviceBusTreeView.SelectedNode.Tag = notificationHubDescription;

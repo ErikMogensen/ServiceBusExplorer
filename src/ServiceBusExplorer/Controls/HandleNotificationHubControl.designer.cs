@@ -558,14 +558,14 @@
             this.grouperFirebaseCloudMessagingSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperFirebaseCloudMessagingSettings.ShadowControl = false;
             this.grouperFirebaseCloudMessagingSettings.ShadowThickness = 1;
-            this.grouperFirebaseCloudMessagingSettings.Size = new System.Drawing.Size(304, 208);
+            this.grouperFirebaseCloudMessagingSettings.Size = new System.Drawing.Size(304, 164);
             this.grouperFirebaseCloudMessagingSettings.TabIndex = 0;
             // 
             // lblFcmV1Email
             // 
             this.lblFcmV1Email.AutoSize = true;
             this.lblFcmV1Email.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmV1Email.Location = new System.Drawing.Point(17, 120);
+            this.lblFcmV1Email.Location = new System.Drawing.Point(17, 77);
             this.lblFcmV1Email.Name = "lblFcmV1Email";
             this.lblFcmV1Email.Size = new System.Drawing.Size(35, 13);
             this.lblFcmV1Email.TabIndex = 4;
@@ -577,7 +577,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmEmail.BackColor = System.Drawing.SystemColors.Window;
             this.txtFcmEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtFcmEmail.Location = new System.Drawing.Point(17, 136);
+            this.txtFcmEmail.Location = new System.Drawing.Point(17, 93);
             this.txtFcmEmail.Name = "txtFcmEmail";
             this.txtFcmEmail.Size = new System.Drawing.Size(272, 20);
             this.txtFcmEmail.TabIndex = 5;
@@ -586,7 +586,7 @@
             // 
             this.lblFcmProjectId.AutoSize = true;
             this.lblFcmProjectId.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmProjectId.Location = new System.Drawing.Point(17, 76);
+            this.lblFcmProjectId.Location = new System.Drawing.Point(151, 32);
             this.lblFcmProjectId.Name = "lblFcmProjectId";
             this.lblFcmProjectId.Size = new System.Drawing.Size(55, 13);
             this.lblFcmProjectId.TabIndex = 2;
@@ -598,9 +598,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmProjectId.BackColor = System.Drawing.SystemColors.Window;
             this.txtFcmProjectId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtFcmProjectId.Location = new System.Drawing.Point(17, 92);
+            this.txtFcmProjectId.Location = new System.Drawing.Point(154, 48);
             this.txtFcmProjectId.Name = "txtFcmProjectId";
-            this.txtFcmProjectId.Size = new System.Drawing.Size(272, 20);
+            this.txtFcmProjectId.Size = new System.Drawing.Size(127, 20);
             this.txtFcmProjectId.TabIndex = 3;
             // 
             // txtFcmEndpoint
@@ -608,7 +608,7 @@
             this.txtFcmEndpoint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFcmEndpoint.BackColor = System.Drawing.SystemColors.Window;
-            this.txtFcmEndpoint.Location = new System.Drawing.Point(17, 180);
+            this.txtFcmEndpoint.Location = new System.Drawing.Point(17, 137);
             this.txtFcmEndpoint.Name = "txtFcmEndpoint";
             this.txtFcmEndpoint.ReadOnly = true;
             this.txtFcmEndpoint.Size = new System.Drawing.Size(272, 20);
@@ -618,7 +618,7 @@
             // 
             this.lblFcmV1Endpoint.AutoSize = true;
             this.lblFcmV1Endpoint.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblFcmV1Endpoint.Location = new System.Drawing.Point(17, 164);
+            this.lblFcmV1Endpoint.Location = new System.Drawing.Point(17, 121);
             this.lblFcmV1Endpoint.Name = "lblFcmV1Endpoint";
             this.lblFcmV1Endpoint.Size = new System.Drawing.Size(52, 13);
             this.lblFcmV1Endpoint.TabIndex = 6;
@@ -642,7 +642,7 @@
             this.txtFcmPrivateKey.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.txtFcmPrivateKey.Location = new System.Drawing.Point(17, 48);
             this.txtFcmPrivateKey.Name = "txtFcmPrivateKey";
-            this.txtFcmPrivateKey.Size = new System.Drawing.Size(272, 20);
+            this.txtFcmPrivateKey.Size = new System.Drawing.Size(127, 20);
             this.txtFcmPrivateKey.TabIndex = 1;
             // 
             // grouperWindowsPhoneNotificationSettings
@@ -665,7 +665,7 @@
             this.grouperWindowsPhoneNotificationSettings.ForeColor = System.Drawing.Color.White;
             this.grouperWindowsPhoneNotificationSettings.GroupImage = null;
             this.grouperWindowsPhoneNotificationSettings.GroupTitle = "Windows Phone Notification Settings";
-            this.grouperWindowsPhoneNotificationSettings.Location = new System.Drawing.Point(16, 326);
+            this.grouperWindowsPhoneNotificationSettings.Location = new System.Drawing.Point(16, 296);
             this.grouperWindowsPhoneNotificationSettings.Name = "grouperWindowsPhoneNotificationSettings";
             this.grouperWindowsPhoneNotificationSettings.Padding = new System.Windows.Forms.Padding(20);
             this.grouperWindowsPhoneNotificationSettings.PaintGroupBox = true;
@@ -765,7 +765,7 @@
             this.grouperAppleNotificationSettings.ForeColor = System.Drawing.Color.White;
             this.grouperAppleNotificationSettings.GroupImage = null;
             this.grouperAppleNotificationSettings.GroupTitle = "Apple Notification Settings";
-            this.grouperAppleNotificationSettings.Location = new System.Drawing.Point(336, 326);
+            this.grouperAppleNotificationSettings.Location = new System.Drawing.Point(336, 296);
             this.grouperAppleNotificationSettings.Name = "grouperAppleNotificationSettings";
             this.grouperAppleNotificationSettings.Padding = new System.Windows.Forms.Padding(20);
             this.grouperAppleNotificationSettings.PaintGroupBox = true;
@@ -881,7 +881,7 @@
             this.grouperWindowsNotificationSettings.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperWindowsNotificationSettings.ShadowControl = false;
             this.grouperWindowsNotificationSettings.ShadowThickness = 1;
-            this.grouperWindowsNotificationSettings.Size = new System.Drawing.Size(304, 208);
+            this.grouperWindowsNotificationSettings.Size = new System.Drawing.Size(304, 164);
             this.grouperWindowsNotificationSettings.TabIndex = 1;
             // 
             // btnClearWnsNotification
@@ -893,7 +893,7 @@
             this.btnClearWnsNotification.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnClearWnsNotification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearWnsNotification.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnClearWnsNotification.Location = new System.Drawing.Point(216, 136);
+            this.btnClearWnsNotification.Location = new System.Drawing.Point(216, 127);
             this.btnClearWnsNotification.Name = "btnClearWnsNotification";
             this.btnClearWnsNotification.Size = new System.Drawing.Size(72, 24);
             this.btnClearWnsNotification.TabIndex = 4;
@@ -1030,7 +1030,7 @@
             this.tabPageAuthorization.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPageAuthorization.Location = new System.Drawing.Point(4, 22);
             this.tabPageAuthorization.Name = "tabPageAuthorization";
-            this.tabPageAuthorization.Size = new System.Drawing.Size(968, 488);
+            this.tabPageAuthorization.Size = new System.Drawing.Size(968, 502);
             this.tabPageAuthorization.TabIndex = 6;
             this.tabPageAuthorization.Text = "Authorization Rules";
             // 
@@ -1098,7 +1098,7 @@
             this.tabPageRegistrations.Location = new System.Drawing.Point(4, 22);
             this.tabPageRegistrations.Name = "tabPageRegistrations";
             this.tabPageRegistrations.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRegistrations.Size = new System.Drawing.Size(968, 488);
+            this.tabPageRegistrations.Size = new System.Drawing.Size(968, 502);
             this.tabPageRegistrations.TabIndex = 4;
             this.tabPageRegistrations.Text = "Registrations";
             // 
@@ -1418,7 +1418,7 @@
             this.tabPageTemplateNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageTemplateNotification.Name = "tabPageTemplateNotification";
             this.tabPageTemplateNotification.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTemplateNotification.Size = new System.Drawing.Size(968, 488);
+            this.tabPageTemplateNotification.Size = new System.Drawing.Size(968, 502);
             this.tabPageTemplateNotification.TabIndex = 0;
             this.tabPageTemplateNotification.Text = "Template";
             // 
@@ -1769,7 +1769,7 @@
             this.tabPageMpnsNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageMpnsNativeNotification.Name = "tabPageMpnsNativeNotification";
             this.tabPageMpnsNativeNotification.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMpnsNativeNotification.Size = new System.Drawing.Size(968, 488);
+            this.tabPageMpnsNativeNotification.Size = new System.Drawing.Size(968, 502);
             this.tabPageMpnsNativeNotification.TabIndex = 1;
             this.tabPageMpnsNativeNotification.Text = "Windows Phone";
             // 
@@ -2127,7 +2127,7 @@
             this.tabPageWnsNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageWnsNativeNotification.Name = "tabPageWnsNativeNotification";
             this.tabPageWnsNativeNotification.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWnsNativeNotification.Size = new System.Drawing.Size(968, 488);
+            this.tabPageWnsNativeNotification.Size = new System.Drawing.Size(968, 502);
             this.tabPageWnsNativeNotification.TabIndex = 1;
             this.tabPageWnsNativeNotification.Text = "Windows";
             // 
@@ -2484,7 +2484,7 @@
             this.tabPageAppleNativeNotification.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPageAppleNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageAppleNativeNotification.Name = "tabPageAppleNativeNotification";
-            this.tabPageAppleNativeNotification.Size = new System.Drawing.Size(968, 488);
+            this.tabPageAppleNativeNotification.Size = new System.Drawing.Size(968, 502);
             this.tabPageAppleNativeNotification.TabIndex = 2;
             this.tabPageAppleNativeNotification.Text = "Apple";
             // 
@@ -2822,7 +2822,7 @@
             this.tabPageGoogleNativeNotification.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPageGoogleNativeNotification.Location = new System.Drawing.Point(4, 22);
             this.tabPageGoogleNativeNotification.Name = "tabPageGoogleNativeNotification";
-            this.tabPageGoogleNativeNotification.Size = new System.Drawing.Size(968, 488);
+            this.tabPageGoogleNativeNotification.Size = new System.Drawing.Size(968, 502);
             this.tabPageGoogleNativeNotification.TabIndex = 5;
             this.tabPageGoogleNativeNotification.Text = "Google";
             // 
