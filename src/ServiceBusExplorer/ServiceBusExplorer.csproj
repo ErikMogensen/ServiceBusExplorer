@@ -7,6 +7,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net462</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
 
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -177,9 +178,7 @@
     <Compile Update="Controls\StandardValueEditorUI.designer.cs">
       <DependentUpon>StandardValueEditorUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="Controls\TestRelayControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Controls\TestRelayControl.cs" />
     <Compile Update="Controls\TestRelayControl.Designer.cs">
       <DependentUpon>TestRelayControl.cs</DependentUpon>
     </Compile>
@@ -189,9 +188,7 @@
     <Compile Update="Controls\TestSubscriptionControl.Designer.cs">
       <DependentUpon>TestSubscriptionControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Controls\TestQueueControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Controls\TestQueueControl.cs" />
     <Compile Update="Controls\TestQueueControl.Designer.cs">
       <DependentUpon>TestQueueControl.cs</DependentUpon>
     </Compile>
@@ -549,8 +546,9 @@
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="1.0.9" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="WindowsAzure.ServiceBus" Version="6.2.2" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="WindowsAzure.ServiceBus" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icons\Add.ico" />
@@ -645,6 +643,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\EventGridExplorerLibrary\EventGridExplorerLibrary.csproj" />
     <ProjectReference Include="..\EventHubs\EventHubs.csproj" />
     <ProjectReference Include="..\NotificationHubs\NotificationHubs.csproj" />
     <ProjectReference Include="..\Relay\Relay.csproj" />

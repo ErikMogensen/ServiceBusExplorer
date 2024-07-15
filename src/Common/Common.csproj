@@ -17,10 +17,8 @@
   <ItemGroup>
 
     <PackageReference Include="Microsoft.Azure.NotificationHubs" Version="1.0.9" />
-    <PackageReference Include="Microsoft.Azure.Relay" Version="2.0.15596" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 
-    <PackageReference Include="WindowsAzure.ServiceBus" Version="6.2.2" />
+    <PackageReference Include="WindowsAzure.ServiceBus" Version="7.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />
@@ -45,6 +43,7 @@
     </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EventGridExplorerLibrary\EventGridExplorerLibrary.csproj" />
     <ProjectReference Include="..\EventHubs\EventHubs.csproj" />
     <ProjectReference Include="..\Relay\Relay.csproj" />
     <ProjectReference Include="..\ServiceBus\ServiceBus.csproj" />

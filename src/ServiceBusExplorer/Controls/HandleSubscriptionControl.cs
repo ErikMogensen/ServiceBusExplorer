@@ -1345,6 +1345,17 @@ namespace ServiceBusExplorer.Controls
                 {
                     using (var deleteForm = new DeleteForm(subscriptionWrapper.SubscriptionDescription.Name, SubscriptionEntity.ToLower()))
                     {
+                        var configuration = TwoFilesConfiguration.Create(TwoFilesConfiguration.GetCurrentConfigFileUse(), writeToLog);
+
+                        bool disableAccidentalDeletionPrevention = configuration.GetBoolValue(
+                                                               ConfigurationParameters.DisableAccidentalDeletionPrevention,
+                                                               defaultValue: false);
+
+                        if (!disableAccidentalDeletionPrevention)
+                        {
+                            deleteForm.ShowAccidentalDeletionPreventionCheck(configuration, $"Delete {subscriptionWrapper.SubscriptionDescription.Name} {SubscriptionEntity.ToLower()}");
+                        }
+
                         if (deleteForm.ShowDialog() == DialogResult.OK)
                         {
                             await serviceBusHelper.DeleteSubscription(subscriptionWrapper.SubscriptionDescription);
@@ -2372,7 +2383,7 @@ namespace ServiceBusExplorer.Controls
                 stopwatch.Start();
 
                 var messagesDeleteCount = sequenceNumbersToDelete.Count;
-                var result = await deadLetterMessageHandler.DeleteMessages(sequenceNumbersToDelete);
+                var result = await deadLetterMessageHandler.DeleteMessages(sequenceNumbersToDelete, TransferDLQ: false);
                 RemoveDeadletterDataGridRows(result.DeletedSequenceNumbers);
 
                 if (messagesDeleteCount > result.DeletedSequenceNumbers.Count)

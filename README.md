@@ -14,14 +14,43 @@ The following software is required to run ServiceBusExplorer. It may run on othe
 - .NET Framework 4.6.2
 
 # Installation
+
+It is strongly recommended to set `Configuration File for Settings and Connection Strings` to `User Configuration File` as shown in the figure below to reduce problems when upgrading. 
+![UserConfiguration](./media/UserConfigFile.png)
+
+> **_Note:_** The `ServiceBusExplorer.exe.config` in the application directory will get overwritten during the upgrade.
+>
+> If you have made changes to it, you should back it up before upgrading. If you follow the recommendation above then only advanced changes such as WCF configuration modifications cause this. 
+>
+> Do not overwite the new configuration file with the old file since the `runtime` section in the new must file not be modified. 
+
 ## Using [Chocolatey](https://chocolatey.org/install)
+
+### Installing for the first time
+
 ```
 choco install ServiceBusExplorer
 ```
 
-The default location of the executable is C:\ProgramData\chocolatey\lib\ServiceBusExplorer\tools\ServiceBusExplorer.exe.
+### Upgrading
+
+```
+choco upgrade ServiceBusExplorer
+```
+
+The default location of the executable is `C:\ProgramData\chocolatey\lib\ServiceBusExplorer\tools\ServiceBusExplorer.exe`.
 
 More information on our [Chocolatey page](https://chocolatey.org/packages/ServiceBusExplorer).
+
+## Using [Scoop](https://scoop.sh)
+
+> **__Warning_** The `scoop` package is not maintained by the ServiceBusExplorer project so carefully check the package and the URLs it uses before using it. Also, the current package keeps the old version of `ServiceBusExplorer.exe.config`. That may cause assembly loading issues so do not use it for upgrading.
+
+```
+scoop install extras/servicebusexplorer
+```
+
+The default location of the executable is `%USERPROFILE%\scoop\apps\servicebusexplorer\current\tools\ServiceBusExplorer.exe`.
 
 ## Using GitHub
 ```
@@ -39,9 +68,9 @@ Here are some guidelines concerning contributions:
 - We have started to migrate from the old SDK to the latest SDKs for Service Bus, Event Hubs, Relay and Notification Hubs. Therefore, new classes should not depend on the old SDK unless absolutely necessary.  
 
 
-# Development Environment
+## Development Environment
 
-Visual Studio 2022 17.2.4 or later is required to build the solution. 
+Visual Studio 2022 17.8.0 or later is required to build the solution. 
 
 When editing UI elements Visual Studio should run as a DPI-unaware process. For more information about this, see the [Visual Studio documentation](https://docs.microsoft.com/en-us/dotnet/framework/winforms/disable-dpi-awareness-visual-studio). In Visual Studio 2022 the informational bar looks like this ![AutoscalingTurnedOff](./media/AutoscalingTurnedOff.png) when it is running as a DPI-unaware process.
 
@@ -61,20 +90,21 @@ The Service Bus Explorer 2.1.0 can be used with the Service Bus for Windows Serv
 # Documentation
 [Here](./docs/documentation.md) you can find the tool documentation and a log of the features implemented over time.
 
-# Videos
-For more information on how to use the Service Bus Explorer, see the following videos on Channel9:
-
-- [Getting Started with Service Bus. Part 3: Service Bus Explorer](http://www.digitalpodcast.com/items/10765228) by Clemens Vasters
-- [Cross Platform Notifications using Windows Azure Notifications Hub](http://channel9.msdn.com/Shows/Cloud+Cover/Episode-116-Cross-Platform-Notifications-using-Windows-Azure-Notifications-Hub) by Elio Damaggio, Nick Harris and Chris Risner.
-
 # Alternative Service Bus Management Tools
 Service Bus Explorer is only one of the management tools available for Azure Service Bus.
 
 Here are a couple of alternatives. We do not take responsibility for them though:
 
-- **Microsoft Azure Management Portal** _(SaaS, web based, extremely basic)_
-- **Serverless360** _(paid with free trial, SaaS, web based)_
-- **PowerShell** _([Documentation](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-manage-with-ps))_
-- **[Purple Explorer](https://github.com/telstrapurple/PurpleExplorer)** _(free, open source, cross platform)
-- **[Superbus](https://superbus.app/)** _(paid with a free trial, macOS)_
-- **[Service Bus Cloud Explorer](https://cloudbricks.io/products/service_bus_cloud_explorer/)** _(paid with a free basic plan, SaaS, web based)_
+| Tool                                     | Description                                   |
+| ---------------------------------------- | --------------------------------------------- |
+| Microsoft Azure Management Portal        | SaaS, web based, extremely basic              |
+| Serverless360                            | paid with free trial, SaaS, web based         |
+| [PowerShell]                             | free, open source, cross platform             |
+| [Purple Explorer]                        | free, open source, cross platform             |
+| [Superbus]                               | paid with a free trial, macOS                 |
+| [Service Bus Cloud Explorer]             | paid with a free basic plan, SaaS, web based  |
+
+[PowerShell]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-manage-with-ps
+[Purple Explorer]: https://github.com/telstrapurple/PurpleExplorer
+[Superbus]: https://superbus.app/
+[Service Bus Cloud Explorer]: https://cloudbricks.io/products/service_bus_cloud_explorer/

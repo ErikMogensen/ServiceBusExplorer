@@ -467,7 +467,7 @@ namespace ServiceBusExplorer.Helpers
                 }
             }
 
-            if (!updatedApp && !updatedApp)
+            if (!updatedUser && !updatedApp)
             {
                 HandleUpdateConfigurationFileError(updatedUser, updatedApp, writeToLog);
             }
@@ -616,7 +616,7 @@ namespace ServiceBusExplorer.Helpers
                     ConfigurationParameters.ConfigurationConfigFileParameter, resultStringApp, typeof(ConfigFileUse));
             }
 
-            return ConfigFileUse.ApplicationConfig;  // Default to Application for backwards compability
+            return ConfigFileUse.UserConfig;  // Default to User file for better performance
         }
 
         static ConfigFileUse AquireConfigFileUseValue()
