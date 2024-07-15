@@ -14,7 +14,7 @@ jobs:
     name: Publish winget package
     runs-on: windows-2022
     steps:
-      - name: Submit PaoloSalvatori.ServiceBusExplorer ${{ github.event.release.prerelease && 'Preview' || 'Stable' }}
+      - name: Submit Test.NotForReal ${{ github.event.release.prerelease && 'Preview' || 'Stable' }}
         run: |
 
           $assets = '${{ toJSON(github.event.release.assets) }}' | ConvertFrom-Json
@@ -22,12 +22,12 @@ jobs:
           $regex = [Regex]::New($env:REGEX)
           $version = $regex.Match($wingetRelevantAsset.name).Groups[1].Value
 
-          $wingetPackage = "PaoloSalvatori.ServiceBusExplorer${{ github.event.release.prerelease && '.Preview' || '' }}"
+          $wingetPackage = "Test.NotForReal${{ github.event.release.prerelease && '.Preview' || '' }}"
 
           # Get the latest wingetcreate file
           Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
 
           # Submit a PR for the package
-          .\wingetcreate.exe update $wingetPackage --submit --version $version --urls $wingetRelevantAsset.browser_download_url --token "${{ secrets.GITHUB_TOKEN }}"
+          # .\wingetcreate.exe update $wingetPackage --submit --version $version --urls $wingetRelevantAsset.browser_download_url --token "${{ secrets.GITHUB_TOKEN }}"
 
           
