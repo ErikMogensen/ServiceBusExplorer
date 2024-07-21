@@ -22,7 +22,7 @@ jobs:
         echo "OUTPUT_PATH=$env:GITHUB_WORKSPACE\src\ServiceBusExplorer\bin\Release" >> $env:GITHUB_ENV
         echo "RELEASE_VERSION=$env:STEP_RELEASE_VERSION" >> $env:GITHUB_ENV
        
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Verify release version and get just the numbers and the dots
       id: get-number-version
