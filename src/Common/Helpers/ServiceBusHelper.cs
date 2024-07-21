@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -33,6 +34,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Xml;
 
 using Azure.Messaging.ServiceBus.Administration;
@@ -40,25 +42,20 @@ using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 
+using ServiceBusExplorer.Abstractions;
 using ServiceBusExplorer.Enums;
 using ServiceBusExplorer.Helpers;
 using ServiceBusExplorer.ServiceBus.Helpers;
 using ServiceBusExplorer.Utilities.Helpers;
 
 using AzureNotificationHubs = Microsoft.Azure.NotificationHubs;
+using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnectionStringBuilder;
 #endregion
 
 // ReSharper disable CheckNamespace
 namespace ServiceBusExplorer
 // ReSharper restore CheckNamespace
 {
-    using System.IO.Compression;
-    using System.Web.UI.WebControls;
-    using Abstractions;
-    using Microsoft.Azure.NotificationHubs;
-
-    using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnectionStringBuilder;
-
     public enum BodyType
     {
         Stream,
@@ -66,6 +63,15 @@ namespace ServiceBusExplorer
         Wcf,
         ByteArray
     }
+
+    // Hopefully we will be able to switch Messaging to the different messaging types
+    // such as Relay, EventHub and Service bus.
+    public enum NamespaceType
+    {
+        Messaging,
+        NotificationHub
+    }
+
 
     public class ServiceBusHelper
     {
@@ -108,8 +114,9 @@ namespace ServiceBusExplorer
         private const string NewPathCannotBeNull = "The new path argument cannot be null or empty.";
         private const string NameCannotBeNull = "The name argument cannot be null or empty.";
         private const string DescriptionCannotBeNull = "The description argument cannot be null.";
-        private const string ServiceBusIsDisconnected = "The application is now disconnected from any service bus namespace.";
-        private const string ServiceBusIsConnected = "The application is now connected to the {0} service bus namespace.";
+        private const string ServiceBusIsDisconnected = "The application is now disconnected from any Service bus namespace.";
+        private const string ServiceBusIsConnected = "The application is now connected to the {0} Service bus namespace.";
+        private const string NotificationHubIsConnected = "The application is now connected to the {0} Notification hub namespace.";
         private const string QueueCreated = "The queue {0} has been successfully created.";
         private const string QueueDeleted = "The queue {0} has been successfully deleted.";
         private const string QueueRenamed = "The queue {0} has been successfully renamed to {1}.";
@@ -284,6 +291,9 @@ namespace ServiceBusExplorer
             }
         }
 
+
+        public NamespaceType NameSpaceType { get; set; }
+
         /// <summary>
         /// Gets or sets the type of the message defer provider
         /// </summary>
@@ -374,7 +384,7 @@ namespace ServiceBusExplorer
         /// <summary>
         /// Gets the current namespace manager.
         /// </summary>
-        public Microsoft.ServiceBus.NamespaceManager NamespaceManager
+        public NamespaceManager NamespaceManager
         {
             get
             {
@@ -744,52 +754,45 @@ namespace ServiceBusExplorer
                 currentSharedAccessKeyName = serviceBusNamespace.SharedAccessKeyName;
                 currentTransportType = serviceBusNamespace.TransportType;
 
-                // The NamespaceManager class can be used for managing entities,
-                // such as queues, topics, subscriptions, and rules, in your service namespace.
-                // You must provide service namespace address and access credentials in order
-                // to manage your service namespace.
-                namespaceManager = Microsoft.ServiceBus.NamespaceManager.CreateFromConnectionString(ConnectionStringWithoutEntityPath);
+            // According to a this blog post https://azure.microsoft.com/fr-fr/blog/updating-mixed-notification-hubs-namespace-type/ from 2015
+            // we can assume that namespaces are either for messaging or for notification hubs.
 
-                // Set retry count
-                if (namespaceManager.Settings.RetryPolicy is Microsoft.ServiceBus.RetryExponential defaultServiceBusRetryExponential)
+                
+                try
                 {
-                    namespaceManager.Settings.RetryPolicy = new Microsoft.ServiceBus.RetryExponential(defaultServiceBusRetryExponential.MinimalBackoff,
-                                                                                            defaultServiceBusRetryExponential.MaximumBackoff,
-                                                                                            RetryHelper.RetryCount);
+                    notificationHubNamespaceManager = new AzureNotificationHubs.NamespaceManager(serviceBusNamespace.ConnectionStringWithoutTransportType);
+                    NameSpaceType = NamespaceType.NotificationHub;
+                    WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, NotificationHubIsConnected,
+                        serviceBusNamespace.ConnectionStringWithoutTransportType));
+                }
+                catch (Exception)
+                {
+                    // Will fail if the namespace is not a notification namespace or for other reasons.
+                    namespaceManager = NamespaceManager.CreateFromConnectionString(ConnectionStringWithoutEntityPath);
+
+                    // Set retry count
+                    if (namespaceManager.Settings.RetryPolicy is RetryExponential defaultServiceBusRetryExponential)
+                    {
+                        namespaceManager.Settings.RetryPolicy = new RetryExponential(defaultServiceBusRetryExponential.MinimalBackoff,
+                                                                            defaultServiceBusRetryExponential.MaximumBackoff,
+                                                                            RetryHelper.RetryCount);
+                    }
+
+                    NameSpaceType = NamespaceType.Messaging;
+                    WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, ServiceBusIsConnected, namespaceManager.Address.AbsoluteUri));
+                    
+                    namespaceUri = namespaceManager.Address;
+                    connectionStringType = serviceBusNamespace.ConnectionStringType;
+                    ns = IsCloudNamespace ? namespaceUri.Host.Split('.')[0] : namespaceUri.Segments[namespaceUri.Segments.Length - 1];
+                    atomFeedUri = new Uri($"{Uri.UriSchemeHttp}://{namespaceUri.Host}");
+                    MessagingFactory = MessagingFactory.CreateFromConnectionString(ConnectionStringWithoutEntityPath);
+                    
+                    WriteToLogIf(traceEnabled, MessageFactorySuccessfullyCreated);
                 }
 
-                //try
-                //{
-                    notificationHubNamespaceManager = new AzureNotificationHubs.NamespaceManager                           (serviceBusNamespace.ConnectionStringWithoutTransportType);
-
-                    //notificationHubNamespaceManager = AzureNotificationHubs.NamespaceManager.CreateFromConnectionString(serviceBusNamespace.ConnectionStringWithoutTransportType);
-
-                    //// Set retry count
-                    //if (notificationHubNamespaceManager.RetryPolicy is AzureNotificationHubs.RetryExponential defaultNotificationHubsRetryExponential)
-                    //{
-                    //    notificationHubNamespaceManager.Settings.RetryPolicy = new AzureNotificationHubs.RetryExponential(defaultNotificationHubsRetryExponential.MinimalBackoff,
-                    //                                                                                                 defaultNotificationHubsRetryExponential.MaximumBackoff,
-                    //                                                                                                 defaultNotificationHubsRetryExponential.DeltaBackoff,
-                    //                                                                                                 defaultNotificationHubsRetryExponential.TerminationTimeBuffer,
-                    //                                                                                                 RetryHelper.RetryCount);
-                    //}
-                //}
-                //catch (Exception)
-                //{
-                //    // ignored
-                //}
-                WriteToLogIf(traceEnabled, string.Format(CultureInfo.CurrentCulture, ServiceBusIsConnected, namespaceManager.Address.AbsoluteUri));
-                namespaceUri = namespaceManager.Address;
-                connectionStringType = serviceBusNamespace.ConnectionStringType;
-                ns = IsCloudNamespace ? namespaceUri.Host.Split('.')[0] : namespaceUri.Segments[namespaceUri.Segments.Length - 1];
-                atomFeedUri = new Uri($"{Uri.UriSchemeHttp}://{namespaceUri.Host}");
-
-                // As the name suggests, the MessagingFactory class is a Factory class that allows to create
-                // instances of the QueueClient, TopicClient and SubscriptionClient classes.
-                MessagingFactory = MessagingFactory.CreateFromConnectionString(ConnectionStringWithoutEntityPath);
-                WriteToLogIf(traceEnabled, MessageFactorySuccessfullyCreated);
                 return true;
             });
+
             return RetryHelper.RetryFunc(func, writeToLog);
         }
 
