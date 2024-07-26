@@ -54,7 +54,6 @@ namespace ServiceBusExplorer.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            ServiceBusExplorer.Controls.CheckBoxProperties checkBoxProperties1 = new ServiceBusExplorer.Controls.CheckBoxProperties();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectForm));
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -86,6 +85,13 @@ namespace ServiceBusExplorer.Forms
             this.lblTransportType = new System.Windows.Forms.Label();
             this.cboConnectivityMode = new System.Windows.Forms.ComboBox();
             this.lblConnectivityMode = new System.Windows.Forms.Label();
+            this.lblConfigFileUse = new System.Windows.Forms.Label();
+            this.grouperFilters = new ServiceBusExplorer.Controls.Grouper();
+            this.lblSubscriptionFilterExpression = new System.Windows.Forms.Label();
+            this.lblQueueFilterExpression = new System.Windows.Forms.Label();
+            this.lblTopicFilterExpression = new System.Windows.Forms.Label();
+            this.grouperServiceBusNamespaceSettings = new ServiceBusExplorer.Controls.Grouper();
+            this.label1 = new System.Windows.Forms.Label();
             this.txtUri = new System.Windows.Forms.TextBox();
             this.lblUri = new System.Windows.Forms.Label();
             this.txtIssuerSecret = new System.Windows.Forms.TextBox();
@@ -97,7 +103,9 @@ namespace ServiceBusExplorer.Forms
             this.txtEntityPath = new System.Windows.Forms.TextBox();
             this.lblEntityPath = new System.Windows.Forms.Label();
             this.grouperServiceBusNamespaces = new ServiceBusExplorer.Controls.Grouper();
+            this.btnNew = new System.Windows.Forms.Button();
             this.cboServiceBusNamespace = new System.Windows.Forms.ComboBox();
+            this.cboServiceType = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
             this.grouperConfigFileUse.SuspendLayout();
             this.grouperFilters.SuspendLayout();
@@ -107,7 +115,7 @@ namespace ServiceBusExplorer.Forms
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOk.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.btnOk.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnOk.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
@@ -125,8 +133,9 @@ namespace ServiceBusExplorer.Forms
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
@@ -155,7 +164,7 @@ namespace ServiceBusExplorer.Forms
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
             this.btnSave.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnSave.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
@@ -165,7 +174,7 @@ namespace ServiceBusExplorer.Forms
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(72, 24);
             this.btnSave.TabIndex = 6;
-            this.btnSave.Text = "Save";
+            this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Visible = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -180,11 +189,11 @@ namespace ServiceBusExplorer.Forms
             this.btnRename.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnRename.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnRename.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRename.Location = new System.Drawing.Point(16, 443);
+            this.btnRename.Location = new System.Drawing.Point(16, 505);
             this.btnRename.Name = "btnRename";
             this.btnRename.Size = new System.Drawing.Size(72, 24);
             this.btnRename.TabIndex = 4;
-            this.btnRename.Text = "Rename";
+            this.btnRename.Text = "&Rename";
             this.btnRename.UseVisualStyleBackColor = false;
             this.btnRename.Visible = false;
             this.btnRename.Click += new System.EventHandler(this.btnRename_Click);
@@ -197,11 +206,11 @@ namespace ServiceBusExplorer.Forms
             this.btnDelete.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnDelete.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Location = new System.Drawing.Point(94, 443);
+            this.btnDelete.Location = new System.Drawing.Point(101, 505);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(72, 24);
             this.btnDelete.TabIndex = 5;
-            this.btnDelete.Text = "Delete";
+            this.btnDelete.Text = "&Delete";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Visible = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
@@ -213,13 +222,19 @@ namespace ServiceBusExplorer.Forms
             this.grouperConfigFileUse.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperConfigFileUse.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperConfigFileUse.BorderThickness = 1F;
+            this.grouperConfigFileUse.Controls.Add(this.useAmqpWebSocketsCheckBox);
+            this.grouperConfigFileUse.Controls.Add(this.lblNewSdkTransportType);
+            this.grouperConfigFileUse.Controls.Add(this.cboTransportType);
+            this.grouperConfigFileUse.Controls.Add(this.lblTransportType);
+            this.grouperConfigFileUse.Controls.Add(this.cboConnectivityMode);
+            this.grouperConfigFileUse.Controls.Add(this.lblConnectivityMode);
             this.grouperConfigFileUse.Controls.Add(this.lblConfigFileUse);
             this.grouperConfigFileUse.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperConfigFileUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.grouperConfigFileUse.ForeColor = System.Drawing.Color.White;
             this.grouperConfigFileUse.GroupImage = null;
-            this.grouperConfigFileUse.GroupTitle = "Configuration File for Connections and Settings";
-            this.grouperConfigFileUse.Location = new System.Drawing.Point(16, 344);
+            this.grouperConfigFileUse.GroupTitle = "Process Settings";
+            this.grouperConfigFileUse.Location = new System.Drawing.Point(399, 24);
             this.grouperConfigFileUse.Name = "grouperConfigFileUse";
             this.grouperConfigFileUse.Padding = new System.Windows.Forms.Padding(20);
             this.grouperConfigFileUse.PaintGroupBox = true;
@@ -229,6 +244,66 @@ namespace ServiceBusExplorer.Forms
             this.grouperConfigFileUse.ShadowThickness = 1;
             this.grouperConfigFileUse.Size = new System.Drawing.Size(384, 88);
             this.grouperConfigFileUse.TabIndex = 2;
+            // 
+            // useAmqpWebSocketsCheckBox
+            // 
+            this.useAmqpWebSocketsCheckBox.AutoSize = true;
+            this.useAmqpWebSocketsCheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.useAmqpWebSocketsCheckBox.Location = new System.Drawing.Point(359, 177);
+            this.useAmqpWebSocketsCheckBox.Name = "useAmqpWebSocketsCheckBox";
+            this.useAmqpWebSocketsCheckBox.Size = new System.Drawing.Size(15, 14);
+            this.useAmqpWebSocketsCheckBox.TabIndex = 21;
+            this.useAmqpWebSocketsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // lblNewSdkTransportType
+            // 
+            this.lblNewSdkTransportType.AutoSize = true;
+            this.lblNewSdkTransportType.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblNewSdkTransportType.Location = new System.Drawing.Point(16, 177);
+            this.lblNewSdkTransportType.Name = "lblNewSdkTransportType";
+            this.lblNewSdkTransportType.Size = new System.Drawing.Size(338, 13);
+            this.lblNewSdkTransportType.TabIndex = 20;
+            this.lblNewSdkTransportType.Text = "Use AMQP Web Sockets for Azure.Messaging.ServiceBus (new SDK)";
+            // 
+            // cboTransportType
+            // 
+            this.cboTransportType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboTransportType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cboTransportType.FormattingEnabled = true;
+            this.cboTransportType.Location = new System.Drawing.Point(16, 145);
+            this.cboTransportType.Name = "cboTransportType";
+            this.cboTransportType.Size = new System.Drawing.Size(288, 21);
+            this.cboTransportType.TabIndex = 19;
+            // 
+            // lblTransportType
+            // 
+            this.lblTransportType.AutoSize = true;
+            this.lblTransportType.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTransportType.Location = new System.Drawing.Point(16, 129);
+            this.lblTransportType.Name = "lblTransportType";
+            this.lblTransportType.Size = new System.Drawing.Size(261, 13);
+            this.lblTransportType.TabIndex = 18;
+            this.lblTransportType.Text = "Transport Type WindowsAzure.ServiceBus (old SDK):";
+            // 
+            // cboConnectivityMode
+            // 
+            this.cboConnectivityMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboConnectivityMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cboConnectivityMode.FormattingEnabled = true;
+            this.cboConnectivityMode.Location = new System.Drawing.Point(16, 97);
+            this.cboConnectivityMode.Name = "cboConnectivityMode";
+            this.cboConnectivityMode.Size = new System.Drawing.Size(288, 21);
+            this.cboConnectivityMode.TabIndex = 17;
+            // 
+            // lblConnectivityMode
+            // 
+            this.lblConnectivityMode.AutoSize = true;
+            this.lblConnectivityMode.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblConnectivityMode.Location = new System.Drawing.Point(16, 81);
+            this.lblConnectivityMode.Name = "lblConnectivityMode";
+            this.lblConnectivityMode.Size = new System.Drawing.Size(277, 13);
+            this.lblConnectivityMode.TabIndex = 16;
+            this.lblConnectivityMode.Text = "Connectivity Mode WindowsAzure.ServiceBus (old SDK):";
             // 
             // lblConfigFileUse
             // 
@@ -248,8 +323,6 @@ namespace ServiceBusExplorer.Forms
             this.grouperFilters.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperFilters.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperFilters.BorderThickness = 1F;
-            this.grouperFilters.Controls.Add(this.lblSelectedEntities);
-            this.grouperFilters.Controls.Add(this.cboSelectedEntities);
             this.grouperFilters.Controls.Add(this.btnClearSubscriptionFilterExpression);
             this.grouperFilters.Controls.Add(this.btnClearTopicFilterExpression);
             this.grouperFilters.Controls.Add(this.btnClearQueueFilterExpression);
@@ -267,7 +340,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperFilters.ForeColor = System.Drawing.Color.White;
             this.grouperFilters.GroupImage = null;
             this.grouperFilters.GroupTitle = "Filter Expressions";
-            this.grouperFilters.Location = new System.Drawing.Point(16, 104);
+            this.grouperFilters.Location = new System.Drawing.Point(399, 259);
             this.grouperFilters.Name = "grouperFilters";
             this.grouperFilters.Padding = new System.Windows.Forms.Padding(20);
             this.grouperFilters.PaintGroupBox = true;
@@ -409,7 +482,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblSubscriptionFilterExpression.AutoSize = true;
             this.lblSubscriptionFilterExpression.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblSubscriptionFilterExpression.Location = new System.Drawing.Point(16, 174);
+            this.lblSubscriptionFilterExpression.Location = new System.Drawing.Point(16, 127);
             this.lblSubscriptionFilterExpression.Name = "lblSubscriptionFilterExpression";
             this.lblSubscriptionFilterExpression.Size = new System.Drawing.Size(147, 13);
             this.lblSubscriptionFilterExpression.TabIndex = 10;
@@ -473,7 +546,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblQueueFilterExpression.AutoSize = true;
             this.lblQueueFilterExpression.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblQueueFilterExpression.Location = new System.Drawing.Point(16, 78);
+            this.lblQueueFilterExpression.Location = new System.Drawing.Point(16, 31);
             this.lblQueueFilterExpression.Name = "lblQueueFilterExpression";
             this.lblQueueFilterExpression.Size = new System.Drawing.Size(121, 13);
             this.lblQueueFilterExpression.TabIndex = 2;
@@ -494,7 +567,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblTopicFilterExpression.AutoSize = true;
             this.lblTopicFilterExpression.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTopicFilterExpression.Location = new System.Drawing.Point(16, 126);
+            this.lblTopicFilterExpression.Location = new System.Drawing.Point(16, 79);
             this.lblTopicFilterExpression.Name = "lblTopicFilterExpression";
             this.lblTopicFilterExpression.Size = new System.Drawing.Size(116, 13);
             this.lblTopicFilterExpression.TabIndex = 6;
@@ -539,7 +612,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperServiceBusNamespaceSettings.TabIndex = 3;
             this.grouperServiceBusNamespaceSettings.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperServiceBusNamespaceSettings_CustomPaint);
             // 
-            // useAmqpWebSocketsCheckBox
+            // label1
             // 
             this.useAmqpWebSocketsCheckBox.AutoSize = true;
             this.useAmqpWebSocketsCheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -600,7 +673,7 @@ namespace ServiceBusExplorer.Forms
             this.txtUri.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUri.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtUri.Location = new System.Drawing.Point(16, 48);
+            this.txtUri.Location = new System.Drawing.Point(16, 95);
             this.txtUri.Multiline = true;
             this.txtUri.Name = "txtUri";
             this.txtUri.Size = new System.Drawing.Size(372, 20);
@@ -611,7 +684,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblUri.AutoSize = true;
             this.lblUri.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblUri.Location = new System.Drawing.Point(16, 32);
+            this.lblUri.Location = new System.Drawing.Point(16, 79);
             this.lblUri.Name = "lblUri";
             this.lblUri.Size = new System.Drawing.Size(74, 13);
             this.lblUri.TabIndex = 0;
@@ -634,7 +707,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblIssuerSecret.AutoSize = true;
             this.lblIssuerSecret.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblIssuerSecret.Location = new System.Drawing.Point(16, 224);
+            this.lblIssuerSecret.Location = new System.Drawing.Point(16, 271);
             this.lblIssuerSecret.Name = "lblIssuerSecret";
             this.lblIssuerSecret.Size = new System.Drawing.Size(103, 13);
             this.lblIssuerSecret.TabIndex = 8;
@@ -656,7 +729,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblIssuerName.AutoSize = true;
             this.lblIssuerName.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblIssuerName.Location = new System.Drawing.Point(16, 176);
+            this.lblIssuerName.Location = new System.Drawing.Point(16, 223);
             this.lblIssuerName.Name = "lblIssuerName";
             this.lblIssuerName.Size = new System.Drawing.Size(134, 13);
             this.lblIssuerName.TabIndex = 6;
@@ -678,7 +751,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblNamespace.AutoSize = true;
             this.lblNamespace.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblNamespace.Location = new System.Drawing.Point(16, 80);
+            this.lblNamespace.Location = new System.Drawing.Point(16, 127);
             this.lblNamespace.Name = "lblNamespace";
             this.lblNamespace.Size = new System.Drawing.Size(67, 13);
             this.lblNamespace.TabIndex = 2;
@@ -699,7 +772,7 @@ namespace ServiceBusExplorer.Forms
             // 
             this.lblEntityPath.AutoSize = true;
             this.lblEntityPath.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblEntityPath.Location = new System.Drawing.Point(16, 128);
+            this.lblEntityPath.Location = new System.Drawing.Point(16, 175);
             this.lblEntityPath.Name = "lblEntityPath";
             this.lblEntityPath.Size = new System.Drawing.Size(61, 13);
             this.lblEntityPath.TabIndex = 4;
@@ -712,6 +785,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperServiceBusNamespaces.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperServiceBusNamespaces.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperServiceBusNamespaces.BorderThickness = 1F;
+            this.grouperServiceBusNamespaces.Controls.Add(this.btnNew);
             this.grouperServiceBusNamespaces.Controls.Add(this.cboServiceBusNamespace);
             this.grouperServiceBusNamespaces.CustomGroupBoxColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperServiceBusNamespaces.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -730,6 +804,23 @@ namespace ServiceBusExplorer.Forms
             this.grouperServiceBusNamespaces.TabIndex = 0;
             this.grouperServiceBusNamespaces.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperServiceBusNamespaces_CustomPaint);
             // 
+            // btnNew
+            // 
+            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNew.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.btnNew.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.btnNew.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.btnNew.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.btnNew.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNew.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnNew.Location = new System.Drawing.Point(16, 73);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(72, 24);
+            this.btnNew.TabIndex = 7;
+            this.btnNew.Text = "&New";
+            this.btnNew.UseVisualStyleBackColor = false;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
             // cboServiceBusNamespace
             // 
             this.cboServiceBusNamespace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -744,8 +835,17 @@ namespace ServiceBusExplorer.Forms
             this.cboServiceBusNamespace.TabIndex = 0;
             this.cboServiceBusNamespace.SelectedIndexChanged += new System.EventHandler(this.cboServiceBusNamespace_SelectedIndexChanged);
             // 
+            // cboServiceType
+            // 
+            this.cboServiceType.FormattingEnabled = true;
+            this.cboServiceType.Location = new System.Drawing.Point(23, 50);
+            this.cboServiceType.Name = "cboServiceType";
+            this.cboServiceType.Size = new System.Drawing.Size(287, 21);
+            this.cboServiceType.TabIndex = 21;
+            // 
             // ConnectForm
             // 
+            this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
@@ -811,12 +911,6 @@ namespace ServiceBusExplorer.Forms
         private System.Windows.Forms.Button btnClearQueueFilterExpression;
         private System.Windows.Forms.Button btnClearTopicFilterExpression;
         private System.Windows.Forms.Button btnClearSubscriptionFilterExpression;
-        private System.Windows.Forms.Label lblConnectivityMode;
-        private System.Windows.Forms.ComboBox cboConnectivityMode;
-        private System.Windows.Forms.ComboBox cboTransportType;
-        private System.Windows.Forms.Label lblTransportType;
-        private System.Windows.Forms.Label lblSelectedEntities;
-        private CheckBoxComboBox cboSelectedEntities;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtEntityPath;
         private System.Windows.Forms.Label lblEntityPath;

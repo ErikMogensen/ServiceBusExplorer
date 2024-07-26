@@ -84,10 +84,6 @@ namespace ServiceBusExplorer.Forms
             cboEncodingType.DataSource = Enum.GetValues(typeof(EncodingType));
             cboConfigFile.DataSource = ConfigUseForUI;
 
-            foreach (var item in ConfigurationHelper.Entities)
-            {
-                cboSelectedEntities.Items.Add(item);
-            }
             foreach (var item in ConfigurationHelper.MessageCounts)
             {
                 cboSelectedMessageCounts.Items.Add(item);
@@ -152,7 +148,6 @@ namespace ServiceBusExplorer.Forms
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            MainSettings.SelectedEntities = GetSelectedEntities();
             MainSettings.SelectedMessageCounts = GetSelectedMessageCounts();
             
             SaveSettings(GetConfigFileUseFromUIIndex(cboConfigFile.SelectedIndex));
@@ -169,8 +164,6 @@ namespace ServiceBusExplorer.Forms
 
         void btnSave_Click(object sender, EventArgs e)
         {
-            // Get selected items
-            MainSettings.SelectedEntities = GetSelectedEntities();
             MainSettings.SelectedMessageCounts = GetSelectedMessageCounts();
 
             SaveSettings(GetConfigFileUseFromUIIndex(cboConfigFile.SelectedIndex));
@@ -239,15 +232,15 @@ namespace ServiceBusExplorer.Forms
             saveCheckpointsToFileCheckBox.Checked = MainSettings.SaveCheckpointsToFile;
             useAsciiCheckBox.Checked = MainSettings.UseAscii;
 
-            foreach (var item in ConfigurationHelper.Entities)
-            {
-                cboSelectedEntities.CheckBoxItems[item].Checked = true;
-            }
+            //foreach (var item in ConfigurationHelper.Entities)
+            //{
+            //    cboSelectedEntities.CheckBoxItems[item].Checked = true;
+            //}
 
-            foreach (var item in ConfigurationHelper.MessageCounts)
-            {
-                cboSelectedEntities.CheckBoxItems[item].Checked = true;
-            }
+            //foreach (var item in ConfigurationHelper.MessageCounts)
+            //{
+            //    cboSelectedEntities.CheckBoxItems[item].Checked = true;
+            //}
 
             MainSettings.MessageBodyType = MainSettings.MessageBodyType; // .Stream.ToString();
 
@@ -633,8 +626,6 @@ namespace ServiceBusExplorer.Forms
             SaveSetting(configuration, readSettings, ConfigurationParameters.Encoding,
                 MainSettings.EncodingType);
 
-            SaveListSetting(configuration, readSettings, ConfigurationParameters.SelectedEntitiesParameter,
-                MainSettings.SelectedEntities);
             SaveListSetting(configuration, readSettings, ConfigurationParameters.SelectedMessageCountsParameter,
                 MainSettings.SelectedMessageCounts);
 
@@ -724,10 +715,6 @@ namespace ServiceBusExplorer.Forms
             useAmqpWebSocketsCheckBox.Checked = mainSettings.UseAmqpWebSockets;
             cboEncodingType.SelectedItem = mainSettings.EncodingType;
 
-            foreach (var item in mainSettings.SelectedEntities)
-            {
-                cboSelectedEntities.CheckBoxItems[item].Checked = true;
-            }
             foreach (var item in mainSettings.SelectedMessageCounts)
             {
                 cboSelectedMessageCounts.CheckBoxItems[item].Checked = true;
@@ -753,12 +740,6 @@ namespace ServiceBusExplorer.Forms
             SetNodesColorsIntoBindingList(mainSettings.NodesColors);
         }
 
-        List<string> GetSelectedEntities()
-        {
-            return cboSelectedEntities.CheckBoxItems.
-                Where(i => i.Checked).Select(i => i.Text).ToList();
-        }
-
         List<string> GetSelectedMessageCounts()
         {
             return cboSelectedMessageCounts.CheckBoxItems.
@@ -772,11 +753,7 @@ namespace ServiceBusExplorer.Forms
                                     cboEncodingType.Location.Y - 1,
                                     cboEncodingType.Size.Width + 1,
                                     cboEncodingType.Size.Height + 1);
-            e.Graphics.DrawRectangle(new Pen(SystemColors.ActiveBorder, 1),
-                                    cboSelectedEntities.Location.X - 1,
-                                    cboSelectedEntities.Location.Y - 1,
-                                    cboSelectedEntities.Size.Width + 1,
-                                    cboSelectedEntities.Size.Height + 1);
+
             e.Graphics.DrawRectangle(new Pen(SystemColors.ActiveBorder, 1),
                 cboSelectedMessageCounts.Location.X - 1,
                 cboSelectedMessageCounts.Location.Y - 1,

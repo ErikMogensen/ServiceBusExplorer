@@ -652,7 +652,6 @@
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Helpers\ConnectionStringHelper.cs" />
     <Compile Remove="Controls\Windows\HeaderPanel.cs" />
     <Compile Remove="Controls\Windows\HeaderPanel.Designer.cs" />
     <Compile Remove="obj\x86\Debug\.NETFramework,Version=v4.6.2.AssemblyAttributes.cs" />
