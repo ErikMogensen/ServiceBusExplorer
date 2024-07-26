@@ -60,7 +60,7 @@ namespace ServiceBusExplorer.Helpers
         public string MessageText { get; set; }
         public string MessageContentType { get; set; }
 
-        public List<string> SelectedEntities { get; set; }
+        public ServiceType ServiceType { get; set; }
         public List<string> SelectedMessageCounts { get; set; }
 
         public string MessageBodyType { get; set; }
@@ -124,7 +124,7 @@ namespace ServiceBusExplorer.Helpers
             MessageFile = string.Empty;
             MessageText = string.Empty;
             MessageContentType = string.Empty;
-            SelectedEntities = ConfigurationHelper.Entities;
+            //ServiceType = ConfigurationHelper.Entities;
             SelectedMessageCounts = ConfigurationHelper.MessageCounts;
 
             MessageBodyType = BodyType.Stream.ToString();
@@ -172,7 +172,7 @@ namespace ServiceBusExplorer.Helpers
             if (MessageText != otherProperties.MessageText) return false;
             if (MessageContentType != otherProperties.MessageContentType) return false;
 
-            if (!SelectedEntities.SequenceEqual(SelectedEntities)) return false;
+            //if (!ServiceType.SequenceEqual(ServiceType)) return false;
             if (!SelectedMessageCounts.SequenceEqual(SelectedMessageCounts)) return false;
 
             if (MessageBodyType != otherProperties.MessageBodyType) return false;
@@ -273,7 +273,7 @@ namespace ServiceBusExplorer.Helpers
                     return MessageContentType;
 
                 case ConfigurationParameters.SelectedEntitiesParameter:
-                    return SelectedEntities;
+                    return ServiceType;
 
                 case ConfigurationParameters.SelectedMessageCountsParameter:
                     return SelectedMessageCounts;

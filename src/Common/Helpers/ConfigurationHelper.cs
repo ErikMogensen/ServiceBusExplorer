@@ -20,6 +20,7 @@
 #endregion
 
 using ServiceBusExplorer.Utilities.Helpers;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +31,32 @@ namespace ServiceBusExplorer.Helpers
     {
         static readonly string SERVICEBUS_SECTION_NAME = "serviceBusNamespaces";
 
-        static readonly List<string> entities = new List<string> { Constants.QueueEntities, Constants.TopicEntities,
-            Constants.EventHubEntities, Constants.NotificationHubEntities, Constants.RelayEntities };
+        static readonly List<string> serviceTypes = new List<string> 
+        { 
+            Constants.EventHubsServiceType, 
+            Constants.NotificationHubServiceType,
+            Constants.RelayServiceType, 
+            Constants.ServiceBusServiceType, 
+            Constants.UnknownServiceType
+        };
 
-        static readonly List<string> messageCounts = new List<string> { Constants.ActiveMessages, Constants.DeadLetterMessages,
-            Constants.ScheduledMessages, Constants.TransferMessages, Constants.TransferDeadLetterMessages };
+        static readonly List<string> entities = new List<string> 
+        { 
+            Constants.QueueEntities, 
+            Constants.TopicEntities,
+            Constants.EventHubEntities, 
+            Constants.NotificationHubEntities, 
+            Constants.RelayEntities 
+        };
+
+        static readonly List<string> messageCounts = new List<string> 
+        { 
+            Constants.ActiveMessages, 
+            Constants.DeadLetterMessages,
+            Constants.ScheduledMessages, 
+            Constants.TransferMessages, 
+            Constants.TransferDeadLetterMessages 
+        };
 
         #region Public methods
 
@@ -84,6 +106,14 @@ namespace ServiceBusExplorer.Helpers
             get
             {
                 return messageCounts;
+            }
+        }
+
+        public static List<string> ServiceTypes
+        {
+            get
+            {
+                return serviceTypes;
             }
         }
         #endregion
@@ -163,7 +193,7 @@ namespace ServiceBusExplorer.Helpers
             resultProperties.PrefetchCount = configuration.GetIntValue(ConfigurationParameters.PrefetchCountParameter,
                 currentSettings.PrefetchCount, writeToLog);
 
-            resultProperties.TopCount = configuration.GetIntValue(ConfigurationParameters.TopParameter, 
+            resultProperties.TopCount = configuration.GetIntValue(ConfigurationParameters.TopParameter,
                 currentSettings.TopCount, writeToLog);
 
             resultProperties.SenderThinkTime = configuration.GetIntValue
@@ -173,7 +203,7 @@ namespace ServiceBusExplorer.Helpers
                 (ConfigurationParameters.ReceiverThinkTimeParameter, currentSettings.ReceiverThinkTime, writeToLog);
 
             resultProperties.MonitorRefreshInterval = configuration.GetIntValue
-                (ConfigurationParameters.MonitorRefreshIntervalParameter, 
+                (ConfigurationParameters.MonitorRefreshIntervalParameter,
                 currentSettings.MonitorRefreshInterval, writeToLog);
 
             resultProperties.ShowMessageCount = configuration.GetBoolValue
@@ -194,18 +224,18 @@ namespace ServiceBusExplorer.Helpers
                 (ConfigurationParameters.SaveCheckpointsToFileParameter,
                 currentSettings.SaveCheckpointsToFile, writeToLog);
 
-            resultProperties.Label = configuration.GetStringValue(ConfigurationParameters.LabelParameter, 
+            resultProperties.Label = configuration.GetStringValue(ConfigurationParameters.LabelParameter,
                 MainSettings.DefaultLabel);
 
             MessageAndPropertiesHelper.GetMessageTextAndFile(configuration,
                 out string messageText, out string messageFile);
             resultProperties.MessageText = messageText;
             resultProperties.MessageFile = messageFile;
-            
+
             resultProperties.MessageContentType = configuration.GetStringValue(ConfigurationParameters.MessageContentTypeParameter,
                 string.Empty);
 
-            resultProperties.SelectedEntities = ConfigurationHelper.GetSelectedEntities(configuration);
+            //resultProperties.ServiceType = ConfigurationHelper.GetSelectedEntities(configuration);
             resultProperties.SelectedMessageCounts = ConfigurationHelper.GetSelectedMessageCounts(configuration);
 
             resultProperties.MessageBodyType = configuration.GetStringValue(ConfigurationParameters.MessageBodyType,

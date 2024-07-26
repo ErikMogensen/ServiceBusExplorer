@@ -514,7 +514,7 @@ namespace ServiceBusExplorer.Forms
                 MessageText = MessageText,
                 MessageContentType = MessageContentType,
 
-                SelectedEntities = SelectedEntities,
+                ServiceType = ServiceType,
                 SelectedMessageCounts = SelectedMessageCounts,
                 MessageBodyType = messageBodyType,
                 ConnectivityMode = ServiceBusHelper.ConnectivityMode,
@@ -597,7 +597,7 @@ namespace ServiceBusExplorer.Forms
                 MessageText = optionForm.MainSettings.MessageText;
                 MessageContentType = optionForm.MainSettings.MessageContentType;
 
-                SelectedEntities = optionForm.MainSettings.SelectedEntities;
+                ServiceType = optionForm.MainSettings.ServiceType;
 
                 messageBodyType = optionForm.MainSettings.MessageBodyType;
                 ServiceBusHelper.ConnectivityMode = optionForm.MainSettings.ConnectivityMode;
@@ -4026,7 +4026,7 @@ namespace ServiceBusExplorer.Forms
                 MessageFile = messageFile,
                 MessageText = MessageText,
                 MessageContentType = MessageContentType,
-                SelectedEntities = SelectedEntities,
+                ServiceType = ServiceType,
                 SelectedMessageCounts = SelectedMessageCounts,
                 MessageBodyType = messageBodyType,
                 ConnectivityMode = ServiceBusHelper.ConnectivityMode,
@@ -4114,7 +4114,7 @@ namespace ServiceBusExplorer.Forms
             MessageContentType = readSettings.MessageContentType;
             messageFile = readSettings.MessageFile;
 
-            SelectedEntities = readSettings.SelectedEntities;
+            ServiceType = readSettings.ServiceType;
             SelectedMessageCounts = readSettings.SelectedMessageCounts;
             messageBodyType = readSettings.MessageBodyType;
             ServiceBusHelper.ConnectivityMode = readSettings.ConnectivityMode;
@@ -4334,7 +4334,7 @@ namespace ServiceBusExplorer.Forms
 
         public bool UseAscii { get; set; } = true;
 
-        public List<string> SelectedEntities { get; private set; } = new List<string>();
+        public ServiceType ServiceType { get; private set; } = ServiceType.Unknown;
         public List<string> SelectedMessageCounts { get; private set; } = new List<string>();
         public bool ProxyOverrideDefault { get; set; }
         public string ProxyAddress { get; set; }
@@ -4451,18 +4451,18 @@ namespace ServiceBusExplorer.Forms
                     var eventHubListNode = FindNode(Constants.EventHubEntities, rootNode);
                     var notificationHubListNode = FindNode(Constants.NotificationHubEntities, rootNode);
                     var relayServiceListNode = FindNode(Constants.RelayEntities, rootNode);
+                    
                     if (entityType == EntityType.All)
                     {
                         serviceBusTreeView.Nodes.Clear();
                         rootNode = serviceBusTreeView.Nodes.Add(serviceBusHelper.NamespaceUri.AbsoluteUri, serviceBusHelper.NamespaceUri.AbsoluteUri, AzureIconIndex, AzureIconIndex);
                         rootNode.ContextMenuStrip = rootContextMenuStrip;
-                        if (SelectedEntities.Contains(Constants.QueueEntities))
+
+                        if (ServiceType == ServiceType.ServiceBus)
                         {
                             queueListNode = rootNode.Nodes.Add(Constants.QueueEntities, Constants.QueueEntities, QueueListIconIndex, QueueListIconIndex);
                             queueListNode.ContextMenuStrip = queuesContextMenuStrip;
-                        }
-                        if (SelectedEntities.Contains(Constants.TopicEntities))
-                        {
+
                             topicListNode = rootNode.Nodes.Add(Constants.TopicEntities, Constants.TopicEntities, TopicListIconIndex, TopicListIconIndex);
                             topicListNode.ContextMenuStrip = topicsContextMenuStrip;
                         }
@@ -4470,27 +4470,31 @@ namespace ServiceBusExplorer.Forms
                         // NOTE: Relays are not actually supported by Service Bus for Windows Server
                         if (serviceBusHelper.IsCloudNamespace)
                         {
-                            if (SelectedEntities.Contains(Constants.EventHubEntities))
+                            if (ServiceType == ServiceType.EventHubs)
                             {
                                 eventHubListNode = rootNode.Nodes.Add(Constants.EventHubEntities, Constants.EventHubEntities, EventHubListIconIndex, EventHubListIconIndex);
                                 eventHubListNode.ContextMenuStrip = eventHubsContextMenuStrip;
                             }
-                            if (SelectedEntities.Contains(Constants.NotificationHubEntities))
+
+                            if (ServiceType == ServiceType.NotificationHubs)
                             {
                                 notificationHubListNode = rootNode.Nodes.Add(Constants.NotificationHubEntities, Constants.NotificationHubEntities, NotificationHubListIconIndex, NotificationHubListIconIndex);
                                 notificationHubListNode.ContextMenuStrip = notificationHubsContextMenuStrip;
                             }
-                            if (SelectedEntities.Contains(Constants.RelayEntities))
+                            
+                            if (ServiceType == ServiceType.Relay)
                             {
                                 relayServiceListNode = rootNode.Nodes.Add(Constants.RelayEntities, Constants.RelayEntities, RelayListIconIndex, RelayListIconIndex);
                                 relayServiceListNode.ContextMenuStrip = relayServicesContextMenuStrip;
                             }
                         }
                     }
+
                     updating = true;
+
                     if (serviceBusHelper.IsCloudNamespace)
                     {
-                        if (SelectedEntities.Contains(Constants.EventHubEntities) &&
+                        if (ServiceType == ServiceType.EventHubs &&
                             (entityType == EntityType.All ||
                             entityType == EntityType.EventHub))
                         {
@@ -4529,7 +4533,7 @@ namespace ServiceBusExplorer.Forms
                                 serviceBusTreeView.Nodes.Remove(eventHubListNode);
                             }
                         }
-                        if (SelectedEntities.Contains(Constants.NotificationHubEntities) &&
+                        if (ServiceType == ServiceType.NotificationHubs &&
                             (entityType == EntityType.All ||
                             entityType == EntityType.NotificationHub))
                         {
@@ -4577,7 +4581,7 @@ namespace ServiceBusExplorer.Forms
                                 serviceBusTreeView.Nodes.Remove(notificationHubListNode);
                             }
                         }
-                        if (SelectedEntities.Contains(Constants.RelayEntities) &&
+                        if (ServiceType == ServiceType.Relay &&
                             (entityType == EntityType.All ||
                             entityType == EntityType.Relay))
                         {
@@ -4618,7 +4622,7 @@ namespace ServiceBusExplorer.Forms
                         }
                     }
 
-                    if (SelectedEntities.Contains(Constants.QueueEntities) &&
+                    if (ServiceType == ServiceType.ServiceBus &&
                         (entityType == EntityType.All ||
                          entityType == EntityType.Queue))
                     {
@@ -4659,7 +4663,7 @@ namespace ServiceBusExplorer.Forms
                             serviceBusTreeView.Nodes.Remove(queueListNode);
                         }
                     }
-                    if (SelectedEntities.Contains(Constants.TopicEntities) &&
+                    if (ServiceType == ServiceType.ServiceBus &&
                         (entityType == EntityType.All ||
                          entityType == EntityType.Topic))
                     {

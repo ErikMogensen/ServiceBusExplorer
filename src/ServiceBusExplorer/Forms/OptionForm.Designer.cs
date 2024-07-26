@@ -57,7 +57,6 @@ namespace ServiceBusExplorer.Forms
         {
             this.components = new System.ComponentModel.Container();
             ServiceBusExplorer.Controls.CheckBoxProperties checkBoxProperties1 = new ServiceBusExplorer.Controls.CheckBoxProperties();
-            ServiceBusExplorer.Controls.CheckBoxProperties checkBoxProperties2 = new ServiceBusExplorer.Controls.CheckBoxProperties();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionForm));
@@ -80,8 +79,6 @@ namespace ServiceBusExplorer.Forms
             this.lblDisableAccidentalDeletionPrevention = new System.Windows.Forms.Label();
             this.lblSaveCheckpointsOnExit = new System.Windows.Forms.Label();
             this.saveCheckpointsToFileCheckBox = new System.Windows.Forms.CheckBox();
-            this.cboSelectedEntities = new ServiceBusExplorer.Controls.CheckBoxComboBox();
-            this.lblSelectedEntities = new System.Windows.Forms.Label();
             this.monitorRefreshIntervalNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.lblMonitorRefreshInterval = new System.Windows.Forms.Label();
             this.useAsciiCheckBox = new System.Windows.Forms.CheckBox();
@@ -150,15 +147,15 @@ namespace ServiceBusExplorer.Forms
             this.tabPageColors = new System.Windows.Forms.TabPage();
             this.label5 = new System.Windows.Forms.Label();
             this.dgNodeColors = new System.Windows.Forms.DataGridView();
+            this.textDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IsLeaf = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.colorDataGridViewTextBoxColumn = new ServiceBusExplorer.Controls.DataGridViewColorPickerColumn();
             this.nodeColorsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mainPanel = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewColorPickerColumn1 = new ServiceBusExplorer.Controls.DataGridViewColorPickerColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.textDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IsLeaf = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.colorDataGridViewTextBoxColumn = new ServiceBusExplorer.Controls.DataGridViewColorPickerColumn();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.tabOptionsControl.SuspendLayout();
@@ -359,8 +356,6 @@ namespace ServiceBusExplorer.Forms
             this.tabPageGeneral.Controls.Add(this.lblDisableAccidentalDeletionPrevention);
             this.tabPageGeneral.Controls.Add(this.lblSaveCheckpointsOnExit);
             this.tabPageGeneral.Controls.Add(this.saveCheckpointsToFileCheckBox);
-            this.tabPageGeneral.Controls.Add(this.cboSelectedEntities);
-            this.tabPageGeneral.Controls.Add(this.lblSelectedEntities);
             this.tabPageGeneral.Controls.Add(this.monitorRefreshIntervalNumericUpDown);
             this.tabPageGeneral.Controls.Add(this.lblMonitorRefreshInterval);
             this.tabPageGeneral.Controls.Add(this.useAsciiCheckBox);
@@ -408,7 +403,7 @@ namespace ServiceBusExplorer.Forms
             // disableAccidentalDeletionPrevention
             // 
             this.disableAccidentalDeletionPrevention.AutoSize = true;
-            this.disableAccidentalDeletionPrevention.Location = new System.Drawing.Point(260, 329);
+            this.disableAccidentalDeletionPrevention.Location = new System.Drawing.Point(260, 304);
             this.disableAccidentalDeletionPrevention.Name = "disableAccidentalDeletionPrevention";
             this.disableAccidentalDeletionPrevention.Size = new System.Drawing.Size(15, 14);
             this.disableAccidentalDeletionPrevention.TabIndex = 21;
@@ -418,7 +413,7 @@ namespace ServiceBusExplorer.Forms
             // lblDisableAccidentalDeletionPrevention
             // 
             this.lblDisableAccidentalDeletionPrevention.AutoSize = true;
-            this.lblDisableAccidentalDeletionPrevention.Location = new System.Drawing.Point(16, 329);
+            this.lblDisableAccidentalDeletionPrevention.Location = new System.Drawing.Point(16, 304);
             this.lblDisableAccidentalDeletionPrevention.Name = "lblDisableAccidentalDeletionPrevention";
             this.lblDisableAccidentalDeletionPrevention.Size = new System.Drawing.Size(194, 13);
             this.lblDisableAccidentalDeletionPrevention.TabIndex = 20;
@@ -446,29 +441,6 @@ namespace ServiceBusExplorer.Forms
             this.saveCheckpointsToFileCheckBox.TabIndex = 15;
             this.saveCheckpointsToFileCheckBox.UseVisualStyleBackColor = true;
             this.saveCheckpointsToFileCheckBox.CheckedChanged += new System.EventHandler(this.saveCheckpointsToFileCheckBox_CheckedChanged);
-            // 
-            // cboSelectedEntities
-            // 
-            checkBoxProperties2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.cboSelectedEntities.CheckBoxProperties = checkBoxProperties2;
-            this.cboSelectedEntities.DisplayMemberSingleItem = "";
-            this.cboSelectedEntities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboSelectedEntities.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cboSelectedEntities.FormattingEnabled = true;
-            this.cboSelectedEntities.Location = new System.Drawing.Point(260, 298);
-            this.cboSelectedEntities.Name = "cboSelectedEntities";
-            this.cboSelectedEntities.Size = new System.Drawing.Size(298, 21);
-            this.cboSelectedEntities.TabIndex = 19;
-            // 
-            // lblSelectedEntities
-            // 
-            this.lblSelectedEntities.AutoSize = true;
-            this.lblSelectedEntities.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblSelectedEntities.Location = new System.Drawing.Point(16, 298);
-            this.lblSelectedEntities.Name = "lblSelectedEntities";
-            this.lblSelectedEntities.Size = new System.Drawing.Size(89, 13);
-            this.lblSelectedEntities.TabIndex = 18;
-            this.lblSelectedEntities.Text = "Selected Entities:";
             // 
             // monitorRefreshIntervalNumericUpDown
             // 
@@ -1333,7 +1305,7 @@ namespace ServiceBusExplorer.Forms
             this.tabPageColors.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageColors.Name = "tabPageColors";
             this.tabPageColors.Padding = new System.Windows.Forms.Padding(16, 25, 16, 25);
-            this.tabPageColors.Size = new System.Drawing.Size(576, 329);
+            this.tabPageColors.Size = new System.Drawing.Size(576, 360);
             this.tabPageColors.TabIndex = 5;
             this.tabPageColors.Text = "Colors";
             this.tabPageColors.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPageColors_Paint);
@@ -1385,6 +1357,30 @@ namespace ServiceBusExplorer.Forms
             this.dgNodeColors.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgNodeColors.Size = new System.Drawing.Size(544, 263);
             this.dgNodeColors.TabIndex = 0;
+            // 
+            // textDataGridViewTextBoxColumn
+            // 
+            this.textDataGridViewTextBoxColumn.DataPropertyName = "Text";
+            this.textDataGridViewTextBoxColumn.FillWeight = 134.7716F;
+            this.textDataGridViewTextBoxColumn.HeaderText = "Text (regexp)";
+            this.textDataGridViewTextBoxColumn.Name = "textDataGridViewTextBoxColumn";
+            // 
+            // IsLeaf
+            // 
+            this.IsLeaf.DataPropertyName = "IsLeaf";
+            this.IsLeaf.FillWeight = 30F;
+            this.IsLeaf.HeaderText = "Leaf";
+            this.IsLeaf.MinimumWidth = 20;
+            this.IsLeaf.Name = "IsLeaf";
+            // 
+            // colorDataGridViewTextBoxColumn
+            // 
+            this.colorDataGridViewTextBoxColumn.DataPropertyName = "Color";
+            this.colorDataGridViewTextBoxColumn.FillWeight = 134.7716F;
+            this.colorDataGridViewTextBoxColumn.HeaderText = "Color";
+            this.colorDataGridViewTextBoxColumn.Name = "colorDataGridViewTextBoxColumn";
+            this.colorDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colorDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // nodeColorsBindingSource
             // 
@@ -1446,30 +1442,6 @@ namespace ServiceBusExplorer.Forms
             this.dataGridViewTextBoxColumn2.HeaderText = "Color";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             this.dataGridViewTextBoxColumn2.Width = 270;
-            // 
-            // textDataGridViewTextBoxColumn
-            // 
-            this.textDataGridViewTextBoxColumn.DataPropertyName = "Text";
-            this.textDataGridViewTextBoxColumn.FillWeight = 134.7716F;
-            this.textDataGridViewTextBoxColumn.HeaderText = "Text (regexp)";
-            this.textDataGridViewTextBoxColumn.Name = "textDataGridViewTextBoxColumn";
-            // 
-            // IsLeaf
-            // 
-            this.IsLeaf.DataPropertyName = "IsLeaf";
-            this.IsLeaf.FillWeight = 30F;
-            this.IsLeaf.HeaderText = "Leaf";
-            this.IsLeaf.MinimumWidth = 20;
-            this.IsLeaf.Name = "IsLeaf";
-            // 
-            // colorDataGridViewTextBoxColumn
-            // 
-            this.colorDataGridViewTextBoxColumn.DataPropertyName = "Color";
-            this.colorDataGridViewTextBoxColumn.FillWeight = 134.7716F;
-            this.colorDataGridViewTextBoxColumn.HeaderText = "Color";
-            this.colorDataGridViewTextBoxColumn.Name = "colorDataGridViewTextBoxColumn";
-            this.colorDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colorDataGridViewTextBoxColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
             // OptionForm
             // 
@@ -1543,8 +1515,6 @@ namespace ServiceBusExplorer.Forms
         private System.Windows.Forms.TabPage tabPageGeneral;
         private System.Windows.Forms.Label lblSaveCheckpointsOnExit;
         private System.Windows.Forms.CheckBox saveCheckpointsToFileCheckBox;
-        private CheckBoxComboBox cboSelectedEntities;
-        private System.Windows.Forms.Label lblSelectedEntities;
         private System.Windows.Forms.NumericUpDown monitorRefreshIntervalNumericUpDown;
         private System.Windows.Forms.Label lblMonitorRefreshInterval;
         private System.Windows.Forms.CheckBox useAsciiCheckBox;
