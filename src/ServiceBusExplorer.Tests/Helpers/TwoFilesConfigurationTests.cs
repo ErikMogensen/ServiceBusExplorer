@@ -451,7 +451,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 var configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
 
                 // Test reading config values - both application config and user config are missing
-                var namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                var namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 namespaces.Should().BeEmpty();
                 
                 logInMemory.Should().Contain("Service bus accounts have not been properly configured");
@@ -463,7 +463,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionString(configuration, IndexNamespaceAdded2);
                 logInMemory.Should().BeEmpty();
 
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 namespaces.Should().HaveCount(2);
                 
                 logInMemory.Should().BeEmpty();
@@ -478,7 +478,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
                     configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 if (UseApplicationConfig(configFileUse))
                 {
@@ -501,7 +501,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionString(configuration, IndexFirstNamespaceInBothFiles);
 
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 namespaces.Should().HaveCount(3);
                 fakeConnectionStrings[IndexNamespaceAdded1].Value.Should().Be(namespaces[KeyNamespaceAdded1].ConnectionString);
@@ -512,7 +512,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Add a connection string to the application file
                 SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 // Depending upon ConfigFileUse setting there are
                 // either four strings in the app config or two in the app and three in the user with
@@ -536,7 +536,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Delete the user file so reading will only be from the application file
                 DeleteUserConfigFile();
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 if (UseApplicationConfig(configFileUse))
                 {
@@ -643,7 +643,7 @@ namespace ServiceBusExplorer.Tests.Helpers
         void SaveConnectionString(TwoFilesConfiguration configuration, int index)
         {
             logInMemory.Should().BeEmpty();
-            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key, fakeConnectionStrings[index].Value, writeToLog);
+            MessagingNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key, fakeConnectionStrings[index].Value, writeToLog);
             logInMemory.Should().BeEmpty();
         }
 
