@@ -272,8 +272,6 @@ namespace ServiceBusExplorer.Helpers
                 case ConfigurationParameters.MessageContentTypeParameter:
                     return MessageContentType;
 
-                case ConfigurationParameters.SelectedEntitiesParameter:
-                    return ServiceType;
 
                 case ConfigurationParameters.SelectedMessageCountsParameter:
                     return SelectedMessageCounts;

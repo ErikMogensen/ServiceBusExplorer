@@ -29,7 +29,11 @@ namespace ServiceBusExplorer.Helpers
 {
     public static class ConfigurationHelper
     {
-        static readonly string SERVICEBUS_SECTION_NAME = "serviceBusNamespaces";
+        static readonly string eventHubsNamespacesSectionName = "eventHubsNamespaces";
+        static readonly string notificationHubsNamespacesSectionName = "notificationHubsNamespaces";
+        static readonly string relayNamespacesSectionName = "relayNamespaces";
+        static readonly string onlyServiceBusNamespacesSectionName = "onlyServiceBusNamespaces";
+        static readonly string unknownNamespacesSectionName = "serviceBusNamespaces";  // This value must be kept for backwards compability
 
         static readonly List<string> serviceTypes = new List<string> 
         { 
@@ -60,26 +64,31 @@ namespace ServiceBusExplorer.Helpers
 
         #region Public methods
 
-        public static void UpdateServiceBusNamespace(ConfigFileUse configFileUse, string key, string newKey, string newValue,
-            WriteToLogDelegate writeToLog)
+        public static void UpdateMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
+            string key, string newKey, string newValue, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
+            var sectionName = MapServiceTypeToSection(serviceTypeName);
 
-            configuration.UpdateEntryInDictionarySection(SERVICEBUS_SECTION_NAME, key, newKey, newValue, writeToLog);
+            configuration.UpdateEntryInDictionarySection(sectionName, key, newKey, newValue, writeToLog);
         }
 
-        public static void AddServiceBusNamespace(ConfigFileUse configFileUse, string key, string value, WriteToLogDelegate writeToLog)
+        public static void AddMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName, 
+            string key, string value, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
+            var sectionName = MapServiceTypeToSection(serviceTypeName);
 
-            configuration.AddEntryToDictionarySection(SERVICEBUS_SECTION_NAME, key, value);
+            configuration.AddEntryToDictionarySection(sectionName, key, value);
         }
 
-        public static void RemoveServiceBusNamespace(ConfigFileUse configFileUse, string key, WriteToLogDelegate writeToLog)
+        public static void RemoveMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName, 
+            string key, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
+            var sectionName = MapServiceTypeToSection(serviceTypeName);
 
-            configuration.RemoveEntryFromDictionarySection(SERVICEBUS_SECTION_NAME, key, writeToLog);
+            configuration.RemoveEntryFromDictionarySection(sectionName, key, writeToLog);
         }
 
         public static MainSettings GetMainProperties(ConfigFileUse configFileUse,
@@ -93,14 +102,6 @@ namespace ServiceBusExplorer.Helpers
         #endregion
 
         #region Public static properties
-        public static List<string> Entities
-        {
-            get
-            {
-                return entities;
-            }
-        }
-
         public static List<string> MessageCounts
         {
             get
@@ -119,10 +120,6 @@ namespace ServiceBusExplorer.Helpers
         #endregion
 
         #region Private static methods
-        static List<string> GetSelectedEntities(TwoFilesConfiguration configuration)
-        {
-            return GetListFromSettings(configuration, ConfigurationParameters.SelectedEntitiesParameter, entities, entities);
-        }
 
         static List<string> GetSelectedMessageCounts(TwoFilesConfiguration configuration)
         {
@@ -261,6 +258,25 @@ namespace ServiceBusExplorer.Helpers
             resultProperties.NodesColors = NodeColorInfo.ParseAll(configuration.GetStringValue(ConfigurationParameters.NodesColors, string.Empty));
 
             return resultProperties;
+        }
+
+        static string MapServiceTypeToSection(string serviceTypeName)
+        {
+            switch (serviceTypeName)
+            {
+                case Constants.EventHubsServiceType:
+                    return eventHubsNamespacesSectionName;
+                case Constants.NotificationHubServiceType:
+                    return notificationHubsNamespacesSectionName;
+                case Constants.RelayServiceType:
+                    return relayNamespacesSectionName;
+                case Constants.ServiceBusServiceType:
+                    return onlyServiceBusNamespacesSectionName;
+                case Constants.UnknownServiceType:
+                    return unknownNamespacesSectionName;
+                default:
+                    throw new ArgumentException($"Unknown service type: {serviceTypeName}", nameof(serviceTypeName));
+            }
         }
         #endregion
     }

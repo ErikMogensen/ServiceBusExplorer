@@ -111,8 +111,6 @@ namespace ServiceBusExplorer.Forms
             SetConfigFileUseLabelText(lblConfigFileUse);
 
             this.serviceBusHelper = serviceBusHelper;
-            cboServiceBusNamespace.Items.Add(SelectServiceBusNamespace);
-            cboServiceBusNamespace.Items.Add(EnterConnectionString);
 
             if (serviceBusHelper.ServiceBusNamespaces != null)
             {
@@ -149,11 +147,6 @@ namespace ServiceBusExplorer.Forms
             {
                 cboServiceType.Items.Add(item);
             }
-
-            //foreach (var item in MainForm.SingletonMainForm.ServiceType)
-            //{
-            //    cboSelectedEntities.CheckBoxItems[item].Checked = true;
-            //}
         }
 
         void SetConfigFileUseLabelText(Label label)
@@ -699,11 +692,20 @@ namespace ServiceBusExplorer.Forms
                 {
                     if (isNewServiceBusNamespace)
                     {
-                        ConfigurationHelper.AddServiceBusNamespace(configFileUse, key, value, MainForm.StaticWriteToLog);
+                        ConfigurationHelper.AddMessagingNamespace(configFileUse, 
+                            cboServiceType.SelectedItem.ToString(), 
+                            key, 
+                            value, 
+                            MainForm.StaticWriteToLog);
                     }
                     else
                     {
-                        ConfigurationHelper.UpdateServiceBusNamespace(configFileUse, key, key, value, MainForm.StaticWriteToLog);
+                        ConfigurationHelper.UpdateMessagingNamespace(configFileUse,
+                            cboServiceType.SelectedItem.ToString(), 
+                            key, 
+                            key, 
+                            value, 
+                            MainForm.StaticWriteToLog);
                     }
                 }
                 catch (ArgumentNullException ex)
@@ -781,7 +783,12 @@ namespace ServiceBusExplorer.Forms
                 }
 
                 var itemIndex = cboServiceBusNamespace.SelectedIndex;
-                ConfigurationHelper.UpdateServiceBusNamespace(configFileUse, key, newKey, newValue: null, MainForm.StaticWriteToLog);
+                ConfigurationHelper.UpdateMessagingNamespace(configFileUse,
+                    cboServiceType.SelectedItem.ToString(), 
+                    key, 
+                    newKey, 
+                    newValue: null, 
+                    MainForm.StaticWriteToLog);
 
                 ignoreSelectedIndexChange = true;
                 serviceBusHelper.ServiceBusNamespaces.Remove(key);
@@ -802,7 +809,10 @@ namespace ServiceBusExplorer.Forms
             {
                 if (deleteForm.ShowDialog() == DialogResult.OK)
                 {
-                    ConfigurationHelper.RemoveServiceBusNamespace(configFileUse, key, MainForm.StaticWriteToLog);
+                    ConfigurationHelper.RemoveMessagingNamespace(configFileUse, 
+                        cboServiceType.SelectedItem.ToString(),
+                        key, 
+                        MainForm.StaticWriteToLog);
                     cboServiceBusNamespace.Items.RemoveAt(cboServiceBusNamespace.SelectedIndex);
                     cboServiceBusNamespace.SelectedIndex = 0;
 

@@ -46,7 +46,7 @@ namespace ServiceBusExplorer.Common.ConfigFileReading
     public class MessagingNamespacesConfigSection : System.Configuration.ConfigurationSection
     {
         //private static readonly ILog log = LogManager.GetLogger(typeof(MessagingNamespacesConfigSection));
-        public const string SectionName = "MessagingNamespaces";
+        public const string SectionName = "ServiceBusNamespaces";
 
         //[ConfigurationProperty("Credentials")]
         //public MessagingNamespaceConfigElement Credentials
@@ -84,10 +84,10 @@ namespace ServiceBusExplorer.Common.ConfigFileReading
         //    }
         //}
 
-        [ConfigurationProperty("MessagingNamespaces")]
+        [ConfigurationProperty("ServiceBusNamespaces")]
         public MessagingNamespaceConfigCollection MessagingNamespaces
         {
-            get { return base["MessagingNamespaces"] as MessagingNamespaceConfigCollection; }
+            get { return base["ServiceBusNamespaces"] as MessagingNamespaceConfigCollection; }
         }
     }
 }
