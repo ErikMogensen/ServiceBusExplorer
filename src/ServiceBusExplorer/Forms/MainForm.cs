@@ -3778,7 +3778,7 @@ namespace ServiceBusExplorer.Forms
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 const string key = @"HKEY_CURRENT_USER\Environment connection string";
-                serviceBusHelper.MessagingNamespaces.Add(key, MessagingNamespace.GetServiceBusNamespace(key, connectionString, StaticWriteToLog));
+                serviceBusHelper.MessagingNamespaces.Add(key, MessagingNamespace.GetMessagingNamespace(key, connectionString, StaticWriteToLog));
             }
         }
 
@@ -7175,7 +7175,7 @@ namespace ServiceBusExplorer.Forms
                     var ns = item.Value;
                     if (ns != null)
                     {
-                        var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace(item.Key, ns.ConnectionString, StaticWriteToLog);
+                        var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace(item.Key, ns.ConnectionString, StaticWriteToLog);
                         serviceBusHelper.Connect(serviceBusNamespace);
                         SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                     }
@@ -7183,7 +7183,7 @@ namespace ServiceBusExplorer.Forms
                 if (string.Compare(argumentName, "/c", StringComparison.InvariantCultureIgnoreCase) == 0 ||
                     string.Compare(argumentName, "-c", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace("Manual", argumentValue, StaticWriteToLog);
+                    var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace("Manual", argumentValue, StaticWriteToLog);
                     serviceBusHelper.Connect(serviceBusNamespace);
                     SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                 }

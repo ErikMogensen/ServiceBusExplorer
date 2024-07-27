@@ -341,7 +341,7 @@ namespace ServiceBusExplorer.Forms
                     try
                     {
                         BuildCurrentConnectionString();
-                        var ns = MessagingNamespace.GetServiceBusNamespace(Key, ConnectionString, (message, async) => { });
+                        var ns = MessagingNamespace.GetMessagingNamespace(Key, ConnectionString, (message, async) => { });
                         txtNamespace.Text = ns.Namespace;
                     }
                     catch
@@ -713,7 +713,7 @@ namespace ServiceBusExplorer.Forms
                     MainForm.StaticWriteToLog(ex.Message);
                 }
 
-                serviceBusHelper.MessagingNamespaces[key] = MessagingNamespace.GetServiceBusNamespace(key, value, MainForm.StaticWriteToLog);
+                serviceBusHelper.MessagingNamespaces[key] = MessagingNamespace.GetMessagingNamespace(key, value, MainForm.StaticWriteToLog);
 
                 cboServiceBusNamespace.Items.Clear();
                 cboServiceBusNamespace.Items.Add(SelectServiceBusNamespace);

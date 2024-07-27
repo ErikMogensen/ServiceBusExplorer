@@ -107,9 +107,6 @@ namespace ServiceBusExplorer.Helpers
             StsEndpoint = default(string);
             RuntimePort = default(string);
             ManagementPort = default(string);
-            WindowsDomain = default(string);
-            WindowsUserName = default(string);
-            WindowsPassword = default(string);
         }
 
         /// <summary>
@@ -161,9 +158,6 @@ namespace ServiceBusExplorer.Helpers
             StsEndpoint = stsEndpoint;
             RuntimePort = default(string);
             ManagementPort = default(string);
-            WindowsDomain = default(string);
-            WindowsUserName = default(string);
-            WindowsPassword = default(string);
             EntityPath = entityPath;
             UserCreated = isUserCreated;
         }
@@ -176,9 +170,6 @@ namespace ServiceBusExplorer.Helpers
         /// <param name="stsEndpoint">The sts endpoint of the service bus namespace.</param>
         /// <param name="runtimePort">The runtime port.</param>
         /// <param name="managementPort">The management port.</param>
-        /// <param name="windowsDomain">The Windows domain or machine name.</param>
-        /// <param name="windowsUsername">The Windows user name.</param>
-        /// <param name="windowsPassword">The Windows user password.</param>
         /// <param name="ns">The service bus namespace.</param>
         /// <param name="transportType">The transport type to use to access the namespace.</param>
         public MessagingNamespace(string connectionString,
@@ -186,9 +177,6 @@ namespace ServiceBusExplorer.Helpers
                                    string stsEndpoint,
                                    string runtimePort,
                                    string managementPort,
-                                   string windowsDomain,
-                                   string windowsUsername,
-                                   string windowsPassword,
                                    string ns,
                                    TransportType transportType,
                                    bool isUserCreated = false)
@@ -210,16 +198,13 @@ namespace ServiceBusExplorer.Helpers
             StsEndpoint = stsEndpoint;
             RuntimePort = runtimePort;
             ManagementPort = managementPort;
-            WindowsDomain = windowsDomain;
-            WindowsUserName = windowsUsername;
-            WindowsPassword = windowsPassword;
             TransportType = transportType;
             UserCreated = isUserCreated;
         }
         #endregion
 
         #region Public methods
-        public static MessagingNamespace GetServiceBusNamespace(string key, string connectionString,
+        public static MessagingNamespace GetMessagingNamespace(string key, string connectionString,
             WriteToLogDelegate staticWriteToLog)
         {
 
@@ -237,18 +222,8 @@ namespace ServiceBusExplorer.Helpers
                 toLower.Contains(ConnectionStringSharedAccessKeyName) &&
                 toLower.Contains(ConnectionStringSharedAccessKey))
             {
-                return GetServiceBusNamespaceUsingSAS(key, connectionString, staticWriteToLog, 
+                return GetMessagingNamespaceUsingSAS(key, connectionString, staticWriteToLog, 
                     isUserCreated, parameters);
-            }
-
-            if (toLower.Contains(ConnectionStringRuntimePort) ||
-                toLower.Contains(ConnectionStringManagementPort) ||
-                toLower.Contains(ConnectionStringWindowsUsername) ||
-                toLower.Contains(ConnectionStringWindowsDomain) ||
-                toLower.Contains(ConnectionStringWindowsPassword))
-            {
-                return GetServiceBusNamespaceUsingWindows(key, connectionString, staticWriteToLog, 
-                    isUserCreated, toLower, parameters);
             }
 
             return null;
@@ -280,7 +255,7 @@ namespace ServiceBusExplorer.Helpers
                     continue;
                 }
 
-                var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace((string)e.Key, (string)e.Value, writeToLog);
+                var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace((string)e.Key, (string)e.Value, writeToLog);
 
                 if (serviceBusNamespace != null)
                 {
@@ -293,7 +268,7 @@ namespace ServiceBusExplorer.Helpers
 
             if (!string.IsNullOrWhiteSpace(microsoftServiceBusConnectionString))
             {
-                var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace(ConfigurationParameters.MicrosoftServiceBusConnectionString, microsoftServiceBusConnectionString, writeToLog);
+                var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace(ConfigurationParameters.MicrosoftServiceBusConnectionString, microsoftServiceBusConnectionString, writeToLog);
 
                 if (serviceBusNamespace != null)
                 {
@@ -378,21 +353,6 @@ namespace ServiceBusExplorer.Helpers
         public string ManagementPort { get; set; }
 
         /// <summary>
-        /// Gets or sets the windows domain.
-        /// </summary>
-        public string WindowsDomain { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Windows user name.
-        /// </summary>
-        public string WindowsUserName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Windows user password.
-        /// </summary>
-        public string WindowsPassword { get; set; }
-
-        /// <summary>
         /// Gets or sets the SharedAccessKeyName.
         /// </summary>
         public string SharedAccessKeyName { get; set; }
@@ -410,87 +370,7 @@ namespace ServiceBusExplorer.Helpers
 
         #region Private Methods
 
-        static MessagingNamespace GetServiceBusNamespaceUsingWindows(string key, string connectionString,
-            WriteToLogDelegate staticWriteToLog, bool isUserCreated, string toLower, 
-            Dictionary<string, string> parameters)
-        {
-            if (!toLower.Contains(ConnectionStringEndpoint) ||
-                !toLower.Contains(ConnectionStringStsEndpoint) ||
-                !toLower.Contains(ConnectionStringRuntimePort) ||
-                !toLower.Contains(ConnectionStringManagementPort))
-            {
-                return null;
-            }
-
-            var endpoint = parameters.ContainsKey(ConnectionStringEndpoint) ?
-                           parameters[ConnectionStringEndpoint] :
-                           null;
-
-            if (string.IsNullOrWhiteSpace(endpoint))
-            {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
-                    ServiceBusNamespaceEndpointIsNullOrEmpty, key));
-                return null;
-            }
-
-            string ns = GetNamespaceNameFromEndpoint(endpoint, staticWriteToLog, key);  
-
-            var stsEndpoint = parameters.ContainsKey(ConnectionStringStsEndpoint) ?
-                              parameters[ConnectionStringStsEndpoint] :
-                              null;
-
-            if (string.IsNullOrWhiteSpace(stsEndpoint))
-            {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
-                    ServiceBusNamespaceStsEndpointIsNullOrEmpty, key));
-                return null;
-            }
-
-            var runtimePort = parameters.ContainsKey(ConnectionStringRuntimePort) ?
-                              parameters[ConnectionStringRuntimePort] :
-                              null;
-
-            if (string.IsNullOrWhiteSpace(runtimePort))
-            {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
-                    ServiceBusNamespaceRuntimePortIsNullOrEmpty, key));
-                return null;
-            }
-
-            var managementPort = parameters.ContainsKey(ConnectionStringManagementPort) ?
-                                 parameters[ConnectionStringManagementPort] :
-                                 null;
-
-            if (string.IsNullOrWhiteSpace(managementPort))
-            {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, ServiceBusNamespaceManagementPortIsNullOrEmpty, key));
-                return null;
-            }
-
-            var windowsDomain = parameters.ContainsKey(ConnectionStringWindowsDomain) ?
-                                parameters[ConnectionStringWindowsDomain] :
-                                null;
-
-            var windowsUsername = parameters.ContainsKey(ConnectionStringWindowsUsername) ?
-                                  parameters[ConnectionStringWindowsUsername] :
-                                  null;
-
-            var windowsPassword = parameters.ContainsKey(ConnectionStringWindowsPassword) ?
-                                  parameters[ConnectionStringWindowsPassword] :
-                                  null;
-
-            var settings = new MessagingFactorySettings();
-            var transportType = settings.TransportType;
-
-            if (parameters.ContainsKey(ConnectionStringTransportType))
-            {
-                Enum.TryParse(parameters[ConnectionStringTransportType], true, out transportType);
-            }
-            
-            return new MessagingNamespace(connectionString, endpoint, stsEndpoint, runtimePort, managementPort, windowsDomain, windowsUsername, windowsPassword, ns, transportType, isUserCreated);
-        }
-
-        static MessagingNamespace GetServiceBusNamespaceUsingSAS(string key, string connectionString, 
+        static MessagingNamespace GetMessagingNamespaceUsingSAS(string key, string connectionString, 
             WriteToLogDelegate staticWriteToLog, bool isUserCreated, Dictionary<string, string> parameters)
         {
             if (parameters.Count < 3)
