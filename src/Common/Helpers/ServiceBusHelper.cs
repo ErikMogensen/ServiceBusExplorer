@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -33,6 +34,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Xml;
 
 using Azure.Messaging.ServiceBus.Administration;
@@ -40,22 +42,21 @@ using Azure.Messaging.ServiceBus.Administration;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 
+using ServiceBusExplorer.Abstractions;
 using ServiceBusExplorer.Enums;
 using ServiceBusExplorer.Helpers;
 using ServiceBusExplorer.ServiceBus.Helpers;
 using ServiceBusExplorer.Utilities.Helpers;
 
 using AzureNotificationHubs = Microsoft.Azure.NotificationHubs;
+using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnectionStringBuilder;
 #endregion
 
 // ReSharper disable CheckNamespace
 namespace ServiceBusExplorer
 // ReSharper restore CheckNamespace
 {
-    using System.IO.Compression;
-    using System.Web.UI.WebControls;
-    using Abstractions;
-    using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnectionStringBuilder;
+
 
     public enum BodyType
     {
@@ -189,7 +190,7 @@ namespace ServiceBusExplorer
         private Microsoft.ServiceBus.TokenProvider tokenProvider;
         private AzureNotificationHubs.TokenProvider notificationHubTokenProvider;
         private Uri namespaceUri;
-        private ServiceBusNamespaceType connectionStringType;
+        private MessagingNamespaceType connectionStringType;
         private Uri atomFeedUri;
         private string ns;
         private string servicePath;
@@ -199,7 +200,7 @@ namespace ServiceBusExplorer
         private string currentSharedAccessKeyName;
         private string currentSharedAccessKey;
         private TransportType currentTransportType;
-        private ServiceBusNamespace serviceBusNamespaceInstance;
+        private MessagingNamespace serviceBusNamespaceInstance;
         #endregion
 
         #region Private Static Fields
@@ -247,7 +248,7 @@ namespace ServiceBusExplorer
             NamespaceUri = serviceBusHelper.NamespaceUri;
             MessageDeferProviderType = serviceBusHelper.MessageDeferProviderType;
             Scheme = serviceBusHelper.Scheme;
-            ServiceBusNamespaces = serviceBusHelper.ServiceBusNamespaces;
+            MessagingNamespaces = serviceBusHelper.MessagingNamespaces;
             BrokeredMessageInspectors = serviceBusHelper.BrokeredMessageInspectors;
             EventDataInspectors = serviceBusHelper.EventDataInspectors;
             BrokeredMessageGenerators = serviceBusHelper.BrokeredMessageGenerators;
@@ -272,7 +273,7 @@ namespace ServiceBusExplorer
             get
             {
                 string uri;
-                return connectionStringType == ServiceBusNamespaceType.Cloud ||
+                return connectionStringType == MessagingNamespaceType.Cloud ||
                       (namespaceUri != null &&
                        !string.IsNullOrWhiteSpace(uri = namespaceUri.ToString()) &&
                        (uri.Contains(CloudServiceBusPostfix) ||
@@ -613,7 +614,7 @@ namespace ServiceBusExplorer
         /// <summary>
         /// Gets or sets the dictionary containing serviceBus accounts.
         /// </summary>
-        public Dictionary<string, ServiceBusNamespace> ServiceBusNamespaces { get; set; }
+        public Dictionary<string, MessagingNamespace> MessagingNamespaces { get; set; }
 
         /// <summary>
         /// Gets or sets the dictionary containing BrokeredMessage inspectors.
@@ -717,11 +718,11 @@ namespace ServiceBusExplorer
         }
 
         /// <summary>
-        /// Connects the ServiceBusHelper object to service bus namespace contained in the ServiceBusNamespaces dictionary.
+        /// Connects the ServiceBusHelper object to service bus namespace contained in the MessagingNamespaces dictionary.
         /// </summary>
         /// <param name="serviceBusNamespace">The Service Bus namespace.</param>
         /// <returns>True if the operation succeeds, false otherwise.</returns>
-        public bool Connect(ServiceBusNamespace serviceBusNamespace)
+        public bool Connect(MessagingNamespace serviceBusNamespace)
         {
             this.serviceBusNamespaceInstance = serviceBusNamespace;
 
@@ -5692,7 +5693,7 @@ namespace ServiceBusExplorer
             }
         }
 
-        private static bool TestNamespaceHostIsContactable(ServiceBusNamespace serviceBusNamespace)
+        private static bool TestNamespaceHostIsContactable(MessagingNamespace serviceBusNamespace)
         {
             if (!Uri.TryCreate(serviceBusNamespace.Uri, UriKind.Absolute, out var namespaceUri))
             {

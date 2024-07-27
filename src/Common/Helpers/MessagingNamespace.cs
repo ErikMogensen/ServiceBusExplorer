@@ -35,7 +35,7 @@ using ServiceBusExplorer.Utilities.Helpers;
 
 namespace ServiceBusExplorer.Helpers
 {
-    public enum ServiceBusNamespaceType
+    public enum MessagingNamespaceType
     {
         Custom,
         Cloud,
@@ -45,7 +45,7 @@ namespace ServiceBusExplorer.Helpers
     /// <summary>
     /// This class represents a service bus namespace address and authentication credentials
     /// </summary>
-    public class ServiceBusNamespace
+    public class MessagingNamespace
     {
         #region Private Constants
         //***************************
@@ -97,9 +97,9 @@ namespace ServiceBusExplorer.Helpers
         /// <summary>
         /// Initializes a new instance of the ServiceBusHelper class.
         /// </summary>
-        public ServiceBusNamespace()
+        public MessagingNamespace()
         {
-            ConnectionStringType = ServiceBusNamespaceType.Cloud;
+            ConnectionStringType = MessagingNamespaceType.Cloud;
             ConnectionString = default(string);
             Uri = default(string);
             Namespace = default(string);
@@ -113,7 +113,7 @@ namespace ServiceBusExplorer.Helpers
         }
 
         /// <summary>
-        /// Initializes a new instance of the ServiceBusNamespace class.
+        /// Initializes a new instance of the MessagingNamespace class.
         /// </summary>
         /// <param name="connectionStringType">The service bus namespace connection string type.</param>
         /// <param name="connectionString">The service bus namespace connection string.</param>
@@ -126,7 +126,7 @@ namespace ServiceBusExplorer.Helpers
         /// <param name="transportType">The transport type to use to access the namespace.</param>
         /// <param name="isSas">True is is SAS connection string, false otherwise.</param>
         /// <param name="entityPath">Entity path connection string scoped to. Otherwise a default.</param>
-        public ServiceBusNamespace(ServiceBusNamespaceType connectionStringType,
+        public MessagingNamespace(MessagingNamespaceType connectionStringType,
                                    string connectionString,
                                    string uri,
                                    string ns,
@@ -169,7 +169,7 @@ namespace ServiceBusExplorer.Helpers
         }
 
         /// <summary>
-        /// Initializes a new instance of the ServiceBusNamespace class for an on-premises namespace.
+        /// Initializes a new instance of the MessagingNamespace class for an on-premises namespace.
         /// </summary>
         /// <param name="connectionString">The service bus namespace connection string.</param>
         /// <param name="endpoint">The endpoint of the service bus namespace.</param>
@@ -181,7 +181,7 @@ namespace ServiceBusExplorer.Helpers
         /// <param name="windowsPassword">The Windows user password.</param>
         /// <param name="ns">The service bus namespace.</param>
         /// <param name="transportType">The transport type to use to access the namespace.</param>
-        public ServiceBusNamespace(string connectionString,
+        public MessagingNamespace(string connectionString,
                                    string endpoint,
                                    string stsEndpoint,
                                    string runtimePort,
@@ -193,7 +193,7 @@ namespace ServiceBusExplorer.Helpers
                                    TransportType transportType,
                                    bool isUserCreated = false)
         {
-            ConnectionStringType = ServiceBusNamespaceType.OnPremises;
+            ConnectionStringType = MessagingNamespaceType.OnPremises;
             ConnectionString = connectionString;
             Uri = endpoint;
             var uri = new Uri(endpoint);
@@ -219,7 +219,7 @@ namespace ServiceBusExplorer.Helpers
         #endregion
 
         #region Public methods
-        public static ServiceBusNamespace GetServiceBusNamespace(string key, string connectionString,
+        public static MessagingNamespace GetServiceBusNamespace(string key, string connectionString,
             WriteToLogDelegate staticWriteToLog)
         {
 
@@ -254,7 +254,7 @@ namespace ServiceBusExplorer.Helpers
             return null;
         }
 
-        public static Dictionary<string, ServiceBusNamespace> GetMessagingNamespaces
+        public static Dictionary<string, MessagingNamespace> GetMessagingNamespaces
             (TwoFilesConfiguration configuration, WriteToLogDelegate writeToLog)
         {
             var hashtable = configuration.GetHashtableFromSection(ServiceBusNamespaces);
@@ -264,7 +264,7 @@ namespace ServiceBusExplorer.Helpers
                 writeToLog(ServiceBusNamespacesNotConfigured);
             }
 
-            var serviceBusNamespaces = new Dictionary<string, ServiceBusNamespace>();
+            var serviceBusNamespaces = new Dictionary<string, MessagingNamespace>();
 
             if (hashtable == null)
             {
@@ -280,7 +280,7 @@ namespace ServiceBusExplorer.Helpers
                     continue;
                 }
 
-                var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace((string)e.Key, (string)e.Value, writeToLog);
+                var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace((string)e.Key, (string)e.Value, writeToLog);
 
                 if (serviceBusNamespace != null)
                 {
@@ -293,7 +293,7 @@ namespace ServiceBusExplorer.Helpers
 
             if (!string.IsNullOrWhiteSpace(microsoftServiceBusConnectionString))
             {
-                var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace(ConfigurationParameters.MicrosoftServiceBusConnectionString, microsoftServiceBusConnectionString, writeToLog);
+                var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace(ConfigurationParameters.MicrosoftServiceBusConnectionString, microsoftServiceBusConnectionString, writeToLog);
 
                 if (serviceBusNamespace != null)
                 {
@@ -317,7 +317,7 @@ namespace ServiceBusExplorer.Helpers
         /// <summary>
         /// Gets or sets the service bus namespace type.
         /// </summary>
-        public ServiceBusNamespaceType ConnectionStringType { get; set; }
+        public MessagingNamespaceType ConnectionStringType { get; set; }
 
         /// <summary>
         /// Get or set if this is a connection string added by the user
@@ -410,7 +410,7 @@ namespace ServiceBusExplorer.Helpers
 
         #region Private Methods
 
-        static ServiceBusNamespace GetServiceBusNamespaceUsingWindows(string key, string connectionString,
+        static MessagingNamespace GetServiceBusNamespaceUsingWindows(string key, string connectionString,
             WriteToLogDelegate staticWriteToLog, bool isUserCreated, string toLower, 
             Dictionary<string, string> parameters)
         {
@@ -487,10 +487,10 @@ namespace ServiceBusExplorer.Helpers
                 Enum.TryParse(parameters[ConnectionStringTransportType], true, out transportType);
             }
             
-            return new ServiceBusNamespace(connectionString, endpoint, stsEndpoint, runtimePort, managementPort, windowsDomain, windowsUsername, windowsPassword, ns, transportType, isUserCreated);
+            return new MessagingNamespace(connectionString, endpoint, stsEndpoint, runtimePort, managementPort, windowsDomain, windowsUsername, windowsPassword, ns, transportType, isUserCreated);
         }
 
-        static ServiceBusNamespace GetServiceBusNamespaceUsingSAS(string key, string connectionString, 
+        static MessagingNamespace GetServiceBusNamespaceUsingSAS(string key, string connectionString, 
             WriteToLogDelegate staticWriteToLog, bool isUserCreated, Dictionary<string, string> parameters)
         {
             if (parameters.Count < 3)
@@ -553,7 +553,7 @@ namespace ServiceBusExplorer.Helpers
                 entityPath = parameters[ConnectionStringEntityPath];
             }
 
-            return new ServiceBusNamespace(ServiceBusNamespaceType.Cloud, connectionString, endpoint, ns, null,
+            return new MessagingNamespace(MessagingNamespaceType.Cloud, connectionString, endpoint, ns, null,
                 sharedAccessKeyName, sharedAccessKey, stsEndpoint, transportType, true,
                 entityPath, isUserCreated);
         }

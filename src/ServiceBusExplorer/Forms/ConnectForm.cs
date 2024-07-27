@@ -112,10 +112,10 @@ namespace ServiceBusExplorer.Forms
 
             this.serviceBusHelper = serviceBusHelper;
 
-            if (serviceBusHelper.ServiceBusNamespaces != null)
+            if (serviceBusHelper.MessagingNamespaces != null)
             {
                 // ReSharper disable CoVariantArrayConversion
-                cboServiceBusNamespace.Items.AddRange(serviceBusHelper.ServiceBusNamespaces.Keys.OrderBy(s => s).ToArray());
+                cboServiceBusNamespace.Items.AddRange(serviceBusHelper.MessagingNamespaces.Keys.OrderBy(s => s).ToArray());
                 // ReSharper restore CoVariantArrayConversion
             }
 
@@ -245,20 +245,20 @@ namespace ServiceBusExplorer.Forms
         private void BuildCurrentConnectionString()
         {
             var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
-                ? serviceBusHelper.ServiceBusNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : ServiceBusNamespaceType.Custom;
+                ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
+                : MessagingNamespaceType.Custom;
 
             Key = cboServiceBusNamespace.SelectedIndex > 1 &&
-                  serviceBusHelper.ServiceBusNamespaces.ContainsKey(cboServiceBusNamespace.Text)
+                  serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
                 ? cboServiceBusNamespace.Text
                 : null;
 
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
-                                      !string.IsNullOrWhiteSpace(serviceBusHelper.ServiceBusNamespaces[Key].StsEndpoint);
+                                      !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
             txtUri.Text = txtUri.Text.Trim();
             if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == ServiceBusNamespaceType.OnPremises || containsStsEndpoint)
+                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
             {
                 ConnectionString = txtUri.Text;
             }
@@ -275,7 +275,7 @@ namespace ServiceBusExplorer.Forms
 
                 if (string.IsNullOrEmpty(EntityPath))
                 {
-                    ConnectionString = string.Format(ServiceBusNamespace.SasConnectionStringFormat,
+                    ConnectionString = string.Format(MessagingNamespace.SasConnectionStringFormat,
                         Uri,
                         SharedAccessKeyName,
                         SharedAccessKey,
@@ -283,7 +283,7 @@ namespace ServiceBusExplorer.Forms
                 }
                 else
                 {
-                    ConnectionString = string.Format(ServiceBusNamespace.SasConnectionStringEntityPathFormat,
+                    ConnectionString = string.Format(MessagingNamespace.SasConnectionStringEntityPathFormat,
                         Uri,
                         SharedAccessKeyName,
                         SharedAccessKey,
@@ -296,19 +296,19 @@ namespace ServiceBusExplorer.Forms
         private void validation_TextChanged(object sender, EventArgs e)
         {
             var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
-                ? serviceBusHelper.ServiceBusNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : ServiceBusNamespaceType.Custom;
+                ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
+                : MessagingNamespaceType.Custom;
 
             Key = cboServiceBusNamespace.SelectedIndex > 1 &&
-                  serviceBusHelper.ServiceBusNamespaces.ContainsKey(cboServiceBusNamespace.Text)
+                  serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
                 ? cboServiceBusNamespace.Text
                 : null;
 
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
-                                      !string.IsNullOrWhiteSpace(serviceBusHelper.ServiceBusNamespaces[Key].StsEndpoint);
+                                      !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
             if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == ServiceBusNamespaceType.OnPremises || containsStsEndpoint)
+                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
             {
                 btnOk.Enabled = !string.IsNullOrWhiteSpace(txtUri.Text);
                 if (string.IsNullOrEmpty(txtUri.Text))
@@ -341,7 +341,7 @@ namespace ServiceBusExplorer.Forms
                     try
                     {
                         BuildCurrentConnectionString();
-                        var ns = ServiceBusNamespace.GetServiceBusNamespace(Key, ConnectionString, (message, async) => { });
+                        var ns = MessagingNamespace.GetServiceBusNamespace(Key, ConnectionString, (message, async) => { });
                         txtNamespace.Text = ns.Namespace;
                     }
                     catch
@@ -365,11 +365,11 @@ namespace ServiceBusExplorer.Forms
             }
 
             var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
-                ? serviceBusHelper.ServiceBusNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : ServiceBusNamespaceType.Custom;
+                ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
+                : MessagingNamespaceType.Custom;
 
             Key = cboServiceBusNamespace.SelectedIndex > 1 &&
-                  serviceBusHelper.ServiceBusNamespaces.ContainsKey(cboServiceBusNamespace.Text)
+                  serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
                 ? cboServiceBusNamespace.Text
                 : null;
 
@@ -378,10 +378,10 @@ namespace ServiceBusExplorer.Forms
             btnSave.Visible = cboServiceBusNamespace.Text == EnterConnectionString;
 
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
-                                      !string.IsNullOrWhiteSpace(serviceBusHelper.ServiceBusNamespaces[Key].StsEndpoint);
+                                      !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
             if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == ServiceBusNamespaceType.OnPremises || containsStsEndpoint)
+                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
             {
                 var newHeight = txtIssuerSecret.Location.Y + txtIssuerSecret.Size.Height - txtUri.Location.Y;
 
@@ -404,7 +404,7 @@ namespace ServiceBusExplorer.Forms
                 return;
             }
 
-            var ns = serviceBusHelper.ServiceBusNamespaces[cboServiceBusNamespace.Text];
+            var ns = serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text];
             btnSave.Visible = ns.UserCreated;
             btnRename.Visible = ns.UserCreated;
             btnDelete.Visible = ns.UserCreated;
@@ -413,7 +413,7 @@ namespace ServiceBusExplorer.Forms
             {
                 return;
             }
-            if (connectionStringType == ServiceBusNamespaceType.OnPremises || containsStsEndpoint)
+            if (connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
             {
                 txtUri.Text = ns.ConnectionString;
             }
@@ -455,14 +455,14 @@ namespace ServiceBusExplorer.Forms
         private void cboTransportType_SelectedIndexChanged(object sender, EventArgs e)
         {
             var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
-                ? serviceBusHelper.ServiceBusNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : ServiceBusNamespaceType.Custom;
+                ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
+                : MessagingNamespaceType.Custom;
 
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
-                                      !string.IsNullOrWhiteSpace(serviceBusHelper.ServiceBusNamespaces[Key].StsEndpoint);
+                                      !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
             if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == ServiceBusNamespaceType.OnPremises || containsStsEndpoint)
+                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
             {
                 btnOk.Enabled = !string.IsNullOrWhiteSpace(txtUri.Text);
 
@@ -713,14 +713,14 @@ namespace ServiceBusExplorer.Forms
                     MainForm.StaticWriteToLog(ex.Message);
                 }
 
-                serviceBusHelper.ServiceBusNamespaces[key] = ServiceBusNamespace.GetServiceBusNamespace(key, value, MainForm.StaticWriteToLog);
+                serviceBusHelper.MessagingNamespaces[key] = MessagingNamespace.GetServiceBusNamespace(key, value, MainForm.StaticWriteToLog);
 
                 cboServiceBusNamespace.Items.Clear();
                 cboServiceBusNamespace.Items.Add(SelectServiceBusNamespace);
                 cboServiceBusNamespace.Items.Add(EnterConnectionString);
 
                 // ReSharper disable once CoVariantArrayConversion
-                cboServiceBusNamespace.Items.AddRange(serviceBusHelper.ServiceBusNamespaces.Keys.OrderBy(s => s).ToArray());
+                cboServiceBusNamespace.Items.AddRange(serviceBusHelper.MessagingNamespaces.Keys.OrderBy(s => s).ToArray());
                 cboServiceBusNamespace.Text = key;
             }
             catch (Exception ex)
@@ -749,7 +749,7 @@ namespace ServiceBusExplorer.Forms
 
         private void btnRename_Click(object sender, EventArgs e)
         {
-            var ns = serviceBusHelper.ServiceBusNamespaces[cboServiceBusNamespace.Text];
+            var ns = serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text];
             var key = cboServiceBusNamespace.Text;
 
             using (var parameterForm = new ParameterForm("Enter the new key for the Azure Messaging namespace",
@@ -769,7 +769,7 @@ namespace ServiceBusExplorer.Forms
                     return;
                 }
 
-                var existingKeys = serviceBusHelper.ServiceBusNamespaces.Keys;
+                var existingKeys = serviceBusHelper.MessagingNamespaces.Keys;
                 if (existingKeys.Contains(newKey))
                 {
                     MainForm.StaticWriteToLog("An Azure Messaging namespace key must be unique");
@@ -791,8 +791,8 @@ namespace ServiceBusExplorer.Forms
                     MainForm.StaticWriteToLog);
 
                 ignoreSelectedIndexChange = true;
-                serviceBusHelper.ServiceBusNamespaces.Remove(key);
-                serviceBusHelper.ServiceBusNamespaces[newKey] = ns;
+                serviceBusHelper.MessagingNamespaces.Remove(key);
+                serviceBusHelper.MessagingNamespaces[newKey] = ns;
                 cboServiceBusNamespace.Items[itemIndex] = newKey.GetHashCode();
                 cboServiceBusNamespace.Items[itemIndex] = newKey;
                 cboServiceBusNamespace.Text = newKey;
@@ -816,7 +816,7 @@ namespace ServiceBusExplorer.Forms
                     cboServiceBusNamespace.Items.RemoveAt(cboServiceBusNamespace.SelectedIndex);
                     cboServiceBusNamespace.SelectedIndex = 0;
 
-                    serviceBusHelper.ServiceBusNamespaces.Remove(key);
+                    serviceBusHelper.MessagingNamespaces.Remove(key);
                 }
             }
         }

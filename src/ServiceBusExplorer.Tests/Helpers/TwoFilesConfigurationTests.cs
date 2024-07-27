@@ -451,7 +451,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 var configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
 
                 // Test reading config values - both application config and user config are missing
-                var namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                var namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 Assert.AreEqual(0, namespaces.Count);
                 Assert.IsTrue(logInMemory.Contains("Service bus accounts have not been properly configured"));
                 logInMemory = string.Empty;
@@ -462,7 +462,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionString(configuration, IndexNamespaceAdded2);
                 Assert.IsEmpty(logInMemory);
 
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces
+                namespaces = MessagingNamespace.GetMessagingNamespaces
                     (configuration, writeToLog);
                 Assert.IsEmpty(logInMemory);
                 Assert.AreEqual(2, namespaces.Count);
@@ -477,7 +477,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
                     configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 if (UseApplicationConfig(configFileUse))
                 {
@@ -503,7 +503,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionString(configuration, IndexFirstNamespaceInBothFiles);
 
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 Assert.AreEqual(3, namespaces.Count);
                 Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
@@ -516,7 +516,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Add a connection string to the application file
                 SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 // Depending upon ConfigFileUse setting there are
                 // either four strings in the app config or two in the app and three in the user with
@@ -543,7 +543,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Delete the user file so reading will only be from the application file
                 DeleteUserConfigFile();
                 configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                namespaces = ServiceBusNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 if (UseApplicationConfig(configFileUse))
                 {
@@ -655,7 +655,7 @@ namespace ServiceBusExplorer.Tests.Helpers
         void SaveConnectionString(TwoFilesConfiguration configuration, int index)
         {
             Assert.IsEmpty(logInMemory);
-            ServiceBusNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key,
+            MessagingNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key,
                 fakeConnectionStrings[index].Value, writeToLog);
             Assert.IsEmpty(logInMemory);
         }

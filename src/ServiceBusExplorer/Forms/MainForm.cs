@@ -331,9 +331,9 @@ namespace ServiceBusExplorer.Forms
                 Keys.Control | Keys.D5
             };
 
-            foreach (var namespaceKey in serviceBusHelper.ServiceBusNamespaces.Keys.OrderBy(k => k))
+            foreach (var namespaceKey in serviceBusHelper.MessagingNamespaces.Keys.OrderBy(k => k))
             {
-                if (serviceBusHelper.ServiceBusNamespaces[namespaceKey].UserCreated)
+                if (serviceBusHelper.MessagingNamespaces[namespaceKey].UserCreated)
                 {
                     var shortcutKey = allowedShortCutKeys.Count > 0 ? allowedShortCutKeys.First() : Keys.None;
                     if (allowedShortCutKeys.Count > 0) allowedShortCutKeys.RemoveAt(0);
@@ -358,7 +358,7 @@ namespace ServiceBusExplorer.Forms
 
         private async void SavedConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var serviceBusNamespace = serviceBusHelper.ServiceBusNamespaces[(sender as ToolStripMenuItem).Tag.ToString()];
+            var serviceBusNamespace = serviceBusHelper.MessagingNamespaces[(sender as ToolStripMenuItem).Tag.ToString()];
             serviceBusHelper.Connect(serviceBusNamespace);
             SetTitle(serviceBusNamespace.Namespace, "Service Bus");
 
@@ -3763,8 +3763,8 @@ namespace ServiceBusExplorer.Forms
             try
             {
                 var configuration = TwoFilesConfiguration.Create(configFileUse, WriteToLog);
-                serviceBusHelper.ServiceBusNamespaces =
-                    ServiceBusNamespace.GetMessagingNamespaces(configuration, WriteToLog);
+                serviceBusHelper.MessagingNamespaces =
+                    MessagingNamespace.GetMessagingNamespaces(configuration, WriteToLog);
             }
             catch (Exception ex)
             {
@@ -3778,7 +3778,7 @@ namespace ServiceBusExplorer.Forms
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 const string key = @"HKEY_CURRENT_USER\Environment connection string";
-                serviceBusHelper.ServiceBusNamespaces.Add(key, ServiceBusNamespace.GetServiceBusNamespace(key, connectionString, StaticWriteToLog));
+                serviceBusHelper.MessagingNamespaces.Add(key, MessagingNamespace.GetServiceBusNamespace(key, connectionString, StaticWriteToLog));
             }
         }
 
@@ -7166,7 +7166,7 @@ namespace ServiceBusExplorer.Forms
                 if (string.Compare(argumentName, "/n", StringComparison.InvariantCultureIgnoreCase) == 0 ||
                     string.Compare(argumentName, "-n", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    var item = serviceBusHelper.ServiceBusNamespaces.FirstOrDefault(s => string.Compare(s.Key, argumentValue, StringComparison.InvariantCultureIgnoreCase) == 0);
+                    var item = serviceBusHelper.MessagingNamespaces.FirstOrDefault(s => string.Compare(s.Key, argumentValue, StringComparison.InvariantCultureIgnoreCase) == 0);
                     if (item.Key == null && item.Value == null)
                     {
                         WriteToLog(string.Format(NoNamespaceWithKeyMessageFormat, argumentValue));
@@ -7175,7 +7175,7 @@ namespace ServiceBusExplorer.Forms
                     var ns = item.Value;
                     if (ns != null)
                     {
-                        var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace(item.Key, ns.ConnectionString, StaticWriteToLog);
+                        var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace(item.Key, ns.ConnectionString, StaticWriteToLog);
                         serviceBusHelper.Connect(serviceBusNamespace);
                         SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                     }
@@ -7183,7 +7183,7 @@ namespace ServiceBusExplorer.Forms
                 if (string.Compare(argumentName, "/c", StringComparison.InvariantCultureIgnoreCase) == 0 ||
                     string.Compare(argumentName, "-c", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace("Manual", argumentValue, StaticWriteToLog);
+                    var serviceBusNamespace = MessagingNamespace.GetServiceBusNamespace("Manual", argumentValue, StaticWriteToLog);
                     serviceBusHelper.Connect(serviceBusNamespace);
                     SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                 }
