@@ -35,7 +35,7 @@ using ServiceBusExplorer.Utilities.Helpers;
 
 namespace ServiceBusExplorer.Helpers
 {
-    public enum MessagingNamespaceType
+    public enum HostType
     {
         Custom,
         Cloud,
@@ -48,10 +48,6 @@ namespace ServiceBusExplorer.Helpers
     public class MessagingNamespace
     {
         #region Private Constants
-        //***************************
-        // Constants for accessing configuration files
-        //***************************
-        const string ServiceBusNamespaces = "serviceBusNamespaces";
 
         //***************************
         // Messages
@@ -94,20 +90,6 @@ namespace ServiceBusExplorer.Helpers
         #endregion
 
         #region Public Constructors
-        /// <summary>
-        /// Initializes a new instance of the ServiceBusHelper class.
-        /// </summary>
-        public MessagingNamespace()
-        {
-            ConnectionStringType = MessagingNamespaceType.Cloud;
-            ConnectionString = default(string);
-            Uri = default(string);
-            Namespace = default(string);
-            ServicePath = default(string);
-            StsEndpoint = default(string);
-            RuntimePort = default(string);
-            ManagementPort = default(string);
-        }
 
         /// <summary>
         /// Initializes a new instance of the MessagingNamespace class.
@@ -123,19 +105,22 @@ namespace ServiceBusExplorer.Helpers
         /// <param name="transportType">The transport type to use to access the namespace.</param>
         /// <param name="isSas">True is is SAS connection string, false otherwise.</param>
         /// <param name="entityPath">Entity path connection string scoped to. Otherwise a default.</param>
-        public MessagingNamespace(MessagingNamespaceType connectionStringType,
-                                   string connectionString,
-                                   string uri,
-                                   string ns,
-                                   string servicePath,
-                                   string name,
-                                   string key,
-                                   string stsEndpoint,
-                                   TransportType transportType,
-                                   bool isSas = false,
-                                   string entityPath = "",
-                                   bool isUserCreated = false)
+        public MessagingNamespace(
+            ServiceType serviceType,
+            HostType connectionStringType,
+            string connectionString,
+            string uri,
+            string ns,
+            string servicePath,
+            string name,
+            string key,
+            string stsEndpoint,
+            TransportType transportType,
+            bool isSas = false,
+            string entityPath = "",
+            bool isUserCreated = false)
         {
+            ServiceType = serviceType;
             ConnectionStringType = connectionStringType;
             Uri = string.IsNullOrWhiteSpace(uri) ?
                   ServiceBusEnvironment.CreateServiceUri("sb", ns, servicePath).ToString() :
@@ -181,7 +166,7 @@ namespace ServiceBusExplorer.Helpers
                                    TransportType transportType,
                                    bool isUserCreated = false)
         {
-            ConnectionStringType = MessagingNamespaceType.OnPremises;
+            ConnectionStringType = HostType.OnPremises;
             ConnectionString = connectionString;
             Uri = endpoint;
             var uri = new Uri(endpoint);
@@ -204,7 +189,7 @@ namespace ServiceBusExplorer.Helpers
         #endregion
 
         #region Public methods
-        public static MessagingNamespace GetMessagingNamespace(string key, string connectionString,
+        public static MessagingNamespace Create(ServiceType serviceType, string key, string connectionString,
             WriteToLogDelegate staticWriteToLog)
         {
 
@@ -222,8 +207,13 @@ namespace ServiceBusExplorer.Helpers
                 toLower.Contains(ConnectionStringSharedAccessKeyName) &&
                 toLower.Contains(ConnectionStringSharedAccessKey))
             {
-                return GetMessagingNamespaceUsingSAS(key, connectionString, staticWriteToLog, 
-                    isUserCreated, parameters);
+                return CreateUsingSAS(
+                    serviceType,
+                    key,
+                    connectionString,
+                    staticWriteToLog,
+                    isUserCreated,
+                    parameters);
             }
 
             return null;
@@ -232,18 +222,63 @@ namespace ServiceBusExplorer.Helpers
         public static Dictionary<string, MessagingNamespace> GetMessagingNamespaces
             (TwoFilesConfiguration configuration, WriteToLogDelegate writeToLog)
         {
-            var hashtable = configuration.GetHashtableFromSection(ServiceBusNamespaces);
+            var messagingNamespaces = new Dictionary<string, MessagingNamespace>();
+
+            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)))
+            {
+                var namespaces = GetMessagingNamespacesForServiceType(
+                    configuration, (ServiceType)serviceType, writeToLog);
+
+                // Add the latest namespaces to the total
+                foreach (var messagingNamespace in namespaces)
+                {
+                    if (!messagingNamespaces.ContainsKey(messagingNamespace.Key))
+                    {
+                        messagingNamespaces.Add(messagingNamespace.Key, messagingNamespace.Value);
+                    }
+                }
+            }
+
+            var microsoftServiceBusConnectionString =
+                configuration.GetStringValue(ConfigurationParameters.MicrosoftServiceBusConnectionString);
+
+            if (!string.IsNullOrWhiteSpace(microsoftServiceBusConnectionString))
+            {
+                var serviceBusNamespace = MessagingNamespace.Create(
+                    ServiceType.ServiceBus,
+                    ConfigurationParameters.MicrosoftServiceBusConnectionString,
+                    microsoftServiceBusConnectionString,
+                    writeToLog);
+
+                if (serviceBusNamespace != null)
+                {
+                    messagingNamespaces.
+                        Add(ConfigurationParameters.MicrosoftServiceBusConnectionString, serviceBusNamespace);
+                }
+            }
+
+            if (messagingNamespaces == null || messagingNamespaces.Count == 0)
+            {
+                writeToLog(ServiceBusNamespacesNotConfigured);
+            }
+
+            return messagingNamespaces;
+        }
+        public static Dictionary<string, MessagingNamespace> GetMessagingNamespacesForServiceType
+            (TwoFilesConfiguration configuration, ServiceType serviceType, WriteToLogDelegate writeToLog)
+        {
+            var hashtable = ConfigurationHelper.GetNamespacesForServiceType(configuration, serviceType);
 
             if (hashtable == null || hashtable.Count == 0)
             {
                 writeToLog(ServiceBusNamespacesNotConfigured);
             }
 
-            var serviceBusNamespaces = new Dictionary<string, MessagingNamespace>();
+            var messagingNamespaces = new Dictionary<string, MessagingNamespace>();
 
             if (hashtable == null)
             {
-                return serviceBusNamespaces;
+                return messagingNamespaces;
             }
 
             var e = hashtable.GetEnumerator();
@@ -255,36 +290,20 @@ namespace ServiceBusExplorer.Helpers
                     continue;
                 }
 
-                var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace((string)e.Key, (string)e.Value, writeToLog);
+                var serviceBusNamespace = MessagingNamespace.Create(serviceType,
+                                                                    (string)e.Key,
+                                                                    (string)e.Value,
+                                                                    writeToLog);
 
                 if (serviceBusNamespace != null)
                 {
-                    serviceBusNamespaces.Add((string)e.Key, serviceBusNamespace);
+                    messagingNamespaces.Add((string)e.Key, serviceBusNamespace);
                 }
             }
 
-            var microsoftServiceBusConnectionString =
-                configuration.GetStringValue(ConfigurationParameters.MicrosoftServiceBusConnectionString);
-
-            if (!string.IsNullOrWhiteSpace(microsoftServiceBusConnectionString))
-            {
-                var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace(ConfigurationParameters.MicrosoftServiceBusConnectionString, microsoftServiceBusConnectionString, writeToLog);
-
-                if (serviceBusNamespace != null)
-                {
-                    serviceBusNamespaces.
-                        Add(ConfigurationParameters.MicrosoftServiceBusConnectionString, serviceBusNamespace);
-                }
-            }
-
-            return serviceBusNamespaces;
+            return messagingNamespaces;
         }
 
-        public static void SaveConnectionString(TwoFilesConfiguration configuration,
-            string key, string value, WriteToLogDelegate staticWriteToLog)
-        {
-            configuration.AddEntryToDictionarySection(ServiceBusNamespaces, key, value);
-        }
         #endregion
 
         #region Public Properties
@@ -292,7 +311,12 @@ namespace ServiceBusExplorer.Helpers
         /// <summary>
         /// Gets or sets the service bus namespace type.
         /// </summary>
-        public MessagingNamespaceType ConnectionStringType { get; set; }
+        public ServiceType ServiceType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service bus namespace type.
+        /// </summary>
+        public HostType ConnectionStringType { get; set; }
 
         /// <summary>
         /// Get or set if this is a connection string added by the user
@@ -370,7 +394,7 @@ namespace ServiceBusExplorer.Helpers
 
         #region Private Methods
 
-        static MessagingNamespace GetMessagingNamespaceUsingSAS(string key, string connectionString, 
+        static MessagingNamespace CreateUsingSAS(ServiceType serviceType, string key, string connectionString,
             WriteToLogDelegate staticWriteToLog, bool isUserCreated, Dictionary<string, string> parameters)
         {
             if (parameters.Count < 3)
@@ -385,14 +409,14 @@ namespace ServiceBusExplorer.Helpers
 
             if (string.IsNullOrWhiteSpace(endpoint))
             {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
+                staticWriteToLog(string.Format(CultureInfo.CurrentCulture,
                     ServiceBusNamespaceEndpointIsNullOrEmpty, key));
                 return null;
             }
 
             if (!endpoint.Contains("://"))
             {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
+                staticWriteToLog(string.Format(CultureInfo.CurrentCulture,
                     ServiceBusNamespaceEndpointPrefixedWithSb, endpoint));
                 endpoint = "sb://" + endpoint;
             }
@@ -401,9 +425,9 @@ namespace ServiceBusExplorer.Helpers
                               parameters[ConnectionStringStsEndpoint] :
                               null;
 
-            string ns = GetNamespaceNameFromEndpoint(endpoint, staticWriteToLog, key);           
+            string ns = GetNamespaceNameFromEndpoint(endpoint, staticWriteToLog, key);
 
-            if (!parameters.ContainsKey(ConnectionStringSharedAccessKeyName) || 
+            if (!parameters.ContainsKey(ConnectionStringSharedAccessKeyName) ||
                 string.IsNullOrWhiteSpace(parameters[ConnectionStringSharedAccessKeyName]))
             {
                 staticWriteToLog(string.Format(CultureInfo.CurrentCulture, ServiceBusNamespaceSharedAccessKeyNameIsInvalid, key));
@@ -413,7 +437,7 @@ namespace ServiceBusExplorer.Helpers
 
             if (!parameters.ContainsKey(ConnectionStringSharedAccessKey) || string.IsNullOrWhiteSpace(parameters[ConnectionStringSharedAccessKey]))
             {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
+                staticWriteToLog(string.Format(CultureInfo.CurrentCulture,
                     ServiceBusNamespaceSharedAccessKeyIsInvalid, key));
             }
 
@@ -433,15 +457,15 @@ namespace ServiceBusExplorer.Helpers
                 entityPath = parameters[ConnectionStringEntityPath];
             }
 
-            return new MessagingNamespace(MessagingNamespaceType.Cloud, connectionString, endpoint, ns, null,
+            return new MessagingNamespace(serviceType, HostType.Cloud, connectionString, endpoint, ns, null,
                 sharedAccessKeyName, sharedAccessKey, stsEndpoint, transportType, true,
                 entityPath, isUserCreated);
         }
 
-        static string GetNamespaceNameFromEndpoint(string endpoint, WriteToLogDelegate staticWriteToLog, 
+        static string GetNamespaceNameFromEndpoint(string endpoint, WriteToLogDelegate staticWriteToLog,
             string key)
         {
-             Uri uri;
+            Uri uri;
 
             try
             {
@@ -449,7 +473,7 @@ namespace ServiceBusExplorer.Helpers
             }
             catch (Exception)
             {
-                staticWriteToLog(string.Format(CultureInfo.CurrentCulture, 
+                staticWriteToLog(string.Format(CultureInfo.CurrentCulture,
                     ServiceBusNamespaceEndpointUriIsInvalid, key));
                 return null;
             }

@@ -46,8 +46,6 @@ namespace ServiceBusExplorer.Forms
         //***************************
         // Constants
         //***************************
-        private const string SelectServiceBusNamespace = "Select a Azure Messaging namespace...";
-        private const string EnterConnectionString = "Enter connection string...";
         private const string ExceptionFormat = "Exception: {0}";
         private const string InnerExceptionFormat = "InnerException: {0}";
         private const string UriLabel = "URI or Server FQDN:";
@@ -88,9 +86,10 @@ namespace ServiceBusExplorer.Forms
 
         #region Private Instance Fields
 
-        private readonly ServiceBusHelper serviceBusHelper;
-        private readonly ConfigFileUse configFileUse;
-        private bool ignoreSelectedIndexChange;
+        readonly ServiceBusHelper serviceBusHelper;
+        readonly ConfigFileUse configFileUse;
+        bool isCreatingNewNamespace = false;
+        bool ignoreSelectedIndexChange;
 
         #endregion
 
@@ -110,6 +109,7 @@ namespace ServiceBusExplorer.Forms
             this.configFileUse = configFileUse;
             SetConfigFileUseLabelText(lblConfigFileUse);
 
+            cboServiceType.DataSource = ConfigurationHelper.ServiceTypes;
             this.serviceBusHelper = serviceBusHelper;
 
             if (serviceBusHelper.MessagingNamespaces != null)
@@ -131,7 +131,7 @@ namespace ServiceBusExplorer.Forms
 
             cboServiceBusNamespace.SelectedIndex = connectionStringIndex > 0 ? connectionStringIndex : 0;
 
-            if (cboServiceBusNamespace.Text == EnterConnectionString)
+            if (isCreatingNewNamespace)
             {
                 txtUri.Text = connectionString;
             }
@@ -139,14 +139,7 @@ namespace ServiceBusExplorer.Forms
             txtQueueFilterExpression.Text = FilterExpressionHelper.QueueFilterExpression;
             txtTopicFilterExpression.Text = FilterExpressionHelper.TopicFilterExpression;
             txtSubscriptionFilterExpression.Text = FilterExpressionHelper.SubscriptionFilterExpression;
-            btnOk.Enabled = cboServiceBusNamespace.SelectedIndex > 1 ||
-                            (cboServiceBusNamespace.Text == EnterConnectionString &&
-                             !string.IsNullOrWhiteSpace(connectionString));
-
-            foreach (var item in ConfigurationHelper.ServiceTypes)
-            {
-                cboServiceType.Items.Add(item);
-            }
+            btnOk.Enabled = isCreatingNewNamespace && !string.IsNullOrWhiteSpace(connectionString);
         }
 
         void SetConfigFileUseLabelText(Label label)
@@ -185,9 +178,6 @@ namespace ServiceBusExplorer.Forms
         public string Key { get; private set; }
         public string Uri { get; private set; }
         public string Namespace { get; private set; }
-        public string ServicePath { get; set; }
-        public string IssuerName { get; private set; }
-        public string IssuerSecret { get; private set; }
         public string SharedAccessKeyName { get; private set; }
         public string SharedAccessKey { get; private set; }
         public string ConnectionString { get; private set; }
@@ -208,6 +198,15 @@ namespace ServiceBusExplorer.Forms
         //{
         //    get { return cboSelectedEntities.CheckBoxItems.Where(i => i.Checked).Select(i => i.Text).ToList(); }
         //}
+
+        #endregion
+
+        #region Public Methods
+
+        public ServiceType GetSelectedServiceType()
+        {
+            return MapServiceTypeDisplayNameToServiceType(cboServiceType.SelectedItem.ToString());
+        }
 
         #endregion
 
@@ -236,7 +235,7 @@ namespace ServiceBusExplorer.Forms
             FilterExpressionHelper.SubscriptionFilterExpression = txtSubscriptionFilterExpression.Text;
             connectionStringIndex = cboServiceBusNamespace.SelectedIndex;
 
-            if (cboServiceBusNamespace.Text == EnterConnectionString)
+            if (isCreatingNewNamespace)
             {
                 connectionString = ConnectionString;
             }
@@ -244,11 +243,11 @@ namespace ServiceBusExplorer.Forms
 
         private void BuildCurrentConnectionString()
         {
-            var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
+            var connectionStringType = isCreatingNewNamespace
                 ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : MessagingNamespaceType.Custom;
+                : HostType.Custom;
 
-            Key = cboServiceBusNamespace.SelectedIndex > 1 &&
+            Key = isCreatingNewNamespace &&
                   serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
                 ? cboServiceBusNamespace.Text
                 : null;
@@ -257,8 +256,9 @@ namespace ServiceBusExplorer.Forms
                                       !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
             txtUri.Text = txtUri.Text.Trim();
-            if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
+
+            if (isCreatingNewNamespace ||
+                connectionStringType == HostType.OnPremises || containsStsEndpoint)
             {
                 ConnectionString = txtUri.Text;
             }
@@ -293,13 +293,13 @@ namespace ServiceBusExplorer.Forms
             }
         }
 
-        private void validation_TextChanged(object sender, EventArgs e)
+        private void txtUri_TextChanged(object sender, EventArgs e)
         {
-            var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
+            var connectionStringType = isCreatingNewNamespace
                 ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : MessagingNamespaceType.Custom;
+                : HostType.Custom;
 
-            Key = cboServiceBusNamespace.SelectedIndex > 1 &&
+            Key = isCreatingNewNamespace &&
                   serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
                 ? cboServiceBusNamespace.Text
                 : null;
@@ -307,8 +307,8 @@ namespace ServiceBusExplorer.Forms
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
                                       !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
-            if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
+            if (isCreatingNewNamespace ||
+                connectionStringType == HostType.OnPremises || containsStsEndpoint)
             {
                 btnOk.Enabled = !string.IsNullOrWhiteSpace(txtUri.Text);
                 if (string.IsNullOrEmpty(txtUri.Text))
@@ -341,7 +341,9 @@ namespace ServiceBusExplorer.Forms
                     try
                     {
                         BuildCurrentConnectionString();
-                        var ns = MessagingNamespace.GetMessagingNamespace(Key, ConnectionString, (message, async) => { });
+
+                        var ns = MessagingNamespace.Create(GetSelectedServiceType(), Key, ConnectionString,
+                            (message, async) => { });
                         txtNamespace.Text = ns.Namespace;
                     }
                     catch
@@ -364,24 +366,23 @@ namespace ServiceBusExplorer.Forms
                 return;
             }
 
-            var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
+            var connectionStringType = isCreatingNewNamespace
                 ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : MessagingNamespaceType.Custom;
+                : HostType.Custom;
 
-            Key = cboServiceBusNamespace.SelectedIndex > 1 &&
-                  serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
-                ? cboServiceBusNamespace.Text
-                : null;
+            Key = serviceBusHelper.MessagingNamespaces.ContainsKey(cboServiceBusNamespace.Text)
+                    ? cboServiceBusNamespace.Text
+                    : null;
 
             btnRename.Visible = false;
             btnDelete.Visible = false;
-            btnSave.Visible = cboServiceBusNamespace.Text == EnterConnectionString;
+            btnSave.Visible = isCreatingNewNamespace;
 
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
                                       !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
-            if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
+            if (isCreatingNewNamespace ||
+                connectionStringType == HostType.OnPremises || containsStsEndpoint)
             {
                 var newHeight = txtIssuerSecret.Location.Y + txtIssuerSecret.Size.Height - txtUri.Location.Y;
 
@@ -399,7 +400,7 @@ namespace ServiceBusExplorer.Forms
                 toolTip.SetToolTip(txtUri, UriTooltip);
             }
 
-            if (cboServiceBusNamespace.SelectedIndex <= 1)
+            if (isCreatingNewNamespace)
             {
                 return;
             }
@@ -413,12 +414,15 @@ namespace ServiceBusExplorer.Forms
             {
                 return;
             }
-            if (connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
+
+            if (connectionStringType == HostType.OnPremises || containsStsEndpoint)
             {
                 txtUri.Text = ns.ConnectionString;
             }
             else
             {
+                cboServiceType.SelectedItem =
+                    MapServiceTypeToServiceTypeDisplayName(ns.ServiceType);
                 txtUri.Text = ns.Uri;
                 txtNamespace.Text = ns.Namespace;
 
@@ -433,36 +437,19 @@ namespace ServiceBusExplorer.Forms
             }
 
             cboTransportType.SelectedItem = ns.TransportType;
-
-            void MakeUriTextboxNormal()
-            {
-                lblUri.Text = UriLabel;
-                txtUri.Multiline = false;
-                txtUri.Size = new Size(336, 20);
-                toolTip.SetToolTip(txtUri, UriTooltip);
-            }
-        }
-
-        private void MakeUriTextboxBig()
-        {
-            lblUri.Text = ConnectionStringLabel;
-            txtUri.Multiline = true;
-            txtUri.Size = new Size(336, 220);
-            txtUri.Text = string.Empty;
-            toolTip.SetToolTip(txtUri, ConnectionStringTooltip);
         }
 
         private void cboTransportType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var connectionStringType = cboServiceBusNamespace.SelectedIndex > 1
+            var connectionStringType = isCreatingNewNamespace
                 ? serviceBusHelper.MessagingNamespaces[cboServiceBusNamespace.Text].ConnectionStringType
-                : MessagingNamespaceType.Custom;
+                : HostType.Custom;
 
             var containsStsEndpoint = !string.IsNullOrWhiteSpace(Key) &&
                                       !string.IsNullOrWhiteSpace(serviceBusHelper.MessagingNamespaces[Key].StsEndpoint);
 
-            if (cboServiceBusNamespace.Text == EnterConnectionString ||
-                connectionStringType == MessagingNamespaceType.OnPremises || containsStsEndpoint)
+            if (isCreatingNewNamespace ||
+                connectionStringType == HostType.OnPremises || containsStsEndpoint)
             {
                 btnOk.Enabled = !string.IsNullOrWhiteSpace(txtUri.Text);
 
@@ -629,7 +616,6 @@ namespace ServiceBusExplorer.Forms
             try
             {
                 var key = cboServiceBusNamespace.Text;
-                var isNewServiceBusNamespace = (key == EnterConnectionString);
 
                 ServiceBusConnectionStringBuilder serviceBusConnectionStringBuilder;
 
@@ -662,7 +648,7 @@ namespace ServiceBusExplorer.Forms
 
                 var index = host.IndexOf(".", StringComparison.Ordinal);
 
-                if (isNewServiceBusNamespace)
+                if (isCreatingNewNamespace)
                 {
                     key = index > 0 ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(host.Substring(0, index)) : "MyNamespace";
 
@@ -690,34 +676,41 @@ namespace ServiceBusExplorer.Forms
 
                 try
                 {
-                    if (isNewServiceBusNamespace)
-                    {
-                        ConfigurationHelper.AddMessagingNamespace(configFileUse, 
-                            cboServiceType.SelectedItem.ToString(), 
-                            key, 
-                            value, 
+                    ConfigurationHelper.SuperUpsertMessagingNamespace(
+                            configFileUse,
+                            cboServiceType.SelectedItem.ToString(),
+                            key,
+                            key,
+                            value,
                             MainForm.StaticWriteToLog);
-                    }
-                    else
-                    {
-                        ConfigurationHelper.UpdateMessagingNamespace(configFileUse,
-                            cboServiceType.SelectedItem.ToString(), 
-                            key, 
-                            key, 
-                            value, 
-                            MainForm.StaticWriteToLog);
-                    }
+
+                    //if (isCreatingNewNamespace)
+                    //{
+                    //    ConfigurationHelper.AddMessagingNamespace(configFileUse,
+                    //        cboServiceType.SelectedItem.ToString(),
+                    //        key,
+                    //        value,
+                    //        MainForm.StaticWriteToLog);
+                    //}
+                    //else
+                    //{
+                    //    ConfigurationHelper.UpdateMessagingNamespace(configFileUse,
+                    //        cboServiceType.SelectedItem.ToString(),
+                    //        key,
+                    //        key,
+                    //        value,
+                    //        MainForm.StaticWriteToLog);
+                    //}
                 }
                 catch (ArgumentNullException ex)
                 {
                     MainForm.StaticWriteToLog(ex.Message);
                 }
 
-                serviceBusHelper.MessagingNamespaces[key] = MessagingNamespace.GetMessagingNamespace(key, value, MainForm.StaticWriteToLog);
+                serviceBusHelper.MessagingNamespaces[key] = MessagingNamespace.Create(GetSelectedServiceType(),
+                    key, value, MainForm.StaticWriteToLog);
 
                 cboServiceBusNamespace.Items.Clear();
-                cboServiceBusNamespace.Items.Add(SelectServiceBusNamespace);
-                cboServiceBusNamespace.Items.Add(EnterConnectionString);
 
                 // ReSharper disable once CoVariantArrayConversion
                 cboServiceBusNamespace.Items.AddRange(serviceBusHelper.MessagingNamespaces.Keys.OrderBy(s => s).ToArray());
@@ -731,7 +724,7 @@ namespace ServiceBusExplorer.Forms
 
         private void btnNew_Click(object sender, EventArgs e)
         {
-            MakeUriTextboxBig();
+            SetIsCreatingNamespaceMode(true);
         }
 
         void HandleException(Exception ex)
@@ -784,10 +777,10 @@ namespace ServiceBusExplorer.Forms
 
                 var itemIndex = cboServiceBusNamespace.SelectedIndex;
                 ConfigurationHelper.UpdateMessagingNamespace(configFileUse,
-                    cboServiceType.SelectedItem.ToString(), 
-                    key, 
-                    newKey, 
-                    newValue: null, 
+                    cboServiceType.SelectedItem.ToString(),
+                    key,
+                    newKey,
+                    newValue: null,
                     MainForm.StaticWriteToLog);
 
                 ignoreSelectedIndexChange = true;
@@ -809,15 +802,89 @@ namespace ServiceBusExplorer.Forms
             {
                 if (deleteForm.ShowDialog() == DialogResult.OK)
                 {
-                    ConfigurationHelper.RemoveMessagingNamespace(configFileUse, 
+                    ConfigurationHelper.RemoveMessagingNamespace(configFileUse,
                         cboServiceType.SelectedItem.ToString(),
-                        key, 
+                        key,
                         MainForm.StaticWriteToLog);
                     cboServiceBusNamespace.Items.RemoveAt(cboServiceBusNamespace.SelectedIndex);
                     cboServiceBusNamespace.SelectedIndex = 0;
 
                     serviceBusHelper.MessagingNamespaces.Remove(key);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Private Instance Methods
+
+        void SetIsCreatingNamespaceMode(bool isCreatingNewNamespace)
+        {
+            if (isCreatingNewNamespace)
+            {
+                this.isCreatingNewNamespace = true;
+                MakeUriTextboxBig();
+            }
+            else
+            {
+                this.isCreatingNewNamespace = false;
+                MakeUriTextboxNormal();
+            }
+        }
+
+        void MakeUriTextboxNormal()
+        {
+            lblUri.Text = UriLabel;
+            txtUri.Multiline = false;
+            txtUri.Size = new Size(336, 20);
+            toolTip.SetToolTip(txtUri, UriTooltip);
+        }
+
+        private void MakeUriTextboxBig()
+        {
+            lblUri.Text = ConnectionStringLabel;
+            txtUri.Multiline = true;
+            txtUri.Size = new Size(336, 220);
+            txtUri.Text = string.Empty;
+            toolTip.SetToolTip(txtUri, ConnectionStringTooltip);
+        }
+
+        ServiceType MapServiceTypeDisplayNameToServiceType(string serviceTypeDisplayName)
+        {
+            switch (serviceTypeDisplayName)
+            {
+                case Constants.EventHubsServiceType:
+                    return ServiceType.EventHubs;
+                case Constants.NotificationHubsServiceType:
+                    return ServiceType.NotificationHubs;
+                case Constants.RelayServiceType:
+                    return ServiceType.Relay;
+                case Constants.ServiceBusServiceType:
+                    return ServiceType.ServiceBus;
+                case Constants.UnknownServiceType:
+                    return ServiceType.Unknown;
+                default:
+                    throw new ArgumentException($"Unknown service type: {serviceTypeDisplayName}",
+                        nameof(serviceTypeDisplayName));
+            }
+        }
+
+        private string MapServiceTypeToServiceTypeDisplayName(ServiceType serviceType)
+        {
+            switch (serviceType)
+            {
+                case ServiceType.EventHubs:
+                    return Constants.EventHubsServiceType;
+                case ServiceType.NotificationHubs:
+                    return Constants.NotificationHubsServiceType;
+                case ServiceType.Relay:
+                    return Constants.RelayServiceType;
+                case ServiceType.ServiceBus:
+                    return Constants.ServiceBusServiceType;
+                case ServiceType.Unknown:
+                    return Constants.UnknownServiceType;
+                default:
+                    throw new ArgumentException($"Unknown service type: {serviceType}", nameof(serviceType));
             }
         }
 

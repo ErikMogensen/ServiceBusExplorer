@@ -638,15 +638,15 @@ namespace ServiceBusExplorer.Tests.Helpers
             ConfigurationManager.RefreshSection(sectionName);
         }
 
-        void RemoveNamespaceSectionFromApplicationFile()
+        void RemoveNamespaceSectionFromApplicationFile(string sectionName)
         {
             var applicationConfiguration = ConfigurationManager
                 .OpenExeConfiguration(ConfigurationUserLevel.None);
-            var section = applicationConfiguration.GetSection(ServiceBusNamespaces);
+            var section = applicationConfiguration.GetSection(sectionName);
 
             if (null != section)
             {
-                applicationConfiguration.Sections.Remove(ServiceBusNamespaces);
+                applicationConfiguration.Sections.Remove(sectionName);
                 section.SectionInformation.ForceSave = true;
                 applicationConfiguration.Save(ConfigurationSaveMode.Full);
             }
@@ -655,8 +655,14 @@ namespace ServiceBusExplorer.Tests.Helpers
         void SaveConnectionString(TwoFilesConfiguration configuration, int index)
         {
             Assert.IsEmpty(logInMemory);
-            MessagingNamespace.SaveConnectionString(configuration, fakeConnectionStrings[index].Key,
-                fakeConnectionStrings[index].Value, writeToLog);
+
+            ConfigurationHelper.AddMessagingNamespace(
+                configuration.ConfigFileUse, 
+                Constants.ServiceBusServiceType, 
+                fakeConnectionStrings[index].Key,
+                fakeConnectionStrings[index].Value, 
+                writeToLog);
+
             Assert.IsEmpty(logInMemory);
         }
 

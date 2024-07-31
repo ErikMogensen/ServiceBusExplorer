@@ -514,7 +514,6 @@ namespace ServiceBusExplorer.Forms
                 MessageText = MessageText,
                 MessageContentType = MessageContentType,
 
-                ServiceType = ServiceType,
                 SelectedMessageCounts = SelectedMessageCounts,
                 MessageBodyType = messageBodyType,
                 ConnectivityMode = ServiceBusHelper.ConnectivityMode,
@@ -597,8 +596,6 @@ namespace ServiceBusExplorer.Forms
                 messageFile = optionForm.MainSettings.MessageFile;
                 MessageText = optionForm.MainSettings.MessageText;
                 MessageContentType = optionForm.MainSettings.MessageContentType;
-
-                ServiceType = optionForm.MainSettings.ServiceType;
 
                 messageBodyType = optionForm.MainSettings.MessageBodyType;
                 ServiceBusHelper.ConnectivityMode = optionForm.MainSettings.ConnectivityMode;
@@ -3775,10 +3772,12 @@ namespace ServiceBusExplorer.Forms
         private void GetServiceBusNamespaceFromEnvironmentVariable()
         {
             var connectionString = Environment.GetEnvironmentVariable("AzureServiceBus.ConnectionString", EnvironmentVariableTarget.User);
+
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
                 const string key = @"HKEY_CURRENT_USER\Environment connection string";
-                serviceBusHelper.MessagingNamespaces.Add(key, MessagingNamespace.GetMessagingNamespace(key, connectionString, StaticWriteToLog));
+                serviceBusHelper.MessagingNamespaces.Add(key, MessagingNamespace.Create(
+                    ServiceType.ServiceBus, key, connectionString, StaticWriteToLog));
             }
         }
 
@@ -4015,7 +4014,6 @@ namespace ServiceBusExplorer.Forms
                 MessageFile = messageFile,
                 MessageText = MessageText,
                 MessageContentType = MessageContentType,
-                ServiceType = ServiceType,
                 SelectedMessageCounts = SelectedMessageCounts,
                 MessageBodyType = messageBodyType,
                 ConnectivityMode = ServiceBusHelper.ConnectivityMode,
@@ -4104,7 +4102,6 @@ namespace ServiceBusExplorer.Forms
             MessageContentType = readSettings.MessageContentType;
             messageFile = readSettings.MessageFile;
 
-            ServiceType = readSettings.ServiceType;
             SelectedMessageCounts = readSettings.SelectedMessageCounts;
             messageBodyType = readSettings.MessageBodyType;
             ServiceBusHelper.ConnectivityMode = readSettings.ConnectivityMode;
@@ -4324,7 +4321,6 @@ namespace ServiceBusExplorer.Forms
 
         public bool UseAscii { get; set; } = true;
 
-        public ServiceType ServiceType { get; private set; } = ServiceType.Unknown;
         public List<string> SelectedMessageCounts { get; private set; } = new List<string>();
         public bool ProxyOverrideDefault { get; set; }
         public string ProxyAddress { get; set; }
@@ -4448,7 +4444,7 @@ namespace ServiceBusExplorer.Forms
                         rootNode = serviceBusTreeView.Nodes.Add(serviceBusHelper.NamespaceUri.AbsoluteUri, serviceBusHelper.NamespaceUri.AbsoluteUri, AzureIconIndex, AzureIconIndex);
                         rootNode.ContextMenuStrip = rootContextMenuStrip;
 
-                        if (ServiceType == ServiceType.ServiceBus)
+                        if (serviceBusHelper.ServiceType == ServiceType.ServiceBus)
                         {
                             queueListNode = rootNode.Nodes.Add(Constants.QueueEntities, Constants.QueueEntities, QueueListIconIndex, QueueListIconIndex);
                             queueListNode.ContextMenuStrip = queuesContextMenuStrip;
@@ -4460,19 +4456,19 @@ namespace ServiceBusExplorer.Forms
                         // NOTE: Relays are not actually supported by Service Bus for Windows Server
                         if (serviceBusHelper.IsCloudNamespace)
                         {
-                            if (ServiceType == ServiceType.EventHubs)
+                            if (serviceBusHelper.ServiceType == ServiceType.EventHubs)
                             {
                                 eventHubListNode = rootNode.Nodes.Add(Constants.EventHubEntities, Constants.EventHubEntities, EventHubListIconIndex, EventHubListIconIndex);
                                 eventHubListNode.ContextMenuStrip = eventHubsContextMenuStrip;
                             }
 
-                            if (ServiceType == ServiceType.NotificationHubs)
+                            if (serviceBusHelper.ServiceType == ServiceType.NotificationHubs)
                             {
                                 notificationHubListNode = rootNode.Nodes.Add(Constants.NotificationHubEntities, Constants.NotificationHubEntities, NotificationHubListIconIndex, NotificationHubListIconIndex);
                                 notificationHubListNode.ContextMenuStrip = notificationHubsContextMenuStrip;
                             }
                             
-                            if (ServiceType == ServiceType.Relay)
+                            if (serviceBusHelper.ServiceType == ServiceType.Relay)
                             {
                                 relayServiceListNode = rootNode.Nodes.Add(Constants.RelayEntities, Constants.RelayEntities, RelayListIconIndex, RelayListIconIndex);
                                 relayServiceListNode.ContextMenuStrip = relayServicesContextMenuStrip;
@@ -4484,7 +4480,7 @@ namespace ServiceBusExplorer.Forms
 
                     if (serviceBusHelper.IsCloudNamespace)
                     {
-                        if (ServiceType == ServiceType.EventHubs &&
+                        if (serviceBusHelper.ServiceType == ServiceType.EventHubs &&
                             (entityType == EntityType.All ||
                             entityType == EntityType.EventHub))
                         {
@@ -4523,7 +4519,7 @@ namespace ServiceBusExplorer.Forms
                                 serviceBusTreeView.Nodes.Remove(eventHubListNode);
                             }
                         }
-                        if (ServiceType == ServiceType.NotificationHubs &&
+                        if (serviceBusHelper.ServiceType == ServiceType.NotificationHubs &&
                             (entityType == EntityType.All ||
                             entityType == EntityType.NotificationHub))
                         {
@@ -4571,7 +4567,7 @@ namespace ServiceBusExplorer.Forms
                                 serviceBusTreeView.Nodes.Remove(notificationHubListNode);
                             }
                         }
-                        if (ServiceType == ServiceType.Relay &&
+                        if (serviceBusHelper.ServiceType == ServiceType.Relay &&
                             (entityType == EntityType.All ||
                             entityType == EntityType.Relay))
                         {
@@ -4612,7 +4608,7 @@ namespace ServiceBusExplorer.Forms
                         }
                     }
 
-                    if (ServiceType == ServiceType.ServiceBus &&
+                    if (serviceBusHelper.ServiceType == ServiceType.ServiceBus &&
                         (entityType == EntityType.All ||
                          entityType == EntityType.Queue))
                     {
@@ -4653,7 +4649,7 @@ namespace ServiceBusExplorer.Forms
                             serviceBusTreeView.Nodes.Remove(queueListNode);
                         }
                     }
-                    if (ServiceType == ServiceType.ServiceBus &&
+                    if (serviceBusHelper.ServiceType == ServiceType.ServiceBus &&
                         (entityType == EntityType.All ||
                          entityType == EntityType.Topic))
                     {
@@ -7159,34 +7155,45 @@ namespace ServiceBusExplorer.Forms
             try
             {
                 Refresh();
+                
                 if (string.IsNullOrWhiteSpace(argumentName) || string.IsNullOrWhiteSpace(argumentValue))
                 {
                     return;
                 }
+
                 if (string.Compare(argumentName, "/n", StringComparison.InvariantCultureIgnoreCase) == 0 ||
                     string.Compare(argumentName, "-n", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    var item = serviceBusHelper.MessagingNamespaces.FirstOrDefault(s => string.Compare(s.Key, argumentValue, StringComparison.InvariantCultureIgnoreCase) == 0);
+                    KeyValuePair<string, MessagingNamespace> item = serviceBusHelper.MessagingNamespaces.FirstOrDefault(s => string.Compare(s.Key, argumentValue, StringComparison.InvariantCultureIgnoreCase) == 0);
+                    
                     if (item.Key == null && item.Value == null)
                     {
                         WriteToLog(string.Format(NoNamespaceWithKeyMessageFormat, argumentValue));
                         return;
                     }
+
                     var ns = item.Value;
+                    
                     if (ns != null)
                     {
-                        var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace(item.Key, ns.ConnectionString, StaticWriteToLog);
+                        var serviceBusNamespace = MessagingNamespace.Create(ns.ServiceType,
+                            item.Key, ns.ConnectionString, StaticWriteToLog);
+
                         serviceBusHelper.Connect(serviceBusNamespace);
                         SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                     }
                 }
+
                 if (string.Compare(argumentName, "/c", StringComparison.InvariantCultureIgnoreCase) == 0 ||
                     string.Compare(argumentName, "-c", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    var serviceBusNamespace = MessagingNamespace.GetMessagingNamespace("Manual", argumentValue, StaticWriteToLog);
+                    var serviceBusNamespace = MessagingNamespace.Create(ServiceType.Unknown,
+                        "Manual", argumentValue, StaticWriteToLog);
+
                     serviceBusHelper.Connect(serviceBusNamespace);
                     SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                 }
+
                 panelMain.Controls.Clear();
                 panelMain.BackColor = SystemColors.Window;
                 await ShowEntities(EntityType.All);

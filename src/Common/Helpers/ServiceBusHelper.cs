@@ -190,7 +190,7 @@ namespace ServiceBusExplorer
         private Microsoft.ServiceBus.TokenProvider tokenProvider;
         private AzureNotificationHubs.TokenProvider notificationHubTokenProvider;
         private Uri namespaceUri;
-        private MessagingNamespaceType connectionStringType;
+        private HostType connectionStringType;
         private Uri atomFeedUri;
         private string ns;
         private string servicePath;
@@ -273,7 +273,7 @@ namespace ServiceBusExplorer
             get
             {
                 string uri;
-                return connectionStringType == MessagingNamespaceType.Cloud ||
+                return connectionStringType == HostType.Cloud ||
                       (namespaceUri != null &&
                        !string.IsNullOrWhiteSpace(uri = namespaceUri.ToString()) &&
                        (uri.Contains(CloudServiceBusPostfix) ||
@@ -346,6 +346,15 @@ namespace ServiceBusExplorer
                 {
                     scheme = value;
                 }
+            }
+        }
+
+
+        public ServiceType ServiceType 
+        {
+            get
+            { 
+                return this.serviceBusNamespaceInstance.ServiceType;
             }
         }
 
@@ -735,6 +744,16 @@ namespace ServiceBusExplorer
             {
                 throw new Exception($"Could not contact host in connection string: { serviceBusNamespace.ConnectionString }.");
             }
+
+            // TODO Move this inside the lambda
+            var serviceBusHelper2 = new ServiceBusHelper2(writeToLog)
+            {
+                ConnectionString = serviceBusNamespace.ConnectionString,
+                //TransportType = serviceBusNamespace.TransportType
+            };
+
+            var isPremium = serviceBusHelper2.IsPremiumNamespace().GetAwaiter().GetResult();
+
 
             var func = (() =>
             {

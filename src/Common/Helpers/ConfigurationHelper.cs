@@ -22,6 +22,7 @@
 using ServiceBusExplorer.Utilities.Helpers;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,60 +34,103 @@ namespace ServiceBusExplorer.Helpers
         static readonly string notificationHubsNamespacesSectionName = "notificationHubsNamespaces";
         static readonly string relayNamespacesSectionName = "relayNamespaces";
         static readonly string onlyServiceBusNamespacesSectionName = "onlyServiceBusNamespaces";
-        static readonly string unknownNamespacesSectionName = "serviceBusNamespaces";  // This value must be kept for backwards compability
 
-        static readonly List<string> serviceTypes = new List<string> 
-        { 
-            Constants.EventHubsServiceType, 
-            Constants.NotificationHubServiceType,
-            Constants.RelayServiceType, 
-            Constants.ServiceBusServiceType, 
+        // This value must be kept for backwards compability
+        static readonly string unknownNamespacesSectionName = "serviceBusNamespaces";
+
+        static readonly List<string> serviceTypes = new List<string>
+        {
+            Constants.EventHubsServiceType,
+            Constants.NotificationHubsServiceType,
+            Constants.RelayServiceType,
+            Constants.ServiceBusServiceType,
             Constants.UnknownServiceType
         };
 
-        static readonly List<string> entities = new List<string> 
-        { 
-            Constants.QueueEntities, 
+        static readonly List<string> entities = new List<string>
+        {
+            Constants.QueueEntities,
             Constants.TopicEntities,
-            Constants.EventHubEntities, 
-            Constants.NotificationHubEntities, 
-            Constants.RelayEntities 
+            Constants.EventHubEntities,
+            Constants.NotificationHubEntities,
+            Constants.RelayEntities
         };
 
-        static readonly List<string> messageCounts = new List<string> 
-        { 
-            Constants.ActiveMessages, 
+        static readonly List<string> messageCounts = new List<string>
+        {
+            Constants.ActiveMessages,
             Constants.DeadLetterMessages,
-            Constants.ScheduledMessages, 
-            Constants.TransferMessages, 
-            Constants.TransferDeadLetterMessages 
+            Constants.ScheduledMessages,
+            Constants.TransferMessages,
+            Constants.TransferDeadLetterMessages
         };
 
         #region Public methods
+
+        // Besides the upsert this method also removes the old entry if it exists in another section 
+        public static void SuperUpsertMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
+            string oldKey, string newKey, string newValue, WriteToLogDelegate writeToLog)
+        {
+            var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
+            var sectionToSaveToName = MapServiceTypeNameToSection(serviceTypeName);
+
+            // Remove the old entry if it exists in another section. Update or add it to the section
+            // it should be saved to.
+            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
+            {
+                var otherSectionName = MapServiceTypeToSection(serviceType);
+
+                if (sectionToSaveToName == otherSectionName)
+                {
+                    if (oldKey != newKey)
+                    {
+                        configuration.RemoveEntryFromDictionarySection(otherSectionName, oldKey, writeToLog);
+                    }
+
+                    if (configuration.KeyExistsInSection(otherSectionName, newKey))
+                    {
+                        configuration.UpdateEntryInDictionarySection(
+                            sectionToSaveToName,
+                            newKey,
+                            newKey,
+                            newValue,
+                            writeToLog);
+                    }
+                    else
+                    {
+                        configuration.AddEntryToDictionarySection(sectionToSaveToName, newKey, newValue);
+                    }
+                }
+                else
+                {
+                    configuration.RemoveEntryFromDictionarySection(otherSectionName, oldKey, writeToLog);
+                }
+            }
+        }
 
         public static void UpdateMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
             string key, string newKey, string newValue, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
-            var sectionName = MapServiceTypeToSection(serviceTypeName);
+            var sectionName = MapServiceTypeNameToSection(serviceTypeName);
 
             configuration.UpdateEntryInDictionarySection(sectionName, key, newKey, newValue, writeToLog);
         }
 
-        public static void AddMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName, 
+        public static void AddMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
             string key, string value, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
-            var sectionName = MapServiceTypeToSection(serviceTypeName);
+            var sectionName = MapServiceTypeNameToSection(serviceTypeName);
 
             configuration.AddEntryToDictionarySection(sectionName, key, value);
         }
 
-        public static void RemoveMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName, 
+        public static void RemoveMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
             string key, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
-            var sectionName = MapServiceTypeToSection(serviceTypeName);
+            var sectionName = MapServiceTypeNameToSection(serviceTypeName);
 
             configuration.RemoveEntryFromDictionarySection(sectionName, key, writeToLog);
         }
@@ -97,6 +141,14 @@ namespace ServiceBusExplorer.Helpers
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
 
             return GetMainSettingsUsingConfiguration(configuration, currentSettings, writeToLog);
+        }
+
+        public static Hashtable GetNamespacesForServiceType(TwoFilesConfiguration configuration,
+            ServiceType serviceType)
+        {
+            var sectionName = MapServiceTypeToSection(serviceType);
+
+            return configuration.GetHashtableFromSection(sectionName);
         }
 
         #endregion
@@ -260,13 +312,13 @@ namespace ServiceBusExplorer.Helpers
             return resultProperties;
         }
 
-        static string MapServiceTypeToSection(string serviceTypeName)
+        static string MapServiceTypeNameToSection(string serviceTypeName)
         {
             switch (serviceTypeName)
             {
                 case Constants.EventHubsServiceType:
                     return eventHubsNamespacesSectionName;
-                case Constants.NotificationHubServiceType:
+                case Constants.NotificationHubsServiceType:
                     return notificationHubsNamespacesSectionName;
                 case Constants.RelayServiceType:
                     return relayNamespacesSectionName;
@@ -275,9 +327,31 @@ namespace ServiceBusExplorer.Helpers
                 case Constants.UnknownServiceType:
                     return unknownNamespacesSectionName;
                 default:
-                    throw new ArgumentException($"Unknown service type: {serviceTypeName}", nameof(serviceTypeName));
+                    throw new ArgumentException($"Unknown service type: {serviceTypeName}",
+                        nameof(serviceTypeName));
             }
         }
+
+        static string MapServiceTypeToSection(ServiceType serviceType)
+        {
+            switch (serviceType)
+            {
+                case ServiceType.EventHubs:
+                    return eventHubsNamespacesSectionName;
+                case ServiceType.NotificationHubs:
+                    return notificationHubsNamespacesSectionName;
+                case ServiceType.Relay:
+                    return relayNamespacesSectionName;
+                case ServiceType.ServiceBus:
+                    return onlyServiceBusNamespacesSectionName;
+                case ServiceType.Unknown:
+                    return unknownNamespacesSectionName;
+                default:
+                    throw new ArgumentException($"Unknown service type: {serviceType}",
+                        nameof(serviceType));
+            }
+        }
+
         #endregion
     }
 }
