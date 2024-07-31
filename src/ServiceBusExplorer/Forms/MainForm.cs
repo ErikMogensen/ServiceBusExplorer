@@ -410,13 +410,16 @@ namespace ServiceBusExplorer.Forms
                         UpdateSavedConnectionsMenu();
                         return;
                     }
+
                     UpdateSavedConnectionsMenu();
-                    SelectedEntities = connectForm.SelectedEntities;
                     ServiceBusHelper.ConnectivityMode = connectForm.ConnectivityMode;
                     ServiceBusHelper.UseAmqpWebSockets = connectForm.UseAmqpWebSockets;
-                    var serviceBusNamespace = ServiceBusNamespace.GetServiceBusNamespace(connectForm.Key ?? "Manual",
-                        connectForm.ConnectionString, StaticWriteToLog);
-                    serviceBusHelper.Connect(serviceBusNamespace);
+
+                    var serviceBusNamespace = MessagingNamespace.Create(
+                        connectForm.GetSelectedServiceType(),
+                        connectForm.Key ?? "Manual",
+                            connectForm.ConnectionString,
+                            StaticWriteToLog);
 
                     SetTitle(serviceBusNamespace.Namespace, "Service Bus");
                     panelTreeView.HeaderText = string.Format(NamespaceTypeFormat, "Service Bus");
@@ -450,7 +453,7 @@ namespace ServiceBusExplorer.Forms
 
                     UpdateSavedConnectionsMenu();
 
-                    SelectedEntities = connectForm.SelectedEntities;
+                    //SelectedEntities = connectForm.SelectedEntities;
                     NamespaceName = connectForm.NamespaceName;
                     ResourceGroupName = connectForm.ResourceGroup;
 
@@ -4764,19 +4767,15 @@ namespace ServiceBusExplorer.Forms
 
                         HandleNodeMouseClick(rootNode);
 
-                        if (SelectedEntities.Contains(Constants.TopicEntities))
-                        {
+  
                             topicListNode = rootNode.Nodes.Add(Constants.TopicEntities, Constants.TopicEntities, EventGridEntityIconIndex, EventGridEntityIconIndex);
                             topicListNode.ContextMenuStrip = eventGridTopicsContextMenuStrip;
                             topicListNode.Tag = new NamespaceTopic();
-                        }
                     }
 
                     updating = true;
 
-                    if (SelectedEntities.Contains(Constants.TopicEntities) &&
-                        (entityType == EntityType.All ||
-                         entityType == EntityType.Topic))
+                    if (entityType == EntityType.All || entityType == EntityType.Topic)
                     {
                         try
                         {
