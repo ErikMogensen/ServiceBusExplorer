@@ -44,7 +44,7 @@ namespace ServiceBusExplorer.Helpers
     public static class Constants
     {
         public const string EventHubsServiceType = "Event Hubs";
-        public const string NotificationHubServiceType = "Notification Hubs";
+        public const string NotificationHubsServiceType = "Notification Hubs";
         public const string RelayServiceType = "Relay";
         public const string ServiceBusServiceType = "Service Bus";
         public const string UnknownServiceType = "Unknown";

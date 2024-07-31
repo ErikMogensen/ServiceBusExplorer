@@ -395,6 +395,18 @@ namespace ServiceBusExplorer.Helpers
             return (null != resultStringApp);
         }
 
+        public bool KeyExistsInSection(string sectionName, string key)
+        {
+            var hashTable = GetHashtableFromSection(sectionName);
+
+            if (hashTable is not null)
+            {
+                return hashTable.ContainsValue(key);
+            }
+
+            return false;
+        }
+
         public void AddEntryToDictionarySection(string sectionName, string key, string value)
         {
             AquireUserConfigurationIfNeeded();

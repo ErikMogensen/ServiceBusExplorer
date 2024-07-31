@@ -731,7 +731,7 @@ namespace ServiceBusExplorer.Forms
             this.txtUri.Name = "txtUri";
             this.txtUri.Size = new System.Drawing.Size(336, 20);
             this.txtUri.TabIndex = 1;
-            this.txtUri.TextChanged += new System.EventHandler(this.validation_TextChanged);
+            this.txtUri.TextChanged += new System.EventHandler(this.txtUri_TextChanged);
             // 
             // lblUri
             // 
