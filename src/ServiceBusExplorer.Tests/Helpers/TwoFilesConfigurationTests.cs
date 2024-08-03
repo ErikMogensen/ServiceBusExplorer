@@ -9,6 +9,7 @@ using ServiceBusExplorer.Helpers;
 using ServiceBusExplorer.Utilities.Helpers;
 using Microsoft.ServiceBus;
 using NUnit.Framework;
+using System.Linq;
 
 
 namespace ServiceBusExplorer.Tests.Helpers
@@ -31,6 +32,13 @@ namespace ServiceBusExplorer.Tests.Helpers
     public class TwoFilesConfigurationTests
     {
         #region Constants
+        // Section names matching those used in the application
+        const string eventHubsNamespacesSectionName = "eventHubsNamespaces";
+        const string notificationHubsNamespacesSectionName = "notificationHubsNamespaces";
+        const string relayNamespacesSectionName = "relayNamespaces";
+        const string onlyServiceBusNamespacesSectionName = "onlyServiceBusNamespaces";
+        const string unknownNamespacesSectionName = "serviceBusNamespaces";
+
         // Common values
         const string KeyDoesNotExistAnywhere = "nonExistingKey";
         const string KeyWithInvalidValue = "ContainsInvalidValue";
@@ -93,6 +101,7 @@ namespace ServiceBusExplorer.Tests.Helpers
         #endregion
 
         #region Private fields
+
         WriteToLogDelegate writeToLog;
         string logInMemory;
 
@@ -135,6 +144,7 @@ namespace ServiceBusExplorer.Tests.Helpers
             ConfigFileUse.UserConfig,
             ConfigFileUse.BothConfig
         };
+
         #endregion
 
         #region The constructor
@@ -445,7 +455,7 @@ namespace ServiceBusExplorer.Tests.Helpers
             {
                 // Do the cleanup
                 Setup();
-                RemoveNamespaceSectionFromApplicationFile();
+                RemoveAllNamespaceSectionsFromApplicationFile();
 
                 // Create the TwoFilesConfiguration object without a user file
                 var configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
@@ -453,7 +463,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Test reading config values - both application config and user config are missing
                 var namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 Assert.AreEqual(0, namespaces.Count);
-                Assert.IsTrue(logInMemory.Contains("Service bus accounts have not been properly configured"));
+                Assert.IsTrue(logInMemory.Contains("Azure Messaging connection entries have not been properly configured"));
                 logInMemory = string.Empty;
 
                 // Create two connection strings in the user file or the application file depending upon
@@ -462,8 +472,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 SaveConnectionString(configuration, IndexNamespaceAdded2);
                 Assert.IsEmpty(logInMemory);
 
-                namespaces = MessagingNamespace.GetMessagingNamespaces
-                    (configuration, writeToLog);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 Assert.IsEmpty(logInMemory);
                 Assert.AreEqual(2, namespaces.Count);
                 Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
@@ -475,7 +484,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Add a connection to the application config file, but let the two connection 
                 // strings added previously stay.
                 SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
                     configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
@@ -502,7 +511,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // two having the same key.
                 SaveConnectionString(configuration, IndexFirstNamespaceInBothFiles);
 
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 Assert.AreEqual(3, namespaces.Count);
@@ -515,7 +524,7 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Add a connection string to the application file
                 SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 // Depending upon ConfigFileUse setting there are
@@ -542,7 +551,7 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Delete the user file so reading will only be from the application file
                 DeleteUserConfigFile();
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 if (UseApplicationConfig(configFileUse))
@@ -580,6 +589,16 @@ namespace ServiceBusExplorer.Tests.Helpers
                 {
                     Assert.AreEqual(0, namespaces.Count);
                 }
+            }
+        }
+
+        void RemoveAllNamespaceSectionsFromApplicationFile()
+        {
+            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
+            {
+                var sectionName = MapServiceTypeToSection(serviceType);
+
+                RemoveNamespaceSectionFromApplicationFile(sectionName);
             }
         }
 
@@ -657,10 +676,10 @@ namespace ServiceBusExplorer.Tests.Helpers
             Assert.IsEmpty(logInMemory);
 
             ConfigurationHelper.AddMessagingNamespace(
-                configuration.ConfigFileUse, 
-                Constants.ServiceBusServiceType, 
+                configuration.ConfigFileUse,
+                Constants.ServiceBusServiceType,
                 fakeConnectionStrings[index].Key,
-                fakeConnectionStrings[index].Value, 
+                fakeConnectionStrings[index].Value,
                 writeToLog);
 
             Assert.IsEmpty(logInMemory);
@@ -1127,6 +1146,7 @@ namespace ServiceBusExplorer.Tests.Helpers
             configSections.Add(newSection);
             configElement.AquireElement(sectionName);
         }
+
         static void DeleteFile(string filename)
         {
             if (File.Exists(filename))
@@ -1140,6 +1160,26 @@ namespace ServiceBusExplorer.Tests.Helpers
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 TestDirectoryName,
                 "UserSettings.config");
+        }
+
+        static string MapServiceTypeToSection(ServiceType serviceType)
+        {
+            switch (serviceType)
+            {
+                case ServiceType.EventHubs:
+                    return eventHubsNamespacesSectionName;
+                case ServiceType.NotificationHubs:
+                    return notificationHubsNamespacesSectionName;
+                case ServiceType.Relay:
+                    return relayNamespacesSectionName;
+                case ServiceType.ServiceBus:
+                    return onlyServiceBusNamespacesSectionName;
+                case ServiceType.Unknown:
+                    return unknownNamespacesSectionName;
+                default:
+                    throw new ArgumentException($"Unknown service type: {serviceType}",
+                        nameof(serviceType));
+            }
         }
 
         static void RemoveKeysUsingRawXml(ConfigurationSection section, List<string> keysToRemove)

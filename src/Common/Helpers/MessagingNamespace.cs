@@ -52,7 +52,7 @@ namespace ServiceBusExplorer.Helpers
         //***************************
         // Messages
         //***************************
-        const string ServiceBusNamespacesNotConfigured = "Service bus accounts have not been properly configured in the configuration file.";
+        const string ServiceBusNamespacesNotConfigured = "Azure Messaging connection entries have not been properly configured in the configuration file.";
         const string ServiceBusNamespaceIsNullOrEmpty = "The connection string for service bus entry {0} is null or empty.";
         const string ServiceBusNamespaceIsWrong = "The connection string for service bus namespace {0} is in the wrong format.";
         const string ServiceBusNamespaceEndpointIsNullOrEmpty = "The endpoint for the service bus namespace {0} is null or empty.";
@@ -257,13 +257,14 @@ namespace ServiceBusExplorer.Helpers
                 }
             }
 
-            if (messagingNamespaces == null || messagingNamespaces.Count == 0)
-            {
-                writeToLog(ServiceBusNamespacesNotConfigured);
-            }
+            //if (messagingNamespaces == null || messagingNamespaces.Count == 0)
+            //{
+            //    writeToLog(ServiceBusNamespacesNotConfigured);
+            //}
 
             return messagingNamespaces;
         }
+
         public static Dictionary<string, MessagingNamespace> GetMessagingNamespacesForServiceType
             (TwoFilesConfiguration configuration, ServiceType serviceType, WriteToLogDelegate writeToLog)
         {
