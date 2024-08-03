@@ -31,6 +31,13 @@ namespace ServiceBusExplorer.Tests.Helpers
     public class TwoFilesConfigurationTests
     {
         #region Constants
+        // Section names matching those used in the application
+        const string eventHubsNamespacesSectionName = "eventHubsNamespaces";
+        const string notificationHubsNamespacesSectionName = "notificationHubsNamespaces";
+        const string relayNamespacesSectionName = "relayNamespaces";
+        const string onlyServiceBusNamespacesSectionName = "onlyServiceBusNamespaces";
+        const string unknownNamespacesSectionName = "serviceBusNamespaces";
+
         // Common values
         const string KeyDoesNotExistAnywhere = "nonExistingKey";
         const string KeyWithInvalidValue = "ContainsInvalidValue";
@@ -93,6 +100,7 @@ namespace ServiceBusExplorer.Tests.Helpers
         #endregion
 
         #region Private fields
+
         WriteToLogDelegate writeToLog;
         string logInMemory;
 
@@ -135,6 +143,7 @@ namespace ServiceBusExplorer.Tests.Helpers
             ConfigFileUse.UserConfig,
             ConfigFileUse.BothConfig
         };
+
         #endregion
 
         #region The constructor
@@ -445,7 +454,7 @@ namespace ServiceBusExplorer.Tests.Helpers
             {
                 // Do the cleanup
                 Setup();
-                RemoveNamespaceSectionFromApplicationFile();
+                RemoveAllNamespaceSectionsFromApplicationFile();
 
                 // Create the TwoFilesConfiguration object without a user file
                 var configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
@@ -476,7 +485,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Add a connection to the application config file, but let the two connection 
                 // strings added previously stay.
                 SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
                     configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
@@ -500,7 +509,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // two having the same key.
                 SaveConnectionString(configuration, IndexFirstNamespaceInBothFiles);
 
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 namespaces.Should().HaveCount(3);
@@ -511,7 +520,7 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Add a connection string to the application file
                 SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 // Depending upon ConfigFileUse setting there are
@@ -535,7 +544,7 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Delete the user file so reading will only be from the application file
                 DeleteUserConfigFile();
-                configuration= TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
 
                 if (UseApplicationConfig(configFileUse))
@@ -568,6 +577,16 @@ namespace ServiceBusExplorer.Tests.Helpers
                 {
                     namespaces.Should().BeEmpty();
                 }
+            }
+        }
+
+        void RemoveAllNamespaceSectionsFromApplicationFile()
+        {
+            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
+            {
+                var sectionName = MapServiceTypeToSection(serviceType);
+
+                RemoveNamespaceSectionFromApplicationFile(sectionName);
             }
         }
 
@@ -1105,6 +1124,7 @@ namespace ServiceBusExplorer.Tests.Helpers
             configSections.Add(newSection);
             configElement.AquireElement(sectionName);
         }
+
         static void DeleteFile(string filename)
         {
             if (File.Exists(filename))
@@ -1118,6 +1138,26 @@ namespace ServiceBusExplorer.Tests.Helpers
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 TestDirectoryName,
                 "UserSettings.config");
+        }
+
+        static string MapServiceTypeToSection(ServiceType serviceType)
+        {
+            switch (serviceType)
+            {
+                case ServiceType.EventHubs:
+                    return eventHubsNamespacesSectionName;
+                case ServiceType.NotificationHubs:
+                    return notificationHubsNamespacesSectionName;
+                case ServiceType.Relay:
+                    return relayNamespacesSectionName;
+                case ServiceType.ServiceBus:
+                    return onlyServiceBusNamespacesSectionName;
+                case ServiceType.Unknown:
+                    return unknownNamespacesSectionName;
+                default:
+                    throw new ArgumentException($"Unknown service type: {serviceType}",
+                        nameof(serviceType));
+            }
         }
 
         static void RemoveKeysUsingRawXml(ConfigurationSection section, List<string> keysToRemove)
