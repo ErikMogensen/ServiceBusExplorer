@@ -108,28 +108,25 @@ namespace ServiceBusExplorer.Helpers
             }
         }
 
-        public static void UpdateMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
+        public static void UpdateMessagingNamespace(TwoFilesConfiguration configuration, string serviceTypeName,
             string key, string newKey, string newValue, WriteToLogDelegate writeToLog)
         {
-            var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
             var sectionName = MapServiceTypeNameToSection(serviceTypeName);
 
             configuration.UpdateEntryInDictionarySection(sectionName, key, newKey, newValue, writeToLog);
         }
 
-        public static void AddMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
+        public static void AddMessagingNamespace(TwoFilesConfiguration configuration, string serviceTypeName,
             string key, string value, WriteToLogDelegate writeToLog)
         {
-            var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
             var sectionName = MapServiceTypeNameToSection(serviceTypeName);
 
             configuration.AddEntryToDictionarySection(sectionName, key, value);
         }
 
-        public static void RemoveMessagingNamespace(ConfigFileUse configFileUse, string serviceTypeName,
+        public static void RemoveMessagingNamespace(TwoFilesConfiguration configuration, string serviceTypeName,
             string key, WriteToLogDelegate writeToLog)
         {
-            var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
             var sectionName = MapServiceTypeNameToSection(serviceTypeName);
 
             configuration.RemoveEntryFromDictionarySection(sectionName, key, writeToLog);

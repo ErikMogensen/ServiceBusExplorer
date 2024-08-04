@@ -30,6 +30,7 @@ using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
 using ServiceBusExplorer.Utilities.Helpers;
+using System.Configuration;
 
 #endregion
 
@@ -225,10 +226,10 @@ namespace ServiceBusExplorer.Helpers
         {
             var messagingNamespaces = new Dictionary<string, MessagingNamespace>();
 
-            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)))
+            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
             {
                 var namespaces = GetMessagingNamespacesForServiceType(
-                    configuration, (ServiceType)serviceType, writeToLog);
+                    configuration, serviceType, writeToLog);
 
                 // Add the latest namespaces to the total
                 foreach (var messagingNamespace in namespaces)
@@ -258,10 +259,10 @@ namespace ServiceBusExplorer.Helpers
                 }
             }
 
-            //if (messagingNamespaces == null || messagingNamespaces.Count == 0)
-            //{
-            //    writeToLog(ServiceBusNamespacesNotConfigured);
-            //}
+            if (messagingNamespaces == null || messagingNamespaces.Count == 0)
+            {
+                writeToLog(ServiceBusNamespacesNotConfigured);
+            }
 
             return messagingNamespaces;
         }
@@ -270,12 +271,6 @@ namespace ServiceBusExplorer.Helpers
             (TwoFilesConfiguration configuration, ServiceType serviceType, WriteToLogDelegate writeToLog)
         {
             var hashtable = ConfigurationHelper.GetNamespacesForServiceType(configuration, serviceType);
-
-            if (hashtable == null || hashtable.Count == 0)
-            {
-                writeToLog(ServiceBusNamespacesNotConfigured);
-            }
-
             var messagingNamespaces = new Dictionary<string, MessagingNamespace>();
 
             if (hashtable == null)

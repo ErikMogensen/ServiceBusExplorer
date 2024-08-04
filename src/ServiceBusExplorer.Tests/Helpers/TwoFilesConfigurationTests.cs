@@ -10,6 +10,9 @@ using ServiceBusExplorer.Utilities.Helpers;
 using Microsoft.ServiceBus;
 using FluentAssertions;
 using Xunit;
+using System.Linq;
+using System.Reflection;
+
 
 
 namespace ServiceBusExplorer.Tests.Helpers
@@ -468,18 +471,20 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Create two connection strings in the user file or the application file depending upon
                 // configFileUse.
-                SaveConnectionString(configuration, IndexNamespaceAdded1);
-                SaveConnectionString(configuration, IndexNamespaceAdded2);
+                SaveServiceBusConnectionStringInSection(configuration, IndexNamespaceAdded1);
+                SaveServiceBusConnectionStringInSection(configuration, IndexNamespaceAdded2);
                 logInMemory.Should().BeEmpty();
+
+                // Refresh the configuration
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                var exists = configuration.KeyExistsInSection("onlyServiceBusNamespaces", "treasureInUserFile");
 
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
-                namespaces.Should().HaveCount(2);
-                
                 logInMemory.Should().BeEmpty();
-                
-
+                namespaces.Should().HaveCount(2);
                 fakeConnectionStrings[IndexNamespaceAdded1].Value.Should().Be(namespaces[KeyNamespaceAdded1].ConnectionString);
                 fakeConnectionStrings[IndexNamespaceAdded2].Value.Should().Be(namespaces[KeyNamespaceAdded2].ConnectionString);
+
 
 
                 // Add a connection to the application config file, but let the two connection 
@@ -507,7 +512,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // in the application file. Depending upon ConfigFileUse setting there are 
                 // either three strings in the app config or one in the app and three in the user with
                 // two having the same key.
-                SaveConnectionString(configuration, IndexFirstNamespaceInBothFiles);
+                SaveServiceBusConnectionStringInSection(configuration, IndexFirstNamespaceInBothFiles);
 
                 configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
@@ -659,11 +664,11 @@ namespace ServiceBusExplorer.Tests.Helpers
             }
         }
 
-        void SaveConnectionString(TwoFilesConfiguration configuration, int index)
+        void SaveServiceBusConnectionStringInSection(TwoFilesConfiguration configuration, int index)
         {
             logInMemory.Should().BeEmpty();
             ConfigurationHelper.AddMessagingNamespace(
-                configuration.ConfigFileUse,
+                configuration,
                 Constants.ServiceBusServiceType,
                 fakeConnectionStrings[index].Key,
                 fakeConnectionStrings[index].Value,
