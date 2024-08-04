@@ -72,13 +72,13 @@ namespace ServiceBusExplorer.Helpers
             string oldKey, string newKey, string newValue, WriteToLogDelegate writeToLog)
         {
             var configuration = TwoFilesConfiguration.Create(configFileUse, writeToLog);
-            var sectionToSaveToName = MapServiceTypeNameToSection(serviceTypeName);
+            var sectionToSaveToName = SectionFromServiceTypeName(serviceTypeName);
 
             // Remove the old entry if it exists in another section. Update or add it to the section
             // it should be saved to.
             foreach (var serviceType in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
             {
-                var otherSectionName = MapServiceTypeToSection(serviceType);
+                var otherSectionName = SectionFromServiceType(serviceType);
 
                 if (sectionToSaveToName == otherSectionName)
                 {
@@ -111,7 +111,7 @@ namespace ServiceBusExplorer.Helpers
         public static void UpdateMessagingNamespace(TwoFilesConfiguration configuration, string serviceTypeName,
             string key, string newKey, string newValue, WriteToLogDelegate writeToLog)
         {
-            var sectionName = MapServiceTypeNameToSection(serviceTypeName);
+            var sectionName = SectionFromServiceTypeName(serviceTypeName);
 
             configuration.UpdateEntryInDictionarySection(sectionName, key, newKey, newValue, writeToLog);
         }
@@ -119,7 +119,7 @@ namespace ServiceBusExplorer.Helpers
         public static void AddMessagingNamespace(TwoFilesConfiguration configuration, string serviceTypeName,
             string key, string value, WriteToLogDelegate writeToLog)
         {
-            var sectionName = MapServiceTypeNameToSection(serviceTypeName);
+            var sectionName = SectionFromServiceTypeName(serviceTypeName);
 
             configuration.AddEntryToDictionarySection(sectionName, key, value);
         }
@@ -127,7 +127,7 @@ namespace ServiceBusExplorer.Helpers
         public static void RemoveMessagingNamespace(TwoFilesConfiguration configuration, string serviceTypeName,
             string key, WriteToLogDelegate writeToLog)
         {
-            var sectionName = MapServiceTypeNameToSection(serviceTypeName);
+            var sectionName = SectionFromServiceTypeName(serviceTypeName);
 
             configuration.RemoveEntryFromDictionarySection(sectionName, key, writeToLog);
         }
@@ -143,7 +143,7 @@ namespace ServiceBusExplorer.Helpers
         public static Hashtable GetNamespacesForServiceType(TwoFilesConfiguration configuration,
             ServiceType serviceType)
         {
-            var sectionName = MapServiceTypeToSection(serviceType);
+            var sectionName = SectionFromServiceType(serviceType);
 
             return configuration.GetHashtableFromSection(sectionName);
         }
@@ -309,7 +309,7 @@ namespace ServiceBusExplorer.Helpers
             return resultProperties;
         }
 
-        static string MapServiceTypeNameToSection(string serviceTypeName)
+        static string SectionFromServiceTypeName(string serviceTypeName)
         {
             switch (serviceTypeName)
             {
@@ -329,7 +329,7 @@ namespace ServiceBusExplorer.Helpers
             }
         }
 
-        static string MapServiceTypeToSection(ServiceType serviceType)
+        static string SectionFromServiceType(ServiceType serviceType)
         {
             switch (serviceType)
             {
