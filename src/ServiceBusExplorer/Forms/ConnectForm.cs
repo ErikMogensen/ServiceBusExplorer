@@ -95,8 +95,8 @@ namespace ServiceBusExplorer.Forms
 
         #region Private Static Fields
 
-        private static int connectionStringIndex = -1;
-        private static string connectionString;
+        static int connectionStringIndex = -1;
+        static string connectionString;
 
         #endregion
 
@@ -753,7 +753,11 @@ namespace ServiceBusExplorer.Forms
                 }
 
                 var itemIndex = cboServiceBusNamespace.SelectedIndex;
-                ConfigurationHelper.UpdateMessagingNamespace(configFileUse,
+
+                var configuration = TwoFilesConfiguration.Create(configFileUse, MainForm.StaticWriteToLog);
+
+                ConfigurationHelper.UpdateMessagingNamespace(
+                    configuration,
                     cboServiceType.SelectedItem.ToString(),
                     key,
                     newKey,
@@ -779,10 +783,14 @@ namespace ServiceBusExplorer.Forms
             {
                 if (deleteForm.ShowDialog() == DialogResult.OK)
                 {
-                    ConfigurationHelper.RemoveMessagingNamespace(configFileUse,
+                    var configuration = TwoFilesConfiguration.Create(configFileUse, MainForm.StaticWriteToLog);
+
+                    ConfigurationHelper.RemoveMessagingNamespace(
+                        configuration,
                         cboServiceType.SelectedItem.ToString(),
                         key,
                         MainForm.StaticWriteToLog);
+
                     cboServiceBusNamespace.Items.RemoveAt(cboServiceBusNamespace.SelectedIndex);
                     cboServiceBusNamespace.SelectedIndex = 0;
 

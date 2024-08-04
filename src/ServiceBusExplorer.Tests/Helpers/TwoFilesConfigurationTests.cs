@@ -10,6 +10,7 @@ using ServiceBusExplorer.Utilities.Helpers;
 using Microsoft.ServiceBus;
 using NUnit.Framework;
 using System.Linq;
+using System.Reflection;
 
 
 namespace ServiceBusExplorer.Tests.Helpers
@@ -468,9 +469,13 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Create two connection strings in the user file or the application file depending upon
                 // configFileUse.
-                SaveConnectionString(configuration, IndexNamespaceAdded1);
-                SaveConnectionString(configuration, IndexNamespaceAdded2);
+                SaveServiceBusConnectionStringInSection(configuration, IndexNamespaceAdded1);
+                SaveServiceBusConnectionStringInSection(configuration, IndexNamespaceAdded2);
                 Assert.IsEmpty(logInMemory);
+
+                // Refresh the configuration
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                var exists = configuration.KeyExistsInSection("onlyServiceBusNamespaces", "treasureInUserFile");
 
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 Assert.IsEmpty(logInMemory);
@@ -509,7 +514,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // in the application file. Depending upon ConfigFileUse setting there are 
                 // either three strings in the app config or one in the app and three in the user with
                 // two having the same key.
-                SaveConnectionString(configuration, IndexFirstNamespaceInBothFiles);
+                SaveServiceBusConnectionStringInSection(configuration, IndexFirstNamespaceInBothFiles);
 
                 configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
@@ -671,12 +676,12 @@ namespace ServiceBusExplorer.Tests.Helpers
             }
         }
 
-        void SaveConnectionString(TwoFilesConfiguration configuration, int index)
+        void SaveServiceBusConnectionStringInSection(TwoFilesConfiguration configuration, int index)
         {
             Assert.IsEmpty(logInMemory);
 
             ConfigurationHelper.AddMessagingNamespace(
-                configuration.ConfigFileUse,
+                configuration,
                 Constants.ServiceBusServiceType,
                 fakeConnectionStrings[index].Key,
                 fakeConnectionStrings[index].Value,

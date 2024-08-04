@@ -401,7 +401,7 @@ namespace ServiceBusExplorer.Helpers
 
             if (hashTable is not null)
             {
-                return hashTable.ContainsValue(key);
+                return hashTable.Contains(key);
             }
 
             return false;
