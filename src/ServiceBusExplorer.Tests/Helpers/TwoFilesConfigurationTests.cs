@@ -11,7 +11,6 @@ using Microsoft.ServiceBus;
 using FluentAssertions;
 using Xunit;
 using System.Linq;
-using System.Reflection;
 
 
 
@@ -34,6 +33,15 @@ namespace ServiceBusExplorer.Tests.Helpers
     public class TwoFilesConfigurationTests
     {
         #region Constants
+
+        // Names of the services matching those used in the application
+        const string EventHubsServiceType = "Event Hubs";
+        const string NotificationHubsServiceType = "Notification Hubs";
+        const string RelayServiceType = "Relay";
+        const string ServiceBusServiceType = "Service Bus";
+        const string UnknownServiceType = "Unknown";
+
+
         // Section names matching those used in the application
         const string eventHubsNamespacesSectionName = "eventHubsNamespaces";
         const string notificationHubsNamespacesSectionName = "notificationHubsNamespaces";
@@ -450,8 +458,13 @@ namespace ServiceBusExplorer.Tests.Helpers
             }
         }
 
-        [Fact]
-        public void TestMessagingNamespacesReadAndWrite()
+        [Theory]
+        [TestCase(EventHubsServiceType)]
+        [TestCase(NotificationHubsServiceType)]
+        [TestCase(RelayServiceType)]
+        [TestCase(ServiceBusServiceType)]
+        [TestCase(UnknownServiceType)]
+        public void TestMessagingNamespacesReadAndWrite(string serviceTypeName)
         {
             foreach (var configFileUse in configFileUses)
             {
@@ -471,14 +484,12 @@ namespace ServiceBusExplorer.Tests.Helpers
 
                 // Create two connection strings in the user file or the application file depending upon
                 // configFileUse.
-                SaveServiceBusConnectionStringInSection(configuration, IndexNamespaceAdded1);
-                SaveServiceBusConnectionStringInSection(configuration, IndexNamespaceAdded2);
+                SaveNamespaceInSection(configuration, serviceTypeName, IndexNamespaceAdded1);
+                SaveNamespaceInSection(configuration, serviceTypeName, IndexNamespaceAdded2);
                 logInMemory.Should().BeEmpty();
 
                 // Refresh the configuration
                 configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
-                var exists = configuration.KeyExistsInSection("onlyServiceBusNamespaces", "treasureInUserFile");
-
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
                 logInMemory.Should().BeEmpty();
                 namespaces.Should().HaveCount(2);
@@ -512,7 +523,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // in the application file. Depending upon ConfigFileUse setting there are 
                 // either three strings in the app config or one in the app and three in the user with
                 // two having the same key.
-                SaveServiceBusConnectionStringInSection(configuration, IndexFirstNamespaceInBothFiles);
+                SaveNamespaceInSection(configuration, serviceTypeName, IndexFirstNamespaceInBothFiles);
 
                 configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
                 namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
@@ -664,12 +675,12 @@ namespace ServiceBusExplorer.Tests.Helpers
             }
         }
 
-        void SaveServiceBusConnectionStringInSection(TwoFilesConfiguration configuration, int index)
+        void SaveNamespaceInSection(TwoFilesConfiguration configuration, string serviceTypeName, int index)
         {
             logInMemory.Should().BeEmpty();
             ConfigurationHelper.AddMessagingNamespace(
                 configuration,
-                Constants.ServiceBusServiceType,
+                serviceTypeName,
                 fakeConnectionStrings[index].Key,
                 fakeConnectionStrings[index].Value,
                 writeToLog);
