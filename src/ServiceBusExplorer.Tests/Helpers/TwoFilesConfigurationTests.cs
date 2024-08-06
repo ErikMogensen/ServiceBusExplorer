@@ -606,6 +606,158 @@ namespace ServiceBusExplorer.Tests.Helpers
                 }
             }
         }
+        [Theory]
+        [TestCase(EventHubsServiceType)]
+        //[TestCase(NotificationHubsServiceType)]
+        //[TestCase(RelayServiceType)]
+        //[TestCase(ServiceBusServiceType)]
+        //[TestCase(UnknownServiceType)]
+        public void TestSuperUpsertMessagingNamespace(string serviceTypeName)
+        {
+            foreach (var configFileUse in configFileUses)
+            {
+                // Do the cleanup
+                Setup();
+                RemoveAllNamespaceSectionsFromApplicationFile();
+
+                // Create the TwoFilesConfiguration object without a user file
+                var configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+
+                configuration.Sup
+
+                // Test reading config values - both application config and user config are missing
+                var namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                Assert.AreEqual(0, namespaces.Count);
+                Assert.IsTrue(logInMemory.Contains("Azure Messaging connection entries have not been properly configured"));
+                logInMemory = string.Empty;
+
+                // Create two connection strings in the user file or the application file depending upon
+                // configFileUse.
+                SaveNamespaceInSection(configuration, serviceTypeName, IndexNamespaceAdded1);
+                SaveNamespaceInSection(configuration, serviceTypeName, IndexNamespaceAdded2);
+                Assert.IsEmpty(logInMemory);
+
+                // Refresh the configuration
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
+                Assert.IsEmpty(logInMemory);
+                Assert.AreEqual(2, namespaces.Count);
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
+                    namespaces[KeyNamespaceAdded1].ConnectionString);
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded2].Value,
+                    namespaces[KeyNamespaceAdded2].ConnectionString);
+
+
+                // Add a connection to the application config file, but let the two connection 
+                // strings added previously stay.
+                SaveConnectionStringInApplicationFile(IndexSecondNamespaceInBothFiles);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(),
+                    configFileUse);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
+
+                if (UseApplicationConfig(configFileUse))
+                {
+                    Assert.AreEqual(3, namespaces.Count);
+                    Assert.AreEqual(fakeConnectionStrings[IndexSecondNamespaceInBothFiles].Value,
+                        namespaces[KeyNamespaceInBothFiles].ConnectionString);
+                }
+                else
+                {
+                    Assert.AreEqual(2, namespaces.Count);
+                }
+
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
+                    namespaces[KeyNamespaceAdded1].ConnectionString);
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded2].Value,
+                    namespaces[KeyNamespaceAdded2].ConnectionString);
+
+
+                // Add a connection string to the user file with the same index as an existing entry 
+                // in the application file. Depending upon ConfigFileUse setting there are 
+                // either three strings in the app config or one in the app and three in the user with
+                // two having the same key.
+                SaveNamespaceInSection(configuration, serviceTypeName, IndexFirstNamespaceInBothFiles);
+
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
+
+                Assert.AreEqual(3, namespaces.Count);
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
+                    namespaces[KeyNamespaceAdded1].ConnectionString);
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded2].Value,
+                    namespaces[KeyNamespaceAdded2].ConnectionString);
+                Assert.AreEqual(fakeConnectionStrings[IndexFirstNamespaceInBothFiles].Value,
+                    namespaces[KeyNamespaceInBothFiles].ConnectionString);
+
+                // Add a connection string to the application file
+                SaveConnectionStringInApplicationFile(IndexNamespaceInAppFile1);
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
+
+                // Depending upon ConfigFileUse setting there are
+                // either four strings in the app config or two in the app and three in the user with
+                // two having the same key.
+                if (UseApplicationConfig(configFileUse))
+                {
+                    Assert.AreEqual(4, namespaces.Count);
+                    Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInAppFile1].Value,
+                        namespaces[KeyNamespaceInAppFile1].ConnectionString);
+                }
+                else
+                {
+                    Assert.AreEqual(3, namespaces.Count);
+                }
+
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
+                    namespaces[KeyNamespaceAdded1].ConnectionString);
+                Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded2].Value,
+                    namespaces[KeyNamespaceAdded2].ConnectionString);
+                Assert.AreEqual(fakeConnectionStrings[IndexFirstNamespaceInBothFiles].Value,
+                    namespaces[KeyNamespaceInBothFiles].ConnectionString);
+
+
+                // Delete the user file so reading will only be from the application file
+                DeleteUserConfigFile();
+                configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
+                namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
+
+                if (UseApplicationConfig(configFileUse))
+                {
+                    Assert.IsEmpty(logInMemory);
+                }
+                else
+                {
+                    Assert.IsTrue(logInMemory.Contains("not been properly configured"));
+                }
+
+                if (UseApplicationConfig(configFileUse))
+                {
+                    Assert.AreEqual(configFileUse == ConfigFileUse.ApplicationConfig ? 4 : 2, namespaces.Count);
+
+                    if (configFileUse == ConfigFileUse.ApplicationConfig)
+                    {
+                        Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded1].Value,
+                        namespaces[KeyNamespaceAdded1].ConnectionString);
+                        Assert.AreEqual(fakeConnectionStrings[IndexNamespaceAdded2].Value,
+                            namespaces[KeyNamespaceAdded2].ConnectionString);
+                        Assert.AreEqual(fakeConnectionStrings[IndexFirstNamespaceInBothFiles].Value,
+                            namespaces[KeyNamespaceInBothFiles].ConnectionString);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(fakeConnectionStrings[IndexSecondNamespaceInBothFiles].Value,
+                            namespaces[KeyNamespaceInBothFiles].ConnectionString);
+                    }
+
+                    Assert.AreEqual(fakeConnectionStrings[IndexNamespaceInAppFile1].Value,
+                        namespaces[KeyNamespaceInAppFile1].ConnectionString);
+                }
+                else
+                {
+                    Assert.AreEqual(0, namespaces.Count);
+                }
+            }
+        }
 
         void RemoveAllNamespaceSectionsFromApplicationFile()
         {
