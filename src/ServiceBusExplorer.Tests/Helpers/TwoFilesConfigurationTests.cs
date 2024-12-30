@@ -758,6 +758,16 @@ namespace ServiceBusExplorer.Tests.Helpers
             }
         }
 
+        void RemoveAllNamespaceSectionsFromApplicationFile()
+        {
+            foreach (var serviceType in Enum.GetValues(typeof(ServiceType)).Cast<ServiceType>())
+            {
+                var sectionName = MapServiceTypeToSection(serviceType);
+
+                RemoveNamespaceSectionFromApplicationFile(sectionName);
+            }
+        }
+
         #endregion
 
         #region Private instance methods
