@@ -56,6 +56,13 @@ using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnect
 namespace ServiceBusExplorer
 // ReSharper restore CheckNamespace
 {
+    using System.IO.Compression;
+    using System.Web.UI.WebControls;
+    using Abstractions;
+    using Microsoft.Azure.NotificationHubs;
+
+    using ServiceBusConnectionStringBuilder = Microsoft.ServiceBus.ServiceBusConnectionStringBuilder;
+
     public enum BodyType
     {
         Stream,
