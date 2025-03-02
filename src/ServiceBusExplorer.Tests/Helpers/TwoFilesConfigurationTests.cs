@@ -623,7 +623,7 @@ namespace ServiceBusExplorer.Tests.Helpers
                 // Create the TwoFilesConfiguration object without a user file
                 var configuration = TwoFilesConfiguration.Create(GetUserSettingsFilePath(), configFileUse);
 
-                configuration.Sup
+                //configuration.Sup
 
                 // Test reading config values - both application config and user config are missing
                 var namespaces = MessagingNamespace.GetMessagingNamespaces(configuration, writeToLog);
